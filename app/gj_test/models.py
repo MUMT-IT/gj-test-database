@@ -16,7 +16,7 @@ class GJTest(db.Model):
                           info={'label': u'หน่วย', 'choices': [('None', u'--โปรดเลือกหน่วย--'),
                                                                ('g', 'g'),
                                                                ('mL', 'mL')]})
-    prepare = db.Column(db.String(), info={'label': u'การเตรียมผู้ป่วย'})
+    prepare = db.Column(db.Text(), info={'label': u'การเตรียมผู้ป่วย'})
     specimen_id = db.Column('specimen_id', db.ForeignKey('gj_test_specimens.id'))
     specimen = db.relationship('GJTestSpecimen', backref=db.backref('specimen_test', lazy='dynamic'))
     created_at = db.Column('created_at', db.DateTime(timezone=True), server_default=func.now())
@@ -33,6 +33,11 @@ class GJTest(db.Model):
     caution = db.Column(db.String(), info={'label': u'ข้อควรระวังและอื่นๆ'})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
     location_testing = db.relationship('GJTestLocation', backref=db.backref('location_tests', lazy='dynamic'))
+    drop_off_location = db.relationship('GJTestLocation', backref=db.backref('location_drop_off', lazy='dynamic'))
+    status = db.Column('status', db.String(),
+                     info={'label': u'สถานะ', 'choices': [('None', u'--โปรดเลือกสถานะ--'),
+                                                          ('Avaliable', 'Avaliable'),
+                                                          ('Draft', 'Draft')]})
 
     def __str__(self):
         return u'{}: {}'.format(self.specimen, self.test_date, self.location_testing)
@@ -51,7 +56,7 @@ class GJTestSpecimen(db.Model):
     location = db.relationship('GJTestLocation', backref=db.backref('location_specimens', lazy='dynamic'))
 
     def __str__(self):
-        return u'{}'.format(self.location)
+        return u'{}'.format(self.specimen)
 
 
 class GJTestLocation(db.Model):
@@ -59,17 +64,26 @@ class GJTestLocation(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     location = db.Column('location', db.String(), info={'label': u'สถานที่'})
 
+    def __str__(self):
+        return u'{}'.format(self.location)
+
 
 class GJTestDate(db.Model):
     __tablename__ = 'gj_test_dates'
     id = db.Column('id', db.Integer, primary_key=True)
     test_date = db.Column('test_date', db.String(), info={'label': u'วันที่ทำการทดสอบ'})
 
+    def __str__(self):
+        return u'{}'.format(self.test_date)
+
 
 class GJTestTimePeriodRequest(db.Model):
     __tablename__ = 'gj_test_time_period_requests'
     id = db.Column('id', db.Integer, primary_key=True)
     time_period_request = db.Column('time_period_request', db.String(), info={'label': u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้'})
+
+    def __str__(self):
+        return u'{}'.format(self.time_period_request)
 
 
 class GJTestWaitingPeriod(db.Model):
@@ -78,6 +92,8 @@ class GJTestWaitingPeriod(db.Model):
     waiting_time_normal = db.Column('waiting_time_normal', db.String(), info={'label': u'ระยะเวลารอผล(ปกติ)'})
     waiting_time_urgent = db.Column('waiting_time_urgent', db.String(), info={'label': u'ระยะเวลารอผล(ด่วน)'})
 
+    def __str__(self):
+        return u'{}:{}'.format(self.waiting_time_normal, self.waiting_time_urgent)
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
