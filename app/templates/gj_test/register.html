@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Questrial&display=swap" rel="stylesheet">
+    <!-- Bulma Version 0.9.0-->
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/login.css">
+{% endblock %}
+{% block page_content %}
+    <section class="hero is-fullheight">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                {% include "messages.html" %}
+                <div class="column is-4 is-offset-4">
+                    <h3 class="title has-text-black">Register</h3>
+                    <hr class="login-hr">
+                    <p class="subtitle has-text-black">Please register to proceed.</p>
+                    <div class="box">
+                        <form method="POST" action="/register">
+<!--                            {{ form.csrf_token }}-->
+                            {{ form.hidden_tag() }}
+                            <p class="has-text-danger">
+                                {% for field, msg in errors.items() %}
+                                {{ field }}{{ ', '.join(msg) }}
+                                {% endfor %}
+                            </p>
+                            <div class="field">
+                                <label>{{ form.username.label }}</label>
+                                <div class="control">
+                                    {{ form.username(class="input") }}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>{{ form.email.label }}</label>
+                                <div class="control">
+                                    {{ form.email(class="input") }}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>{{ form.password.label }}</label>
+                                <div class="control">
+                                     {{ form.password(class="input") }}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>{{ form.confirm.label }}</label>
+                                <div class="control">
+                                     {{ form.confirm(class="input") }}
+                                </div>
+                            </div>
+                            <div class="buttons is-centered">
+                                <input type="submit" class="button is-block is-info is-large is-fullwidth" value="Register">
+                            </div>
+                        </form>
+                    </div>
+                    <p class="has-text-grey">
+                        <a href="{{ url_for('gj_test.login')}}">Login</a> &nbsp;·&nbsp;
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script async type="text/javascript" src="../js/bulma.js"></script>
+{% endblock %}
