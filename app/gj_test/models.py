@@ -32,13 +32,16 @@ class GJTest(db.Model):
     drop_off_location_id = db.Column('drop_off_location_id', db.ForeignKey('gj_test_locations.id'))
     drop_off_location = db.relationship('GJTestLocation', foreign_keys=[drop_off_location_id],
                                         backref=db.backref('location_drop_off', lazy='dynamic'))
+    specimen_transportation_id = db.Column('specimen_transportation_id', db.ForeignKey('gj_test_specimen_transportations.id'))
+    specimen_transportation = db.relationship('GJTestSpecimenTransportation', foreign_keys=[specimen_transportation_id],
+                                        backref=db.backref('specimen_transportations', lazy='dynamic'))
     status = db.Column('status', db.String(),
                      info={'label': u'สถานะ', 'choices': [('None', u'--โปรดเลือกสถานะ--'),
                                                           ('Avaliable', 'Avaliable'),
                                                           ('Draft', 'Draft')]})
 
     def __str__(self):
-        return u'{}: {}'.format(self.specimen, self.test_date, self.test_location)
+        return u'{}: {}'.format(self.specimen, self.specimen_transportation, self.test_date, self.test_location)
 
     def to_dict(self):
         return {
@@ -48,6 +51,7 @@ class GJTest(db.Model):
             'desc': self.desc,
             'prepare': self.prepare,
             'specimen': self.specimen,
+            'specimen_transportation': self.specimen_transportation,
             'solution': self.solution,
             'test_date': self.test_date,
             'time_period_request': self.time_period_request,
@@ -88,6 +92,9 @@ class GJTestSpecimenTransportation(db.Model):
                                                      (u'วัน/เวลา', 'วัน/เวลา')]})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
     location = db.relationship('GJTestLocation', backref=db.backref('location_specimens', lazy='dynamic'))
+
+    def __str__(self):
+        return u'{} {}'.format(self.specimen_date_time, self.location)
 
 
 class GJTestLocation(db.Model):
