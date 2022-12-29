@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landing</title>
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <style>
+    @media(max-width: 500px) {
+      .reverse-columns {
+        flex-direction: column-reverse;
+        display: flex;
+      }
+    }
+
+    .titled {
+      font-family: 'Merriweather', serif !important;
+      font-size: 40px !important;
+      font-weight: 400 !important;
+      line-height: 64px !important;
+    }
+
+    .subtitled {
+      font-family: 'Merriweather', serif !important;
+      font-size: 22px !important;
+      font-weight: 400 !important;
+      line-height: 36px !important;
+    }
+  </style>
+{% endblock %}
+{% block page_content %}
+  <!-- NavBar va a todo lo ancho -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a href="https://mt.mahidol.ac.th/en/home/">
+        <img src="{{ url_for('static', filename='img/mumt-logo.png') }}" alt="Logo" width="250">
+      </a>
+    </div>
+
+    <div class="navbar-menu">
+
+      <div class="navbar-end">
+        <a class="navbar-item">
+          REPORT AN ISSUE
+        </a>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero del producto -->
+  <section class="hero is-white is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns  is-vcentered reverse-columns">
+          <div class="column
+          is-10-mobile
+          is-10-tablet
+          is-5-desktop
+          is-5-widescreen
+          is-5-fullhd " data-aos="fade-down">
+            <h1 class="title titled is-1 mb-6">
+              ศูนย์การแพทย์กาญจนาภิเษก – Golden Jubilee Medical Center
+            </h1>
+            <div class="buttons">
+              <a href="{{ url_for('gj_test.add_test') }}" class="button is-warning">New Tests</a>
+              <a href="{{ url_for('gj_test.view_tests') }}" class="button is-success">View Tests</a>
+            </div>
+          </div>
+          <div data-aos="fade-right" class="column
+          is-10-mobile
+          is-10-tablet
+          is-4-desktop
+          is-7-widescreen
+          is-4-fullhd is-offset-1-fullhd">
+            <figure class="image is-square">
+              <img src="{{ url_for('static', filename='img/lab-work.jpg') }}">
+            </figure>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      once: true
+    });
+  </script>
+{% endblock %}

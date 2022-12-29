@@ -1,17 +1,17 @@
-from flask import flash, redirect, url_for, render_template, request
+from flask import flash, redirect, url_for, render_template, request, jsonify
 from flask_login import login_required, login_user, logout_user
 from sqlalchemy.sql.functions import user
 
 from . import gj_test_bp as gj_test
 
 from .models import *
-from .forms import TestListForm, LoginForm, RegisterForm
+from .forms import TestListForm, LoginForm, RegisterForm, SpecimenForm
 from .. import csrf
 
 
-@gj_test.route('/')
-def index():
-    return 'Hello, world'
+@gj_test.route('/landing')
+def landing():
+    return render_template('gj_test/landing.html')
 
 
 @csrf.exempt
@@ -36,20 +36,24 @@ def add_test():
 @csrf.exempt
 @gj_test.route('/login', methods=["GET", "POST"])
 def login():
-    form = LoginForm(request.form)
+    form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
+        email = form.email.data
+        password = form.password.data
+        user = User.query.filter_by(email=email, password=password).first()
+        if user and user.verify_password(password):
             login_user(user)
-            redirect_url = request.args.get('next') or url_for('gj_test.login')
-            return redirect(redirect_url)
+            flash('Logged in successfully')
+        else:
+            flash('Logged in unsuccessfully')
+        return redirect(url_for('gj_test.landing'))
     return render_template('gj_test/login.html', form=form)
 
 
 @gj_test.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('gj_test.index'))
+    return redirect(url_for('gj_test.landing'))
 
 
 @csrf.exempt
@@ -69,3 +73,51 @@ def register():
         flash('Registered successfully')
         return redirect(url_for('gj_test.login'))
     return render_template('gj_test/register.html', form=form, errors=form.errors)
+
+
+@gj_test.route('/tests/view')
+def view_tests():
+    return render_template('gj_test/view_tests.html')
+
+
+@gj_test.route('/api/view-tests')
+def get_tests_view_data():
+    query = GJTest.query
+    search = request.args.get('search[value]')
+    query = query.filter(db.or_(
+        GJTest.test_name.like(u'%{}%'.format(search)),
+        GJTest.code.like(u'%{}%'.format(search)),
+
+    ))
+    start = request.args.get('start', type=int)
+    length = request.args.get('length', type=int)
+    total_filtered = query.count()
+    query = query.offset(start).limit(length)
+    data = []
+    for test in query:
+        test_data = test.to_dict()
+        # test_data['view'] = '<a href="{}"><i class="fas fa-eye"></i></a>'.format(
+        #     url_for())
+        # test_data['edit'] = '<a href="{}"><i class="fas fa-edit"></i></a>'.format(
+        #     url_for())
+        data.append(test_data)
+    return jsonify({'data': data,
+                    'recordsFiltered': total_filtered,
+                    'recordsTotal': GJTest.query.count(),
+                    'draw': request.args.get('draw', type=int),
+                    })
+
+
+@gj_test.route('/specimen/add', methods=['GET', 'POST'])
+def add_specimen_ref():
+    specimen = db.session.query(GJTestSpecimen)
+    form = SpecimenForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_specimen = GJTestSpecimen()
+            form.populate_obj(new_specimen)
+            db.session.add(new_specimen)
+            db.session.commit()
+            flash('New specimen has been added.', 'success')
+            return redirect(url_for('gj_test.add_test', form=form))
+    return render_template('gj_test/specimen_ref.html', form=form, specimen=specimen, url_callback=request.referrer)
