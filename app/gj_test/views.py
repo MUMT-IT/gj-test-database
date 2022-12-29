@@ -5,7 +5,8 @@ from sqlalchemy.sql.functions import user
 from . import gj_test_bp as gj_test
 
 from .models import *
-from .forms import TestListForm, LoginForm, RegisterForm, SpecimenForm
+from .forms import TestListForm, LoginForm, RegisterForm, SpecimenForm, LocationForm, TimePeriodRequestedForm, \
+    WaitingTimeForm, TestDateForm
 from .. import csrf
 
 
@@ -110,7 +111,6 @@ def get_tests_view_data():
 
 @gj_test.route('/specimen/add', methods=['GET', 'POST'])
 def add_specimen_ref():
-    specimen = db.session.query(GJTestSpecimen)
     form = SpecimenForm()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -120,4 +120,60 @@ def add_specimen_ref():
             db.session.commit()
             flash('New specimen has been added.', 'success')
             return redirect(url_for('gj_test.add_test', form=form))
-    return render_template('gj_test/specimen_ref.html', form=form, specimen=specimen, url_callback=request.referrer)
+    return render_template('gj_test/specimen_ref.html', form=form, url_callback=request.referrer)
+
+
+@gj_test.route('/location/add', methods=['GET', 'POST'])
+def add_location_ref():
+    form = LocationForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_location = GJTestLocation()
+            form.populate_obj(new_location)
+            db.session.add(new_location)
+            db.session.commit()
+            flash('New location has been added.', 'success')
+            return redirect(url_for('gj_test.add_test', form=form))
+    return render_template('gj_test/location_ref.html', form=form, url_callback=request.referrer)
+
+
+@gj_test.route('/time-period-requested/add', methods=['GET', 'POST'])
+def add_time_period_requested_ref():
+    form = TimePeriodRequestedForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_time_period_requested = GJTestTimePeriodRequest()
+            form.populate_obj(new_time_period_requested)
+            db.session.add(new_time_period_requested)
+            db.session.commit()
+            flash('New time period request has been added.', 'success')
+            return redirect(url_for('gj_test.add_test', form=form))
+    return render_template('gj_test/time_period_requested_ref.html', form=form, url_callback=request.referrer)
+
+
+@gj_test.route('/new-waiting/add', methods=['GET', 'POST'])
+def add_new_waiting_ref():
+    form = WaitingTimeForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_waiting_time = GJTestWaitingPeriod()
+            form.populate_obj(new_waiting_time)
+            db.session.add(new_waiting_time)
+            db.session.commit()
+            flash('New waiting has been added.', 'success')
+            return redirect(url_for('gj_test.add_test', form=form))
+    return render_template('gj_test/new_waiting_ref.html', form=form, url_callback=request.referrer)
+
+
+@gj_test.route('/test-date/add', methods=['GET', 'POST'])
+def add_test_date_ref():
+    form = TestDateForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_test_date = GJTestDate()
+            form.populate_obj(new_test_date)
+            db.session.add(new_test_date)
+            db.session.commit()
+            flash('New test date has been added.', 'success')
+            return redirect(url_for('gj_test.add_test', form=form))
+    return render_template('gj_test/new_test_date_ref.html', form=form, url_callback=request.referrer)
