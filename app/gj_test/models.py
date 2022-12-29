@@ -85,16 +85,10 @@ class GJTestSpecimenTransportation(db.Model):
     __tablename__ = 'gj_test_specimen_transportations'
     id = db.Column('id', db.Integer, primary_key=True)
     specimen_date_time = db.Column('specimen_date_time', db.String(),
-                                   info={'label': u'วัน/เวลาการนำส่งสิ่งส่งตรวจ',
-                                         'choices': [('None', u'--โปรดเลือกวัน/เวลา--'),
-                                                     (u'ทุกวันตลอด 24 ชั่วโมง', 'ทุกวันตลอด 24 ชั่วโมง'),
-                                                     (u'ทุกวัน', 'ทุกวัน'),
-                                                     (u'วัน/เวลา', 'วัน/เวลา')]})
-    location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
-    location = db.relationship('GJTestLocation', backref=db.backref('location_specimens', lazy='dynamic'))
+                                   info={'label': u'วัน/เวลาการนำส่งสิ่งส่งตรวจ'})
 
     def __str__(self):
-        return u'{} {}'.format(self.specimen_date_time, self.location)
+        return u'{}'.format(self.specimen_date_time)
 
 
 class GJTestLocation(db.Model):
