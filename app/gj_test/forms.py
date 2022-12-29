@@ -41,9 +41,9 @@ class TestListForm(ModelForm):
     waiting_time = QuerySelectField(u'ระยะเวลารอผล',
                                            query_factory=lambda: GJTestWaitingPeriod.query.all(),
                                            blank_text='Select waiting time..', allow_blank=False)
-    location_testing = QuerySelectField(u'สถานที่ทดสอบ',
+    test_location = QuerySelectField(u'สถานที่ทดสอบ',
                                 query_factory=lambda: GJTestLocation.query.all(),
-                                blank_text='Select location test..', allow_blank=False)
+                                blank_text='Select location..', allow_blank=False)
 
 
 class LoginForm(ModelForm):
@@ -98,3 +98,12 @@ class RegisterForm(ModelForm):
             self.email.errors.append("Email already registered")
             return False
         return True
+
+
+class SpecimenForm(ModelForm):
+    class Meta:
+        model = GJTestSpecimen
+
+    location = QuerySelectField(u'สถานที่',
+                                query_factory=lambda: GJTestLocation.query.all(),
+                                blank_text='Select location..', allow_blank=False)
