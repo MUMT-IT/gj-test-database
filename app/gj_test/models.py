@@ -12,10 +12,6 @@ class GJTest(db.Model):
     test_name = db.Column('test_name', db.String(), info={'label': u'ชื่อการทดสอบ'})
     code = db.Column('code', db.String(), unique=True, info={'label': u'รหัส'})
     desc = db.Column('desc', db.Text(), info={'label': u'ข้อบ่งชี้ในการส่งตรวจ'})
-    unit = db.Column('unit', db.String(),
-                          info={'label': u'หน่วย', 'choices': [('None', u'--โปรดเลือกหน่วย--'),
-                                                               ('g', 'g'),
-                                                               ('mL', 'mL')]})
     prepare = db.Column(db.Text(), info={'label': u'การเตรียมผู้ป่วย'})
     specimen_id = db.Column('specimen_id', db.ForeignKey('gj_test_specimens.id'))
     specimen = db.relationship('GJTestSpecimen', backref=db.backref('specimen_test', lazy='dynamic'))
@@ -32,15 +28,40 @@ class GJTest(db.Model):
     interference_analysis = db.Column(db.String(), info={'label': u'สิ่งรบกวนต่อการตรวจวิเคราะห์'})
     caution = db.Column(db.String(), info={'label': u'ข้อควรระวังและอื่นๆ'})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
-    location_testing = db.relationship('GJTestLocation', backref=db.backref('location_tests', lazy='dynamic'))
-    drop_off_location = db.relationship('GJTestLocation', backref=db.backref('location_drop_off', lazy='dynamic'))
+    test_location = db.relationship('GJTestLocation', foreign_keys=[location_id],
+                                    backref=db.backref('test_locations', lazy='dynamic'))
+    drop_off_location_id = db.Column('drop_off_location_id', db.ForeignKey('gj_test_locations.id'))
+    drop_off_location = db.relationship('GJTestLocation', foreign_keys=[drop_off_location_id],
+                                        backref=db.backref('location_drop_off', lazy='dynamic'))
     status = db.Column('status', db.String(),
                      info={'label': u'สถานะ', 'choices': [('None', u'--โปรดเลือกสถานะ--'),
                                                           ('Avaliable', 'Avaliable'),
                                                           ('Draft', 'Draft')]})
 
     def __str__(self):
-        return u'{}: {}'.format(self.specimen, self.test_date, self.location_testing)
+        return u'{}: {}'.format(self.specimen, self.test_date, self.test_location)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'test_name': self.test_name,
+            'code': self.code,
+            'desc': self.desc,
+            'unit': self.unit,
+            'prepare': self.prepare,
+            'specimen': self.specimen,
+            'solution': self.solution,
+            'test_date': self.test_date,
+            'time_period_request': self.time_period_request,
+            'waiting_period': self.waiting_period,
+            'reporting_referral_values': self.reporting_referral_values,
+            'time_period_requested': self.time_period_request,
+            'interference_analysis': self.interference_analysis,
+            'caution': self.caution,
+            'test_location': self.test_location,
+            'drop_off_location': self.drop_off_location,
+            'status': self.status
+        }
 
 
 class GJTestSpecimen(db.Model):
@@ -51,7 +72,13 @@ class GJTestSpecimen(db.Model):
     specimen_container = db.Column('specimen_container', db.String(), info={'label': u'ภาชนะสิ่งส่งตรวจ'})
     specimen_date_time = db.Column('specimen_date_time', db.String(),
                      info={'label': u'วัน/เวลาการนำส่งสิ่งส่งตรวจ', 'choices': [('None', u'--โปรดเลือกวัน/เวลา--'),
-                                                          (u'ทุกวันตลอด 24 ชั่วโมง', 'ทุกวัน')]})
+                                                          (u'ทุกวันตลอด 24 ชั่วโมง', 'ทุกวันตลอด 24 ชั่วโมง'),
+                                                          (u'ทุกวัน', 'ทุกวัน'),
+                                                          (u'วัน/เวลา', 'วัน/เวลา')]})
+    unit = db.Column('unit', db.String(),
+                     info={'label': u'หน่วย', 'choices': [('None', u'--โปรดเลือกหน่วย--'),
+                                                          ('g', 'g'),
+                                                          ('mL', 'mL')]})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
     location = db.relationship('GJTestLocation', backref=db.backref('location_specimens', lazy='dynamic'))
 
