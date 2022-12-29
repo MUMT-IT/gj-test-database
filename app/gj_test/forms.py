@@ -35,7 +35,7 @@ class TestListForm(ModelForm):
     test_date = QuerySelectField(u'วันที่ทำการทดสอบ',
                                 query_factory=lambda: GJTestDate.query.all(),
                                 blank_text='Select test date..', allow_blank=False)
-    time_period_request = QuerySelectField(u'ระยะเวลารอผล',
+    time_period_request = QuerySelectField(u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้',
                                 query_factory=lambda: GJTestTimePeriodRequest.query.all(),
                                 blank_text='Select time period request..', allow_blank=False)
     waiting_time = QuerySelectField(u'ระยะเวลารอผล',
@@ -107,3 +107,23 @@ class SpecimenForm(ModelForm):
     location = QuerySelectField(u'สถานที่',
                                 query_factory=lambda: GJTestLocation.query.all(),
                                 blank_text='Select location..', allow_blank=False)
+
+
+class LocationForm(ModelForm):
+    class Meta:
+        model = GJTestLocation
+
+
+class TimePeriodRequestedForm(ModelForm):
+    class Meta:
+        model = GJTestTimePeriodRequest
+
+
+class WaitingTimeForm(ModelForm):
+    class Meta:
+        model = GJTestWaitingPeriod
+
+
+class TestDateForm(ModelForm):
+    class Meta:
+        model = GJTestDate
