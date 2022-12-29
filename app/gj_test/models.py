@@ -24,7 +24,6 @@ class GJTest(db.Model):
     waiting_period_id = db.Column('waiting_period_id', db.ForeignKey('gj_test_waiting_periods.id'))
     waiting_period = db.relationship('GJTestWaitingPeriod', backref=db.backref('waiting_periods', lazy='dynamic'))
     reporting_referral_values = db.Column(db.String(), info={'label': u'การรายงานผลและค่าอ้างอิง'})
-    time_period_requested = db.Column(db.String(), info={'label': u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้'})
     interference_analysis = db.Column(db.String(), info={'label': u'สิ่งรบกวนต่อการตรวจวิเคราะห์'})
     caution = db.Column(db.String(), info={'label': u'ข้อควรระวังและอื่นๆ'})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
@@ -55,7 +54,6 @@ class GJTest(db.Model):
             'time_period_request': self.time_period_request,
             'waiting_period': self.waiting_period,
             'reporting_referral_values': self.reporting_referral_values,
-            'time_period_requested': self.time_period_request,
             'interference_analysis': self.interference_analysis,
             'caution': self.caution,
             'test_location': self.test_location,
@@ -121,6 +119,7 @@ class GJTestWaitingPeriod(db.Model):
 
     def __str__(self):
         return u'{}:{}'.format(self.waiting_time_normal, self.waiting_time_urgent)
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
