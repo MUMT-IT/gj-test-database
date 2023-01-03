@@ -36,7 +36,7 @@ class GJTest(db.Model):
     specimen_transportation = db.relationship('GJTestSpecimenTransportation', foreign_keys=[specimen_transportation_id],
                                         backref=db.backref('specimen_transportations', lazy='dynamic'))
     status = db.Column('status', db.String(),
-                     info={'label': u'สถานะ', 'choices': [('None', u'--โปรดเลือกสถานะ--'),
+                     info={'label': u'สถานะ', 'choices': [('None', '--Select Status--'),
                                                           ('Avaliable', 'Avaliable'),
                                                           ('Draft', 'Draft')]})
 
@@ -50,17 +50,12 @@ class GJTest(db.Model):
             'code': self.code,
             'desc': self.desc,
             'prepare': self.prepare,
-            'specimen': self.specimen,
-            'specimen_transportation': self.specimen_transportation,
+            'specimen': self.specimen.specimen,
             'solution': self.solution,
-            'test_date': self.test_date,
-            'time_period_request': self.time_period_request,
-            'waiting_period': self.waiting_period,
+            'test_date': self.test_date.test_date,
             'reporting_referral_values': self.reporting_referral_values,
             'interference_analysis': self.interference_analysis,
             'caution': self.caution,
-            'test_location': self.test_location,
-            'drop_off_location': self.drop_off_location,
             'status': self.status
         }
 
