@@ -28,22 +28,25 @@ class TestListForm(ModelForm):
 
     drop_off_location = QuerySelectField(u'สถานที่',
                                 query_factory=lambda: GJTestLocation.query.all(),
-                                blank_text='Select location..', allow_blank=False)
+                                blank_text='--Select Location--', allow_blank=True)
     specimen = QuerySelectField(u'สิ่งส่งตรวจ',
                                 query_factory=lambda: GJTestSpecimen.query.all(),
-                                blank_text='Select specimen..', allow_blank=False)
+                                blank_text='--Select Specimen--', allow_blank=True)
+    specimen_transportation = QuerySelectField(u'การนำส่งสิ่งส่งตรวจ',
+                                query_factory=lambda: GJTestSpecimenTransportation.query.all(),
+                                blank_text='--Select Specimen Transportation--', allow_blank=True)
     test_date = QuerySelectField(u'วันที่ทำการทดสอบ',
                                 query_factory=lambda: GJTestDate.query.all(),
-                                blank_text='Select test date..', allow_blank=False)
+                                blank_text='--Select Test Date--', allow_blank=True)
     time_period_request = QuerySelectField(u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้',
                                 query_factory=lambda: GJTestTimePeriodRequest.query.all(),
-                                blank_text='Select time period request..', allow_blank=False)
+                                blank_text='--Select Time Period Request--', allow_blank=True)
     waiting_time = QuerySelectField(u'ระยะเวลารอผล',
                                            query_factory=lambda: GJTestWaitingPeriod.query.all(),
-                                           blank_text='Select waiting time..', allow_blank=False)
+                                           blank_text='--Select Waiting Time--', allow_blank=True)
     test_location = QuerySelectField(u'สถานที่ทดสอบ',
                                 query_factory=lambda: GJTestLocation.query.all(),
-                                blank_text='Select location..', allow_blank=False)
+                                blank_text='--Select Location--', allow_blank=True)
 
 
 class LoginForm(ModelForm):
@@ -127,3 +130,8 @@ class WaitingTimeForm(ModelForm):
 class TestDateForm(ModelForm):
     class Meta:
         model = GJTestDate
+
+
+class SpecimenTransportationForm(ModelForm):
+    class Meta:
+        model = GJTestSpecimenTransportation
