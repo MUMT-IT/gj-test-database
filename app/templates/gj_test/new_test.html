@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
 {{ super() }}
+
 {% endblock %}
 {% block page_content %}
 <section class="section">
@@ -47,8 +48,13 @@
                         <div class="field-body">
                             <div class="field">
                                 <label class="label">{{ form.specimen.label }}
-                                    <a href="{{ url_for('gj_test.add_specimen_ref') }}">
-                                        <i class="far fa-plus-square"></i>
+                                    <a href="{{ url_for('gj_test.add_specimen_ref') }}" class="button is-small is-info is-rounded">
+                                       <span class="icon-text">
+                                           <span class="icon">
+                                               <i class="fa-solid fa-plus"></i>
+                                           </span>
+                                           <span>เพิ่ม</span>
+                                       </span>
                                     </a>
                                 </label>
                                 <div class="select is-fullwidth">
@@ -56,9 +62,29 @@
                                 </div>
                             </div>
                             <div class="field">
+                                <label class="label">{{ form.specimen_transportation.label }}
+                                    <a href="{{ url_for('gj_test.add_specimen_transportation_ref') }}" class="button is-small is-info is-rounded">
+                                        <span class="icon-text">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </span>
+                                        <span>เพิ่ม</span>
+                                       </span>
+                                    </a>
+                                </label>
+                                <div class="select is-fullwidth">
+                                    {{ form.specimen_transportation() }}
+                                </div>
+                            </div>
+                            <div class="field">
                                 <label class="label">{{ form.drop_off_location.label }}
-                                    <a href="{{ url_for('gj_test.add_location_ref') }}">
-                                        <i class="far fa-plus-square"></i>
+                                    <a href="{{ url_for('gj_test.add_location_ref') }}" class="button is-small is-info is-rounded">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </span>
+                                            <span>เพิ่ม</span>
+                                       </span>
                                     </a>
                                 </label>
                                 <div class="select is-fullwidth">
@@ -76,8 +102,13 @@
                         <div class="field-body">
                             <div class="field">
                                 <label class="label">{{ form.time_period_request.label }}
-                                    <a href="{{ url_for('gj_test.add_time_period_requested_ref') }}">
-                                        <i class="far fa-plus-square"></i>
+                                    <a href="{{ url_for('gj_test.add_time_period_requested_ref') }}" class="button is-small is-info is-rounded">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </span>
+                                            <span>เพิ่ม</span>
+                                       </span>
                                     </a>
                                 </label>
                                 <div class="select is-fullwidth">
@@ -86,8 +117,13 @@
                             </div>
                             <div class="field">
                                 <label class="label">{{ form.test_date.label }}
-                                    <a href="{{ url_for('gj_test.add_test_date_ref') }}">
-                                        <i class="far fa-plus-square"></i>
+                                    <a href="{{ url_for('gj_test.add_test_date_ref') }}" class="button is-small is-info is-rounded">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </span>
+                                            <span>เพิ่ม</span>
+                                       </span>
                                     </a>
                                 </label>
                                 <div class="select is-fullwidth">
@@ -109,8 +145,13 @@
                         </div>
                         <div class="field">
                             <label class="label">{{ form.waiting_time.label }}
-                                <a href="{{ url_for('gj_test.add_new_waiting_ref') }}">
-                                    <i class="far fa-plus-square"></i>
+                                <a href="{{ url_for('gj_test.add_new_waiting_ref') }}"class="button is-small is-info is-rounded">
+                                    <span class="icon-text">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </span>
+                                        <span>เพิ่ม</span>
+                                    </span>
                                 </a>
                             </label>
                             <div class="select is-fullwidth">
@@ -131,8 +172,13 @@
                         </div>
                         <div class="field">
                             <label class="label">{{ form.test_location.label }}
-                                <a href="{{ url_for('gj_test.add_location_ref') }}">
-                                    <i class="far fa-plus-square"></i>
+                                <a href="{{ url_for('gj_test.add_location_ref') }}" class="button is-small is-info is-rounded">
+                                    <span class="icon-text">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </span>
+                                        <span>เพิ่ม</span>
+                                    </span>
                                 </a>
                             </label>
                             <div class="select is-fullwidth">
