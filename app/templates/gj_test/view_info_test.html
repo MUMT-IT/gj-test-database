@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block page_content %}
+<section class="section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="{{ url_for('gj_test.landing') }}">หน้าหลัก</a></li>
+                <li><a href="{{ url_for('gj_test.edit_test', test_id=test.id) }}">แก้ไขข้อมูล</a></li>
+                <li class="is-active"><a href="#" aria-current="page">ข้อมูล</a></li>
+            </ul>
+        </nav>
+        <div class="columns">
+            <div class="column has-text-centered">
+                <h1 class="title">รายละเอียดการทดสอบ</h1>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column has-text-centered is-two-thirds is-offset-2">
+                <div class="card">
+                    <div class="card-content">
+                        <table class="table is-striped is-bordered is-fullwidth">
+                            <colgroup>
+                                <col span="1" style="width: 25%;">
+                                <col span="1" style="width: 75%;">
+                            </colgroup>
+                            <tr>
+                                <td><label class="label">ชนิด</label></td>
+                                <td>{{ test.specimen }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ปริมาณ</label></td>
+                                <td>{{ test.specimen.specimen_quantity }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">หน่วย</label></td>
+                                <td>{{ test.specimen.unit }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ภาชนะ</label></td>
+                                <td>{{ test.specimen.specimen_container }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">วัน/เวลา</label></td>
+                                <td>{{ test.specimen_transportation.specimen_date_time }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">สถานที่</label></td>
+                                <td>{{ test.drop_off_location.location }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">วิธี/หลักการ</label></td>
+                                <td>{{ test.solution }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">วันที่ทำการทดสอบ</label></td>
+                                <td>{{ test.test_date.test_date }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ปกติ</label></td>
+                                <td>{{ test.waiting_period.waiting_time_normal }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ด่วน</label></td>
+                                <td>{{ test.waiting_period.waiting_time_urgent }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">การรายงานผลและค่าอ้างอิง</label></td>
+                                <td>{{ test.reporting_referral_values }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ระยะเวลาที่สามารถขอตรวจเพิ่มได้</label></td>
+                                <td>{{ test.time_period_request.time_period_request }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">สิ่งรบกวนต่อการตรวจวิเคราะห์</label></td>
+                                <td>{{ test.interference_analysis }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ข้อควรระวังและอื่นๆ</label></td>
+                                <td>{{ test.caution }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">สถานที่ทำการทดสอบ</label></td>
+                                <td>{{ test.test_location.location }}</td>
+                            </tr>
+                        </table>
+                        <div class="buttons is-centered">
+                            <a href="{{ url_for('gj_test.view_tests') }}" class="button is-light">กลับ</a>
+                            <a href="{{ url_for('gj_test.edit_test', test_id=test.id) }}" class="button is-danger">แก้ไข</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{ super }}
+
+{% endblock %}

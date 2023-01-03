@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block page_content %}
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                {% include "messages.html" %}
+                <div class="column has-text-centered">
+                    <h1 class="title">แก้ไขข้อมูลการทดสอบ</h1>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-10 is-offset-1">
+                    <div class="box">
+                        <form method="post">
+                        {{ form.hidden_tag() }}
+                        <div class="field-body">
+                            <div class="field">
+                                <label class="label">{{ form.test_name.label }}</label>
+                                <div class="control">
+                                    {{ form.test_name(class="input is-danger") }}
+                                </div>
+                                <p class="help is-danger">Required</p>
+                            </div>
+                            <div class="field">
+                                <label class="label">{{ form.code.label }}</label>
+                                <div class="control">
+                                    {{ form.code(class="input is-danger") }}
+                                </div>
+                                <p class="help is-danger">Required</p>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ form.desc.label }}</label>
+                            <div class="control">
+                                {{ form.desc(class="textarea") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ form.prepare.label }}</label>
+                            <div class="control">
+                                {{ form.prepare(class="textarea") }}
+                            </div>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <label class="label">{{ form.specimen.label }}
+                                    <a href="{{ url_for('gj_test.add_specimen_ref') }}" class="button is-small is-info is-rounded">
+                                       <span class="icon-text">
+                                           <span class="icon">
+                                               <i class="fa-solid fa-plus"></i>
+                                           </span>
+                                           <span>เพิ่ม</span>
+                                       </span>
+                                    </a>
+                                </label>
+                                <div class="select is-fullwidth">
+                                    {{ form.specimen() }}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">{{ form.specimen_transportation.label }}
+                                    <a href="{{ url_for('gj_test.add_specimen_transportation_ref') }}" class="button is-small is-info is-rounded">
+                                        <span class="icon-text">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </span>
+                                        <span>เพิ่ม</span>
+                                       </span>
+                                    </a>
+                                </label>
+                                <div class="select is-fullwidth">
+                                    {{ form.specimen_transportation() }}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">{{ form.drop_off_location.label }}
+                                    <a href="{{ url_for('gj_test.add_location_ref') }}" class="button is-small is-info is-rounded">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </span>
+                                            <span>เพิ่ม</span>
+                                       </span>
+                                    </a>
+                                </label>
+                                <div class="select is-fullwidth">
+                                    {{ form.drop_off_location() }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">{{ form.reporting_referral_values.label }}</label>
+                            <div class="control">
+                                {{ form.reporting_referral_values(class="input") }}
+                            </div>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <label class="label">{{ form.time_period_request.label }}
+                                    <a href="{{ url_for('gj_test.add_time_period_requested_ref') }}" class="button is-small is-info is-rounded">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </span>
+                                            <span>เพิ่ม</span>
+                                       </span>
+                                    </a>
+                                </label>
+                                <div class="select is-fullwidth">
+                                    {{ form.time_period_request() }}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">{{ form.test_date.label }}
+                                    <a href="{{ url_for('gj_test.add_test_date_ref') }}" class="button is-small is-info is-rounded">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </span>
+                                            <span>เพิ่ม</span>
+                                       </span>
+                                    </a>
+                                </label>
+                                <div class="select is-fullwidth">
+                                    {{ form.test_date() }}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">{{ form.status.label }}</label>
+                                <div class="select is-fullwidth">
+                                    {{ form.status() }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ form.solution.label }}</label>
+                            <div class="control">
+                                {{ form.solution(class="input") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ form.waiting_time.label }}
+                                <a href="{{ url_for('gj_test.add_new_waiting_ref') }}"class="button is-small is-info is-rounded">
+                                    <span class="icon-text">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </span>
+                                        <span>เพิ่ม</span>
+                                    </span>
+                                </a>
+                            </label>
+                            <div class="select is-fullwidth">
+                                {{ form.waiting_time() }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ form.interference_analysis.label }}</label>
+                            <div class="control">
+                                {{ form.interference_analysis(class="input") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ form.caution.label }}</label>
+                            <div class="control">
+                                {{ form.caution(class="input") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ form.test_location.label }}
+                                <a href="{{ url_for('gj_test.add_location_ref') }}" class="button is-small is-info is-rounded">
+                                    <span class="icon-text">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </span>
+                                        <span>เพิ่ม</span>
+                                    </span>
+                                </a>
+                            </label>
+                            <div class="select is-fullwidth">
+                                {{ form.test_location() }}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="field is-grouped is-grouped-centered">
+                            <div class="buttons">
+                                <button class="button is-success" type="submit" value="submit">บันทึก</button>
+                                <a href="{{ url_for('gj_test.view_info_test', test_id=test.id) }}"
+                                   class="button is-danger">ยกเลิก</a>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+
+{% endblock %}

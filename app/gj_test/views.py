@@ -6,7 +6,7 @@ from . import gj_test_bp as gj_test
 
 from .models import *
 from .forms import TestListForm, LoginForm, RegisterForm, SpecimenForm, LocationForm, TimePeriodRequestedForm, \
-    WaitingTimeForm, TestDateForm
+    WaitingTimeForm, TestDateForm, SpecimenTransportationForm
 from .. import csrf
 
 
@@ -26,8 +26,7 @@ def add_test():
         db.session.add(test)
         db.session.commit()
         flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
-        # return redirect(url_for('gj_test.view_test'))
-        # Check Error
+        return redirect(url_for('gj_test.view_tests'))
     else:
         for er in form.errors:
             flash("{} {}".format(er, form.errors[er]), 'danger')
@@ -54,7 +53,7 @@ def login():
 @gj_test.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('gj_test.landing'))
+    return redirect(url_for('gj_test.login'))
 
 
 @csrf.exempt
@@ -97,10 +96,10 @@ def get_tests_view_data():
     data = []
     for test in query:
         test_data = test.to_dict()
-        # test_data['view'] = '<a href="{}"><i class="fas fa-eye"></i></a>'.format(
-        #     url_for())
-        # test_data['edit'] = '<a href="{}"><i class="fas fa-edit"></i></a>'.format(
-        #     url_for())
+        test_data['view'] = '<a href="{}" class="button is-small is-primary is-outlined">ดูข้อมูลเพิ่ม</a>'.format(
+            url_for('gj_test.view_info_test', test_id=test.id ))
+        test_data['edit'] = '<a href="{}" class="button is-small is-danger is-outlined">แก้ไขข้อมูล </a>'.format(
+            url_for('gj_test.edit_test', test_id=test.id))
         data.append(test_data)
     return jsonify({'data': data,
                     'recordsFiltered': total_filtered,
@@ -177,3 +176,37 @@ def add_test_date_ref():
             flash('New test date has been added.', 'success')
             return redirect(url_for('gj_test.add_test', form=form))
     return render_template('gj_test/new_test_date_ref.html', form=form, url_callback=request.referrer)
+
+
+@gj_test.route('/specimen-transportation/add', methods=['GET', 'POST'])
+def add_specimen_transportation_ref():
+    form = SpecimenTransportationForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_specimen_transportation = GJTestSpecimenTransportation()
+            form.populate_obj(new_specimen_transportation)
+            db.session.add(new_specimen_transportation)
+            db.session.commit()
+            flash('New specimen transportation has been added.', 'success')
+            return redirect(url_for('gj_test.add_test', form=form))
+    return render_template('gj_test/specimen_transportation.html', form=form, url_callback=request.referrer)
+
+
+@gj_test.route('/info-tests/view/<int:test_id>')
+def view_info_test(test_id):
+    test = GJTest.query.get(test_id)
+    return render_template('gj_test/view_info_test.html',
+                           test=test)
+
+
+@gj_test.route('/edit/<int:test_id>', methods=['GET', 'POST'])
+def edit_test(test_id):
+    test = GJTest.query.get(test_id)
+    form = TestListForm(obj=test)
+    if request.method == 'POST':
+        form.populate_obj(test)
+        db.session.add(test)
+        db.session.commit()
+        flash(u'แก้ไขข้อมูลเรียบร้อย', 'success')
+        return redirect(url_for('gj_test.view_info_tests', test_id=test.id))
+    return render_template('gj_test/edit_test.html', form=form, test=test)
