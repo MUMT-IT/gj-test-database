@@ -40,6 +40,7 @@ from .gj_test.models import *
 
 admin.add_views(ModelView(GJTest, db.session, category='GJ Test'))
 admin.add_views(ModelView(GJTestSpecimen, db.session, category='GJ Test'))
+admin.add_views(ModelView(GJTestSpecimenTransportation, db.session, category='GJ Test'))
 admin.add_views(ModelView(GJTestLocation, db.session, category='GJ Test'))
 admin.add_views(ModelView(GJTestDate, db.session, category='GJ Test'))
 admin.add_views(ModelView(GJTestTimePeriodRequest, db.session, category='GJ Test'))
