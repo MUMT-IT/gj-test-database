@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
 {{ super() }}
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 {% endblock %}
 {% block page_content %}
 <section class="section">
@@ -32,6 +32,12 @@
                                 </div>
                                 <p class="help is-danger">Required</p>
                             </div>
+                            <div class="field">
+                                <label class="label">{{ form.status.label }}</label>
+                                <div class="select is-fullwidth">
+                                    {{ form.status() }}
+                                </div>
+                            </div>
                         </div>
                         <div class="field">
                             <label class="label">{{ form.desc.label }}</label>
@@ -45,10 +51,12 @@
                                 {{ form.prepare(class="textarea") }}
                             </div>
                         </div>
+
                         <div class="field-body">
                             <div class="field">
                                 <label class="label">{{ form.specimen.label }}
-                                    <a href="{{ url_for('gj_test.add_specimen_ref') }}" class="button is-small is-info is-rounded">
+                                    <a href="{{ url_for('gj_test.add_specimen_ref') }}"
+                                       class="button is-small is-info is-rounded">
                                        <span class="icon-text">
                                            <span class="icon">
                                                <i class="fa-solid fa-plus"></i>
@@ -57,13 +65,14 @@
                                        </span>
                                     </a>
                                 </label>
-                                <div class="select is-fullwidth">
-                                    {{ form.specimen() }}
+                                <div>
+                                    {{ form.specimen(class="select js-example-basic-multiple", multiple="multiple") }}
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label">{{ form.specimen_transportation.label }}
-                                    <a href="{{ url_for('gj_test.add_specimen_transportation_ref') }}" class="button is-small is-info is-rounded">
+                                    <a href="{{ url_for('gj_test.add_specimen_transportation_ref') }}"
+                                       class="button is-small is-info is-rounded">
                                         <span class="icon-text">
                                         <span class="icon">
                                             <i class="fa-solid fa-plus"></i>
@@ -72,13 +81,17 @@
                                        </span>
                                     </a>
                                 </label>
-                                <div class="select is-fullwidth">
-                                    {{ form.specimen_transportation() }}
+                                <div>
+                                    {{ form.specimen_transportation(class="select js-example-basic-multiple",
+                                    multiple="multiple") }}
                                 </div>
                             </div>
+                        </div>
+                        <div class="field-body">
                             <div class="field">
                                 <label class="label">{{ form.drop_off_location.label }}
-                                    <a href="{{ url_for('gj_test.add_location_ref') }}" class="button is-small is-info is-rounded">
+                                    <a href="{{ url_for('gj_test.add_location_ref') }}"
+                                       class="button is-small is-info is-rounded">
                                         <span class="icon-text">
                                             <span class="icon">
                                                 <i class="fa-solid fa-plus"></i>
@@ -87,12 +100,12 @@
                                        </span>
                                     </a>
                                 </label>
-                                <div class="select is-fullwidth">
-                                    {{ form.drop_off_location() }}
+                                <div>
+                                    {{ form.drop_off_location(class="select js-example-basic-multiple",
+                                    multiple="multiple") }}
                                 </div>
                             </div>
                         </div>
-
                         <div class="field">
                             <label class="label">{{ form.reporting_referral_values.label }}</label>
                             <div class="control">
@@ -102,7 +115,8 @@
                         <div class="field-body">
                             <div class="field">
                                 <label class="label">{{ form.time_period_request.label }}
-                                    <a href="{{ url_for('gj_test.add_time_period_requested_ref') }}" class="button is-small is-info is-rounded">
+                                    <a href="{{ url_for('gj_test.add_time_period_requested_ref') }}"
+                                       class="button is-small is-info is-rounded">
                                         <span class="icon-text">
                                             <span class="icon">
                                                 <i class="fa-solid fa-plus"></i>
@@ -111,13 +125,15 @@
                                        </span>
                                     </a>
                                 </label>
-                                <div class="select is-fullwidth">
-                                    {{ form.time_period_request() }}
+                                <div>
+                                    {{ form.time_period_request(class="select js-example-basic-multiple",
+                                    multiple="multiple") }}
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label">{{ form.test_date.label }}
-                                    <a href="{{ url_for('gj_test.add_test_date_ref') }}" class="button is-small is-info is-rounded">
+                                    <a href="{{ url_for('gj_test.add_test_date_ref') }}"
+                                       class="button is-small is-info is-rounded">
                                         <span class="icon-text">
                                             <span class="icon">
                                                 <i class="fa-solid fa-plus"></i>
@@ -126,14 +142,8 @@
                                        </span>
                                     </a>
                                 </label>
-                                <div class="select is-fullwidth">
-                                    {{ form.test_date() }}
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">{{ form.status.label }}</label>
-                                <div class="select is-fullwidth">
-                                    {{ form.status() }}
+                                <div>
+                                    {{ form.test_date(class="select js-example-basic-multiple", multiple="multiple") }}
                                 </div>
                             </div>
                         </div>
@@ -145,7 +155,8 @@
                         </div>
                         <div class="field">
                             <label class="label">{{ form.waiting_time.label }}
-                                <a href="{{ url_for('gj_test.add_new_waiting_ref') }}"class="button is-small is-info is-rounded">
+                                <a href="{{ url_for('gj_test.add_new_waiting_ref') }}"
+                                   class="button is-small is-info is-rounded">
                                     <span class="icon-text">
                                         <span class="icon">
                                             <i class="fa-solid fa-plus"></i>
@@ -172,7 +183,8 @@
                         </div>
                         <div class="field">
                             <label class="label">{{ form.test_location.label }}
-                                <a href="{{ url_for('gj_test.add_location_ref') }}" class="button is-small is-info is-rounded">
+                                <a href="{{ url_for('gj_test.add_location_ref') }}"
+                                   class="button is-small is-info is-rounded">
                                     <span class="icon-text">
                                         <span class="icon">
                                             <i class="fa-solid fa-plus"></i>
@@ -181,8 +193,8 @@
                                     </span>
                                 </a>
                             </label>
-                            <div class="select is-fullwidth">
-                                {{ form.test_location() }}
+                            <div>
+                                {{ form.test_location(class="select js-example-basic-multiple", multiple="multiple") }}
                             </div>
                         </div>
                         <br>
@@ -202,5 +214,12 @@
 {% endblock %}
 {% block scripts %}
 {{ super() }}
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(() => {
+        $('.js-example-basic-multiple').select2({
+            width: '400px',
+        });
+    });
+</script>
 {% endblock %}
