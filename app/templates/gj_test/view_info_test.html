@@ -24,20 +24,36 @@
                                 <col span="1" style="width: 75%;">
                             </colgroup>
                             <tr>
+                                <td><label class="label">การทดสอบ</label></td>
+                                <td>{{ test.test_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">รหัส</label></td>
+                                <td>{{ test.code }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ข้อบ่งชี้ในการส่งตรวจ</label></td>
+                                <td>{{ test.desc }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">การเตรียมผู้ป่วย</label></td>
+                                <td>{{ test.prepare }}</td>
+                            </tr>
+                            <tr>
                                 <td><label class="label">ชนิด</label></td>
                                 <td>{{ test.specimen }}</td>
                             </tr>
                             <tr>
                                 <td><label class="label">ปริมาณ</label></td>
-                                <td>{{ test.specimen.specimen_quantity }}</td>
+                                <td>{{ test.specimen_quantity }}</td>
                             </tr>
                             <tr>
                                 <td><label class="label">หน่วย</label></td>
-                                <td>{{ test.specimen.unit }}</td>
+                                <td>{{ test.unit }}</td>
                             </tr>
                             <tr>
                                 <td><label class="label">ภาชนะ</label></td>
-                                <td>{{ test.specimen.specimen_container }}</td>
+                                <td>{{ test.specimen_container }}</td>
                             </tr>
                             <tr>
                                 <td><label class="label">วัน/เวลา</label></td>
