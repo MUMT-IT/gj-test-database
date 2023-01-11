@@ -32,7 +32,7 @@ class TestListForm(ModelForm):
     specimen = QuerySelectField(u'สิ่งส่งตรวจ',
                                 query_factory=lambda: GJTestSpecimen.query.all(),
                                 blank_text='--Select Specimen--', allow_blank=True)
-    specimen_transportation = QuerySelectField(u'การนำส่งสิ่งส่งตรวจ',
+    specimen_transportation = QuerySelectField(u'การนำส่งสิ่งส่งตรวจ วัน/เวลา',
                                 query_factory=lambda: GJTestSpecimenTransportation.query.all(),
                                 blank_text='--Select Specimen Transportation--', allow_blank=True)
     test_date = QuerySelectField(u'วันที่ทำการทดสอบ',
