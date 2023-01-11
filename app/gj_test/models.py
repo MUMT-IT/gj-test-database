@@ -8,7 +8,7 @@ from app import db
 
 class GJTest(db.Model):
     __tablename__ = 'gj_tests'
-    id = db.Column('id', db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     test_name = db.Column('test_name', db.String(), info={'label': u'ชื่อการทดสอบ'})
     code = db.Column('code', db.String(), unique=True, info={'label': u'รหัส'})
     desc = db.Column('desc', db.Text(), info={'label': u'ข้อบ่งชี้ในการส่งตรวจ'})
@@ -71,7 +71,7 @@ class GJTest(db.Model):
 
 class GJTestSpecimen(db.Model):
     __tablename__ = 'gj_test_specimens'
-    id = db.Column('id', db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     specimen = db.Column('specimen', db.String(), info={'label': u'สิ่งส่งตรวจ'})
 
     def __str__(self):
@@ -80,7 +80,7 @@ class GJTestSpecimen(db.Model):
 
 class GJTestSpecimenTransportation(db.Model):
     __tablename__ = 'gj_test_specimen_transportations'
-    id = db.Column('id', db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     specimen_date_time = db.Column('specimen_date_time', db.String(),
                                    info={'label': u'วัน/เวลาการนำส่งสิ่งส่งตรวจ'})
 
@@ -90,7 +90,7 @@ class GJTestSpecimenTransportation(db.Model):
 
 class GJTestLocation(db.Model):
     __tablename__ = 'gj_test_locations'
-    id = db.Column('id', db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     location = db.Column('location', db.String(), info={'label': u'สถานที่'})
 
     def __str__(self):
@@ -99,7 +99,7 @@ class GJTestLocation(db.Model):
 
 class GJTestDate(db.Model):
     __tablename__ = 'gj_test_dates'
-    id = db.Column('id', db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     test_date = db.Column('test_date', db.String(), info={'label': u'วันที่ทำการทดสอบ'})
 
     def __str__(self):
@@ -108,7 +108,7 @@ class GJTestDate(db.Model):
 
 class GJTestTimePeriodRequest(db.Model):
     __tablename__ = 'gj_test_time_period_requests'
-    id = db.Column('id', db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     time_period_request = db.Column('time_period_request', db.String(), info={'label': u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้'})
 
     def __str__(self):
@@ -117,7 +117,7 @@ class GJTestTimePeriodRequest(db.Model):
 
 class GJTestWaitingPeriod(db.Model):
     __tablename__ = 'gj_test_waiting_periods'
-    id = db.Column('id', db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     waiting_time_normal = db.Column('waiting_time_normal', db.String(), info={'label': u'ระยะเวลารอผล(ปกติ)'})
     waiting_time_urgent = db.Column('waiting_time_urgent', db.String(), info={'label': u'ระยะเวลารอผล(ด่วน)'})
 
@@ -127,7 +127,7 @@ class GJTestWaitingPeriod(db.Model):
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(), unique=True, index=True)
     username = db.Column(db.String(), unique=True)
     password_hash = db.Column(db.String())
