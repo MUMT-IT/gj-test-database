@@ -32,6 +32,36 @@ def add_test():
             flash("{} {}".format(er, form.errors[er]), 'danger')
     return render_template('gj_test/new_test.html', form=form, url_callback=url_for('gj_test.view_tests'))
 
+# Try to add multiple
+# @csrf.exempt
+# @gj_test.route('/new-test/add', methods=['GET', 'POST'])
+# def add_test(test_id=None):
+#     form = TestListForm()
+#     test = GJTest.query.get(test_id)
+#     if form.validate_on_submit():
+#         if form.validate_on_submit():
+#             if not test_id:
+#                 new_test = GJTest()
+#                 form.populate_obj(new_test)
+#                 db.session.add(new_test)
+#                 db.session.commit()
+#                 flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
+#                 return redirect(url_for('gj_test.view_tests'))
+#             else:
+#                 form.populate_obj(test)
+#                 new_specimens = []
+#                 test.specimens = new_specimens
+#                 # print(form.specimens.data)
+#                 db.session.add(test)
+#                 db.session.commit()
+#                 flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
+#                 return redirect(url_for('gj_test.view_tests', test=test))
+#         else:
+#             for er in form.errors:
+#                 flash("{} {}".format(er, form.errors[er]), 'danger')
+#     return render_template('gj_test/new_test.html', form=form, test=test,
+#                            url_callback=url_for('gj_test.view_tests'))
+
 
 @csrf.exempt
 @gj_test.route('/login', methods=["GET", "POST"])
