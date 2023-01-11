@@ -1,70 +1,87 @@
 {% extends "base.html" %}
 {% block page_content %}
-    <section class="section">
-        {% include "messages.html" %}
-        <div class="container">
-            <div class="columns">
-                <div class="column has-text-left">
-                    <h1 class="title">ข้อมูลรายการทดสอบที่ให้บริการ</h1>
-                </div>
-            </div>
-            <div class="columns">
-                <div class="column">
-                    <table id="data" class="table is-fullwidth is-striped">
-                        <thead>
-                        <th>การทดสอบ</th>
-                        <th>รหัส</th>
-                        <th>ข้อบ่งชี้ในการส่งตรวจ</th>
-                        <th>การเตรียมผู้ป่วย</th>
-                        <th>สิ่งส่งตรวจ</th>
-<!--                        <th>unit</th>-->
-<!--                        <th>การนำส่งสิ่งส่งตรวจ</th>-->
-<!--                        <th>วิธีการ/หลักการ</th>-->
-<!--                        <th>วันที่ทำการทดสอบ</th>-->
-<!--                        <th>ระยะเวลารอผล</th>-->
-<!--                        <th>การรายงานผลและค่าอ้างอิง</th>-->
-<!--                        <th>ระยะเวลาที่สามารถขอตรวจเพิ่มได้</th>-->
-<!--                        <th>สิ่งรบกวนต่อการตรวจวิเคราะห์</th>-->
-<!--                        <th>ข้อควรระวังและอื่นๆ</th>-->
-<!--                        <th>สถานที่ทำการทดสอบ</th>-->
-<!--                        <th>สถานะ</th>-->
-                        <th>View</th>
-                        <th>Edit</th>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="columns">
-                <div class="column">
-                    <a href="{{ url_for('gj_test.landing') }}" class="button is-rounded is-info is-light">
-                        <span>กลับ</span>
-                    </a>
+<section class="section">
+    {% include "messages.html" %}
+    <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="{{ url_for('gj_test.landing') }}">หน้าหลัก</a></li>
+                <li class="is-active"><a href="#" aria-current="page">ดูข้อมูล</a></li>
+            </ul>
+        </nav>
+        <div class="columns">
+            <div class="column has-text-left">
+                <h1 class="title">ข้อมูลรายการทดสอบที่ให้บริการ</h1>
+                <div class="buttons">
+                    <a href="{{ url_for('gj_test.add_test') }}" class="button is-info">New Tests</a>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="columns">
+            <div class="column">
+                <table id="data" class="table is-fullwidth is-striped">
+                    <thead>
+                    <th>การทดสอบ</th>
+                    <th>รหัส</th>
+                    <th>ข้อบ่งชี้ในการส่งตรวจ</th>
+<!--                    <th>การเตรียมผู้ป่วย</th>-->
+                    <th>สิ่งส่งตรวจ</th>
+                     <th>สถานะ</th>
+<!--                    <th>ปริมาณ</th>-->
+<!--                    <th>หน่วย</th>-->
+<!--                    <th>ภาชนะ</th>-->
+                    <!--                        <th>unit</th>-->
+                    <!--                        <th>การนำส่งสิ่งส่งตรวจ</th>-->
+                    <!--                        <th>วิธีการ/หลักการ</th>-->
+                    <!--                        <th>วันที่ทำการทดสอบ</th>-->
+                    <!--                        <th>ระยะเวลารอผล</th>-->
+                    <!--                        <th>การรายงานผลและค่าอ้างอิง</th>-->
+                    <!--                        <th>ระยะเวลาที่สามารถขอตรวจเพิ่มได้</th>-->
+                    <!--                        <th>สิ่งรบกวนต่อการตรวจวิเคราะห์</th>-->
+                    <!--                        <th>ข้อควรระวังและอื่นๆ</th>-->
+                    <!--                        <th>สถานที่ทำการทดสอบ</th>-->
+                    <!--                        <th>สถานะ</th>-->
+                    <th>View</th>
+                    <th>Edit</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column">
+                <a href="{{ url_callback }}" class="button is-rounded is-info is-light">
+                    <span>กลับ</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
 {% block scripts %}
-    {{ super() }}
-    <script>
-        $(document).ready(function () {
-            $('#data').DataTable({
-                searchDelay: 350,
-                ajax: '{{ url_for("gj_test.get_tests_view_data") }}',
-                serverSide: true,
-                columns: [
-                    {data: 'test_name'},
-                    {data: 'code'},
-                    {data: 'desc'},
-                    {data: 'prepare'},
-                    {data: 'specimen'},
-                    {data: 'view'},
-                    {data: 'edit'},
+{{ super() }}
+<script>
+    $(document).ready(function () {
+        $('#data').DataTable({
+            searchDelay: 350,
+            ajax: '{{ url_for("gj_test.get_tests_view_data") }}',
+            serverSide: true,
+            columns: [
+                {data: 'test_name'},
+                {data: 'code'},
+                {data: 'desc'},
+                // {data: 'prepare'},
+                {data: 'specimen'},
+                {data: 'status'},
+                // {data: 'specimen_quantity'},
+                // {data: 'unit'},
+                // {data: 'specimen_container'},
+                {data: 'view'},
+                {data: 'edit'},
 
-                ],
-            });
+            ],
         });
-    </script>
+    });
+</script>
 {% endblock %}
