@@ -30,7 +30,7 @@ def add_test():
     else:
         for er in form.errors:
             flash("{} {}".format(er, form.errors[er]), 'danger')
-    return render_template('gj_test/new_test.html', form=form)
+    return render_template('gj_test/new_test.html', form=form, url_callback=url_for('gj_test.view_tests'))
 
 
 @csrf.exempt
@@ -42,10 +42,8 @@ def login():
         password = form.password.data
         user = User.query.filter_by(email=email, password=password).first()
         if user and user.verify_password(password):
-            login_user(user)
-            flash('Logged in successfully')
-        else:
-            flash('Logged in unsuccessfully')
+            login_user(user, remember=True)
+        flash('Logged in successfully')
         return redirect(url_for('gj_test.landing'))
     return render_template('gj_test/login.html', form=form)
 
@@ -77,7 +75,7 @@ def register():
 
 @gj_test.route('/tests/view')
 def view_tests():
-    return render_template('gj_test/view_tests.html')
+    return render_template('gj_test/view_tests.html', url_callback=request.referrer)
 
 
 @gj_test.route('/api/view-tests')
@@ -96,7 +94,7 @@ def get_tests_view_data():
     data = []
     for test in query:
         test_data = test.to_dict()
-        test_data['view'] = '<a href="{}" class="button is-small is-primary is-outlined">ดูข้อมูลเพิ่ม</a>'.format(
+        test_data['view'] = '<a href="{}" class="button is-small is-primary is-outlined">ดูข้อมูล</a>'.format(
             url_for('gj_test.view_info_test', test_id=test.id ))
         test_data['edit'] = '<a href="{}" class="button is-small is-danger is-outlined">แก้ไขข้อมูล </a>'.format(
             url_for('gj_test.edit_test', test_id=test.id))
@@ -208,5 +206,5 @@ def edit_test(test_id):
         db.session.add(test)
         db.session.commit()
         flash(u'แก้ไขข้อมูลเรียบร้อย', 'success')
-        return redirect(url_for('gj_test.view_info_tests', test_id=test.id))
-    return render_template('gj_test/edit_test.html', form=form, test=test)
+        return redirect(url_for('gj_test.view_tests'))
+    return render_template('gj_test/edit_test.html', form=form, test=test, url_callback=request.referrer)
