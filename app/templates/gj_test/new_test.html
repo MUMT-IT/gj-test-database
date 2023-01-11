@@ -58,8 +58,6 @@
                                 {{ form.prepare(class="textarea") }}
                             </div>
                         </div>
-
-
                         <div class="field">
                             <label class="label">{{ form.specimen.label }}
                                 <a href="{{ url_for('gj_test.add_specimen_ref') }}"
@@ -113,23 +111,23 @@
                                 multiple="multiple") }}
                             </div>
                         </div>
-                            <div class="field">
-                                <label class="label">{{ form.drop_off_location.label }}
-                                    <a href="{{ url_for('gj_test.add_location_ref') }}"
-                                       class="button is-small is-info is-rounded">
+                        <div class="field">
+                            <label class="label">{{ form.drop_off_location.label }}
+                                <a href="{{ url_for('gj_test.add_location_ref') }}"
+                                   class="button is-small is-info is-rounded">
                                         <span class="icon-text">
                                             <span class="icon">
                                                 <i class="fa-solid fa-plus"></i>
                                             </span>
                                             <span>เพิ่ม</span>
                                        </span>
-                                    </a>
-                                </label>
-                                <div>
-                                    {{ form.drop_off_location(class="select js-example-basic-multiple",
-                                    multiple="multiple") }}
-                                </div>
+                                </a>
+                            </label>
+                            <div>
+                                {{ form.drop_off_location(class="select js-example-basic-multiple",
+                                multiple="multiple") }}
                             </div>
+                        </div>
                         <div class="field">
                             <label class="label">{{ form.solution.label }}</label>
                             <div class="control">
@@ -153,21 +151,20 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">{{ form.waiting_time.label }}
-                                <a href="{{ url_for('gj_test.add_new_waiting_ref') }}"
-                                   class="button is-small is-info is-rounded">
-                                    <span class="icon-text">
-                                        <span class="icon">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </span>
-                                        <span>เพิ่ม</span>
-                                    </span>
-                                </a>
-                            </label>
-                            <div class="select is-fullwidth">
-                                {{ form.waiting_time() }}
+                            <label class="label">{{ form.waiting_time_normal.label }}</label>
+                            <div class="control">
+                                {{ form.waiting_time_normal(class="select js-example-basic-multiple",
+                                multiple="multiple") }}
                             </div>
                         </div>
+                        <div class="field">
+                            <label class="label">{{ form.waiting_time_urgent.label }}</label>
+                            <div class="control">
+                                {{ form.waiting_time_urgent(class="select js-example-basic-multiple",
+                                multiple="multiple") }}
+                            </div>
+                        </div>
+
                         <div class="field">
                             <label class="label">{{ form.reporting_referral_values.label }}</label>
                             <div class="control">
