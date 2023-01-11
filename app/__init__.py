@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-
+from datetime import timedelta
 
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
@@ -21,6 +21,7 @@ app = Flask(__name__)
 app.config.from_prefixed_env()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(seconds=20)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
