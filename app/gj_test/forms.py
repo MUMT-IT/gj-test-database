@@ -2,7 +2,7 @@
 from flask_wtf import FlaskForm
 from wtforms import SelectMultipleField, widgets, StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
-from wtforms_alchemy import model_form_factory, QuerySelectField
+from wtforms_alchemy import model_form_factory, QuerySelectField, QuerySelectMultipleField
 
 from app import db
 from app.gj_test.models import *
@@ -26,27 +26,30 @@ class TestListForm(ModelForm):
         model = GJTest
         exclude = ['created_at']
 
-    drop_off_location = QuerySelectField(u'สถานที่',
+    drop_off_location = QuerySelectMultipleField(u'สถานที่',
                                 query_factory=lambda: GJTestLocation.query.all(),
-                                blank_text='--Select Location--', allow_blank=True)
-    specimen = QuerySelectField(u'สิ่งส่งตรวจ',
+                                allow_blank=True)
+    specimen = QuerySelectMultipleField(u'สิ่งส่งตรวจ',
                                 query_factory=lambda: GJTestSpecimen.query.all(),
-                                blank_text='--Select Specimen--', allow_blank=True)
-    specimen_transportation = QuerySelectField(u'การนำส่งสิ่งส่งตรวจ วัน/เวลา',
+                                allow_blank=True)
+    specimen_transportation = QuerySelectMultipleField(u'การนำส่งสิ่งส่งตรวจ วัน/เวลา',
                                 query_factory=lambda: GJTestSpecimenTransportation.query.all(),
-                                blank_text='--Select Specimen Transportation--', allow_blank=True)
-    test_date = QuerySelectField(u'วันที่ทำการทดสอบ',
+                                allow_blank=True)
+    test_date = QuerySelectMultipleField(u'วันที่ทำการทดสอบ',
                                 query_factory=lambda: GJTestDate.query.all(),
-                                blank_text='--Select Test Date--', allow_blank=True)
-    time_period_request = QuerySelectField(u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้',
+                                allow_blank=True)
+    time_period_request = QuerySelectMultipleField(u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้',
                                 query_factory=lambda: GJTestTimePeriodRequest.query.all(),
-                                blank_text='--Select Time Period Request--', allow_blank=True)
-    waiting_time = QuerySelectField(u'ระยะเวลารอผล',
-                                           query_factory=lambda: GJTestWaitingPeriod.query.all(),
-                                           blank_text='--Select Waiting Time--', allow_blank=True)
-    test_location = QuerySelectField(u'สถานที่ทดสอบ',
+                                allow_blank=True)
+    waiting_time_normal = QuerySelectMultipleField(u'ปกติ',
+                                 query_factory=lambda: GJTestWaitingPeriod.query.all(),
+                                 allow_blank=True)
+    waiting_time_urgent = QuerySelectMultipleField(u'ด่วน',
+                                 query_factory=lambda: GJTestWaitingPeriod.query.all(),
+                                 allow_blank=True)
+    test_location = QuerySelectMultipleField(u'สถานที่ทดสอบ',
                                 query_factory=lambda: GJTestLocation.query.all(),
-                                blank_text='--Select Location--', allow_blank=True)
+                                allow_blank=True)
 
 
 class LoginForm(ModelForm):
