@@ -39,6 +39,12 @@ class GJTest(db.Model):
                      info={'label': u'สถานะ', 'choices': [('None', '--Select Status--'),
                                                           ('Avaliable', 'Avaliable'),
                                                           ('Draft', 'Draft')]})
+    specimen_quantity = db.Column('specimen_quantity', db.String(), info={'label': u'ปริมาณสิ่งส่งตรวจ'})
+    specimen_container = db.Column('specimen_container', db.String(), info={'label': u'ภาชนะสิ่งส่งตรวจ'})
+    unit = db.Column('unit', db.String(),
+                     info={'label': u'หน่วย', 'choices': [('None', u'--โปรดเลือกหน่วย--'),
+                                                          ('g', 'g'),
+                                                          ('mL', 'mL')]})
 
     def __str__(self):
         return u'{}: {}'.format(self.specimen, self.specimen_transportation, self.test_date, self.test_location)
@@ -51,6 +57,9 @@ class GJTest(db.Model):
             'desc': self.desc,
             'prepare': self.prepare,
             'specimen': self.specimen.specimen,
+            'specimen_quantity': self.specimen_quantity,
+            'unit': self.unit,
+            'specimen_container': self.specimen_container,
             'solution': self.solution,
             'test_date': self.test_date.test_date,
             'reporting_referral_values': self.reporting_referral_values,
@@ -64,13 +73,6 @@ class GJTestSpecimen(db.Model):
     __tablename__ = 'gj_test_specimens'
     id = db.Column('id', db.Integer, primary_key=True)
     specimen = db.Column('specimen', db.String(), info={'label': u'สิ่งส่งตรวจ'})
-    specimen_quantity = db.Column('specimen_quantity', db.String(), info={'label': u'ปริมาณสิ่งส่งตรวจ'})
-    specimen_container = db.Column('specimen_container', db.String(), info={'label': u'ภาชนะสิ่งส่งตรวจ'})
-    unit = db.Column('unit', db.String(),
-                     info={'label': u'หน่วย', 'choices': [('None', u'--โปรดเลือกหน่วย--'),
-                                                          ('g', 'g'),
-                                                          ('mL', 'mL')]})
-
 
     def __str__(self):
         return u'{}'.format(self.specimen)
