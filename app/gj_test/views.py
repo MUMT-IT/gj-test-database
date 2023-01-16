@@ -1,13 +1,22 @@
 from flask import flash, redirect, url_for, render_template, request, jsonify
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
+from flask_mail import Message
+from itsdangerous import TimedJSONWebSignatureSerializer
 from sqlalchemy.sql.functions import user
+from app import app, mail
+
 
 from . import gj_test_bp as gj_test
 
 from .models import *
 from .forms import TestListForm, LoginForm, RegisterForm, SpecimenForm, LocationForm, TimePeriodRequestedForm, \
-    WaitingTimeForm, TestDateForm, SpecimenTransportationForm
+    WaitingTimeForm, TestDateForm, SpecimenTransportationForm, ForgotPasswordForm, ResetPasswordForm
 from .. import csrf
+
+
+def send_mail(recp, title, message):
+    message = Message(subject=title, body=message, recipients=recp)
+    mail.send(message)
 
 
 @gj_test.route('/landing')
@@ -101,6 +110,67 @@ def register():
         flash('Registered successfully')
         return redirect(url_for('gj_test.login'))
     return render_template('gj_test/register.html', form=form, errors=form.errors)
+
+
+@gj_test.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    token = request.args.get('token')
+    email = request.args.get('email')
+    serializer = TimedJSONWebSignatureSerializer(app.config.get('SECRET_KEY'))
+    try:
+        token_data = serializer.loads(token)
+    except Exception as e:
+        print(str(e))
+        return u'Bad JSON Web token. You need a valid token to reset the password. รหัสสำหรับทำการตั้งค่า password หมดอายุหรือไม่ถูกต้อง'
+    if token_data.get('email') != email:
+        return u'Invalid JSON Web token.'
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash(u'User does not exists. ไม่พบชื่อบัญชีในฐานข้อมูล')
+        return redirect(url_for('gj_test.register'))
+
+    form = ResetPasswordForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user.password = form.new_pass.data
+            db.session.add(user)
+            db.session.commit()
+            flash(u'Password has been reset. ตั้งค่ารหัสผ่านใหม่เรียบร้อย', 'success')
+            return redirect(url_for('gj_test.login'))
+    return render_template('gj_test/reset_password.html', form=form, errors=form.errors)
+
+
+@gj_test.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect('gj_test.landing')
+    form = ForgotPasswordForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = User.query.filter_by(email=form.email.data).first()
+            if not user:
+                flash(u'User not found. ไม่พบบัญชีในฐานข้อมูล', 'warning')
+                return render_template('gj_test/forgot_password.html', form=form)
+            serializer = TimedJSONWebSignatureSerializer(app.config.get('SECRET_KEY'), expires_in=72000)
+            token = serializer.dumps({'email': form.email.data})
+            url = url_for('gj_test.reset_password', token=token, email=form.email.data, _external=True)
+            message = u'Click the link below to reset the password.'\
+                      u' กรุณาคลิกที่ลิงค์เพื่อทำการตั้งค่ารหัสผ่านใหม่\n\n{}'.format(url)
+            print(form.email.data)
+            try:
+                send_mail(['{}'.format(form.email.data)],
+                          title='MUMT-GJ: Password Reset. ตั้งรหัสผ่านใหม่สำหรับระบบ MUMT-GJ',
+                          message=message)
+            except Exception as e:
+                print(str(e))
+                flash(u'Failed to send an email to {}. ระบบไม่สามารถส่งอีเมลได้กรุณาตรวจสอบอีกครั้ง'\
+                      .format(form.email.data), 'danger')
+            else:
+                flash(u'Please check your email for the link to reset the password within 20 minutes.'
+                      u' โปรดตรวจสอบอีเมลของท่านเพื่อทำการแก้ไขรหัสผ่านภายใน 20 นาที', 'success')
+            return redirect(url_for('gj_test.login'))
+    return render_template('gj_test/forgot_password.html', form=form)
 
 
 @gj_test.route('/tests/view')
