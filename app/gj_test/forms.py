@@ -106,6 +106,17 @@ class RegisterForm(ModelForm):
         return True
 
 
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class ResetPasswordForm(FlaskForm):
+    new_pass = PasswordField('New Password', validators=[DataRequired()])
+    confirm_pass = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('new_pass')])
+    submit = SubmitField('Submit')
+
+
 class SpecimenForm(ModelForm):
     class Meta:
         model = GJTestSpecimen
