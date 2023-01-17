@@ -53,9 +53,8 @@ class TestListForm(ModelForm):
 
 
 class LoginForm(ModelForm):
-    email = StringField('Email',
-            validators=[Length(min=10, message=u'สั้นเกินไป'),
-                        Email(message=u'อีเมลไม่ถูกต้อง'), DataRequired()])
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=3, max=32)])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
@@ -67,9 +66,9 @@ class LoginForm(ModelForm):
         initial_validation = super(LoginForm, self).validate()
         if not initial_validation:
             return False
-        user = User.query.filter_by(email=self.email.data).first()
+        user = User.query.filter_by(username=self.username.data).first()
         if not user:
-            self.email.errors.append('Unknown email')
+            self.username.errors.append('Unknown username')
             return False
         if not user.verify_password(self.password.data):
             self.password.errors.append('Invalid password')
