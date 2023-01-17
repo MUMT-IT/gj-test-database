@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import SelectMultipleField, widgets, StringField, PasswordField, BooleanField, SubmitField
+from wtforms import SelectMultipleField, widgets, StringField, PasswordField, BooleanField, SubmitField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from wtforms_alchemy import model_form_factory, QuerySelectField, QuerySelectMultipleField
 
@@ -50,6 +50,7 @@ class TestListForm(ModelForm):
     test_location = QuerySelectMultipleField(u'สถานที่ทดสอบ',
                                 query_factory=lambda: GJTestLocation.query.all(),
                                 allow_blank=True)
+    upload = FileField(u'อัพโหลดไฟล์')
 
 
 class LoginForm(ModelForm):
@@ -148,3 +149,5 @@ class TestDateForm(ModelForm):
 class SpecimenTransportationForm(ModelForm):
     class Meta:
         model = GJTestSpecimenTransportation
+
+

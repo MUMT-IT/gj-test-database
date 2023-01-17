@@ -1,11 +1,15 @@
-from flask import flash, redirect, url_for, render_template, request, jsonify, abort
+import os
+
+from flask import flash, redirect, url_for, render_template, request, jsonify, abort, send_from_directory
 from flask_admin.helpers import is_safe_url
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_mail import Message
 from itsdangerous import TimedJSONWebSignatureSerializer
+from pandas import read_excel, isna, DataFrame
 from sqlalchemy.sql.functions import user
-from app import app, mail
+from werkzeug.utils import secure_filename
 
+from app import app, mail
 
 from . import gj_test_bp as gj_test
 
@@ -13,6 +17,8 @@ from .models import *
 from .forms import TestListForm, LoginForm, RegisterForm, SpecimenForm, LocationForm, TimePeriodRequestedForm, \
     WaitingTimeForm, TestDateForm, SpecimenTransportationForm, ForgotPasswordForm, ResetPasswordForm
 from .. import csrf
+
+ALLOWED_EXTENSIONS = ['xlsx', 'xls']
 
 
 def send_mail(recp, title, message):
@@ -142,7 +148,7 @@ def forgot_password():
             serializer = TimedJSONWebSignatureSerializer(app.config.get('SECRET_KEY'), expires_in=72000)
             token = serializer.dumps({'email': form.email.data})
             url = url_for('gj_test.reset_password', token=token, email=form.email.data, _external=True)
-            message = u'Click the link below to reset the password.'\
+            message = u'Click the link below to reset the password.' \
                       u' กรุณาคลิกที่ลิงค์เพื่อทำการตั้งค่ารหัสผ่านใหม่\n\n{}'.format(url)
             print(form.email.data)
             try:
@@ -151,7 +157,7 @@ def forgot_password():
                           message=message)
             except Exception as e:
                 print(str(e))
-                flash(u'Failed to send an email to {}. ระบบไม่สามารถส่งอีเมลได้กรุณาตรวจสอบอีกครั้ง'\
+                flash(u'Failed to send an email to {}. ระบบไม่สามารถส่งอีเมลได้กรุณาตรวจสอบอีกครั้ง' \
                       .format(form.email.data), 'danger')
             else:
                 flash(u'Please check your email for the link to reset the password within 20 minutes.'
@@ -182,7 +188,7 @@ def get_tests_view_data():
     for test in query:
         test_data = test.to_dict()
         test_data['view'] = '<a href="{}" class="button is-small is-primary is-outlined">ดูข้อมูล</a>'.format(
-            url_for('gj_test.view_info_test', test_id=test.id ))
+            url_for('gj_test.view_info_test', test_id=test.id))
         test_data['edit'] = '<a href="{}" class="button is-small is-danger is-outlined">แก้ไขข้อมูล </a>'.format(
             url_for('gj_test.edit_test', test_id=test.id))
         data.append(test_data)
@@ -295,3 +301,87 @@ def edit_test(test_id):
         flash(u'แก้ไขข้อมูลเรียบร้อย', 'success')
         return redirect(url_for('gj_test.view_tests'))
     return render_template('gj_test/edit_test.html', form=form, test=test, url_callback=request.referrer)
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@gj_test.route('tests/template/download', methods=['GET'])
+def download_test_template():
+    records = []
+
+    records.append({
+        u'การทดสอบ': u'ABO Group',
+        u'รหัส': u'MT0304900',
+        u'ข้อบ่งชี้ในการส่งตรวจ': u'ตรวจหาหมู่เลือด ABO',
+        u'การเตรียมผู้ป่วย': u'-',
+        u'ชนิด': u'EDTA Blood',
+        u'ปริมาณ': u'3',
+        u'หน่วย': u'ml',
+        u'ภาชนะ': u'หลอดเลือดสูญญากาศจุกสีม่วง',
+        u'วัน/วันเวลา': u'ทุกวันตลอด 24 ชั่วโมง',
+        u'สถานที่': u'ห้องปฏิบัติการศูนย์เทคนิคการแพทย์ฯ',
+        u'วิธี/หลักการ': u'Tube technique',
+        u'วันที่ทำการทดสอบ': u'ทุกวัน',
+        u'ปกติ': u'1 ชั่วโมง',
+        u'ด่วน': u'A, B, O, AB',
+        u'การรายงานผลและค่าอ้างอิง': u'-',
+        u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้': u'ภายใน 24 ชั่วโมง',
+        u'สิ่งรบกวนต่อการตรวจวิเคราะห์': u'สิ่งส่งตรวจ Clot',
+        u'ข้อควรระวังและอื่นๆ': u'นำส่งภายใน 2 ชั่วโมงหลังเจาะเลือด',
+        u'สถานที่ทำการทดสอบ': u'ห้องปฏิบัติการศูนย์เทคนิคการแพทย์ฯ'
+    })
+    df = DataFrame(records)
+    df.to_excel('test_template.xlsx')
+    return send_from_directory(os.getcwd(), 'test_template.xlsx')
+
+
+@gj_test.route('tests/add-many', methods=['GET', 'POST'])
+def add_many_tests():
+    form = TestListForm()
+    if request.method == 'POST':
+        filename = ''
+        if form.upload.data:
+            if not filename or (form.upload.data.filename != filename):
+                upfile = form.upload.data
+                filename = secure_filename(upfile.filename)
+                upfile.save(filename)
+            if upfile and allowed_file(upfile.filename):
+                df = read_excel(upfile)
+                for idx, rec in df.iterrows():
+                    test_name, code, desc, prepare, specimen, specimen_quantity, unit, specimen_container, \
+                    specimen_transportation, drop_off_location, solution, waiting_period, reporting_referral_values, \
+                    interference_analysis, caution, test_location = rec
+
+                    test_ = GJTest.query.filter_by(code=code).first()
+                    if not test_:
+                        new_test = GJTest(
+                            test_name=test_name,
+                            code=code,
+                            desc=desc,
+                            prepare=prepare,
+                            specimen=specimen,
+                            specimen_quantity=specimen_quantity,
+                            unit=unit,
+                            specimen_container=specimen_container,
+                            specimen_transportation=specimen_transportation,
+                            drop_off_location=drop_off_location,
+                            solution=solution,
+                            waiting_period=waiting_period,
+                            reporting_referral_values=reporting_referral_values,
+                            interference_analysis=interference_analysis,
+                            caution=caution,
+                            test_location=test_location
+                        )
+                        db.session.add(new_test)
+                        db.session.commit()
+                        flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
+                return redirect(url_for('gj_test.view_tests'))
+
+        flash('The file has been uploaded', 'success')
+    else:
+        for er in form.errors:
+            flash(er, 'danger')
+    return render_template('gj_test/tests_upload.html', form=form)
