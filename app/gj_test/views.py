@@ -1,4 +1,5 @@
-from flask import flash, redirect, url_for, render_template, request, jsonify
+from flask import flash, redirect, url_for, render_template, request, jsonify, abort
+from flask_admin.helpers import is_safe_url
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_mail import Message
 from itsdangerous import TimedJSONWebSignatureSerializer
@@ -41,50 +42,35 @@ def add_test():
             flash("{} {}".format(er, form.errors[er]), 'danger')
     return render_template('gj_test/new_test.html', form=form, url_callback=url_for('gj_test.view_tests'))
 
-# Try to add multiple
-# @csrf.exempt
-# @gj_test.route('/new-test/add', methods=['GET', 'POST'])
-# def add_test(test_id=None):
-#     form = TestListForm()
-#     test = GJTest.query.get(test_id)
-#     if form.validate_on_submit():
-#         if form.validate_on_submit():
-#             if not test_id:
-#                 new_test = GJTest()
-#                 form.populate_obj(new_test)
-#                 db.session.add(new_test)
-#                 db.session.commit()
-#                 flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
-#                 return redirect(url_for('gj_test.view_tests'))
-#             else:
-#                 form.populate_obj(test)
-#                 new_specimens = []
-#                 test.specimens = new_specimens
-#                 # print(form.specimens.data)
-#                 db.session.add(test)
-#                 db.session.commit()
-#                 flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
-#                 return redirect(url_for('gj_test.view_tests', test=test))
-#         else:
-#             for er in form.errors:
-#                 flash("{} {}".format(er, form.errors[er]), 'danger')
-#     return render_template('gj_test/new_test.html', form=form, test=test,
-#                            url_callback=url_for('gj_test.view_tests'))
-
 
 @csrf.exempt
 @gj_test.route('/login', methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        next = request.args.get('next')
+        if not is_safe_url(next):
+            return abort(400)
+        if next:
+            return redirect(next)
+        else:
+            return redirect(url_for('gj_test.landing'))
     form = LoginForm()
     if form.validate_on_submit():
-        email = form.email.data
-        password = form.password.data
-        user = User.query.filter_by(email=email, password=password).first()
-        if user and user.verify_password(password):
-            login_user(user, remember=True)
-        flash('Logged in successfully')
-        return redirect(url_for('gj_test.landing'))
-    return render_template('gj_test/login.html', form=form)
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            password = form.password.data
+            if user.verify_password(password):
+                login_user(user, form.remember_me.data)
+                flash(u'Logged in successfully ลงทะเบียนสำเร็จ', 'success')
+                return redirect(url_for('gj_test.landing'))
+            else:
+                flash(u'Wrong password, try again. รหัสผ่านไม่ถูกต้อง โปรดลองอีกครั้ง', 'danger')
+                return redirect(url_for('gj_test.login'))
+        else:
+            flash(u'User does not exists. ไม่พบบัญชีผู้ใช้ในระบบ', 'danger')
+            return redirect(url_for('gj_test.register'))
+
+    return render_template('gj_test/login.html', form=form, errors=form.errors)
 
 
 @gj_test.route('/logout')
@@ -107,7 +93,7 @@ def register():
             password=password)
         db.session.add(new_user)
         db.session.commit()
-        flash('Registered successfully')
+        flash(u'Registered system successfully สมัครระบบสำเร็จ', 'success')
         return redirect(url_for('gj_test.login'))
     return render_template('gj_test/register.html', form=form, errors=form.errors)
 
@@ -121,7 +107,8 @@ def reset_password():
         token_data = serializer.loads(token)
     except Exception as e:
         print(str(e))
-        return u'Bad JSON Web token. You need a valid token to reset the password. รหัสสำหรับทำการตั้งค่า password หมดอายุหรือไม่ถูกต้อง'
+        return u'Bad JSON Web token. You need a valid token to reset the password.' \
+               u'รหัสสำหรับทำการตั้งค่า password หมดอายุหรือไม่ถูกต้อง'
     if token_data.get('email') != email:
         return u'Invalid JSON Web token.'
 
@@ -151,7 +138,7 @@ def forgot_password():
             user = User.query.filter_by(email=form.email.data).first()
             if not user:
                 flash(u'User not found. ไม่พบบัญชีในฐานข้อมูล', 'warning')
-                return render_template('gj_test/forgot_password.html', form=form)
+                return render_template('gj_test/forgot_password.html', form=form, errors=form.errors)
             serializer = TimedJSONWebSignatureSerializer(app.config.get('SECRET_KEY'), expires_in=72000)
             token = serializer.dumps({'email': form.email.data})
             url = url_for('gj_test.reset_password', token=token, email=form.email.data, _external=True)
@@ -170,7 +157,7 @@ def forgot_password():
                 flash(u'Please check your email for the link to reset the password within 20 minutes.'
                       u' โปรดตรวจสอบอีเมลของท่านเพื่อทำการแก้ไขรหัสผ่านภายใน 20 นาที', 'success')
             return redirect(url_for('gj_test.login'))
-    return render_template('gj_test/forgot_password.html', form=form)
+    return render_template('gj_test/forgot_password.html', form=form, errors=form.errors)
 
 
 @gj_test.route('/tests/view')
