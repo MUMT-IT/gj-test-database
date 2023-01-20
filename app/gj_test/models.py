@@ -13,8 +13,6 @@ class GJTest(db.Model):
     code = db.Column('code', db.String(), unique=True, info={'label': u'รหัส'})
     desc = db.Column('desc', db.Text(), info={'label': u'ข้อบ่งชี้ในการส่งตรวจ'})
     prepare = db.Column(db.Text(), info={'label': u'การเตรียมผู้ป่วย'})
-    specimen_id = db.Column('specimen_id', db.ForeignKey('gj_test_specimens.id'))
-    specimen = db.relationship('GJTestSpecimen', backref=db.backref('specimen_test', lazy='dynamic'))
     created_at = db.Column('created_at', db.DateTime(timezone=True), server_default=func.now())
     solution = db.Column('solution', db.String(), info={'label': u'วิธีการ/หลักการ'})
     test_date_id = db.Column('test_date_id', db.ForeignKey('gj_test_dates.id'))
@@ -76,6 +74,12 @@ class GJTestSpecimen(db.Model):
 
     def __str__(self):
         return u'{}'.format(self.specimen)
+
+    def to_dict(self):
+        return {
+            'id': self.specimen,
+            'text': self.specimen
+        }
 
 
 class GJTestSpecimenTransportation(db.Model):
