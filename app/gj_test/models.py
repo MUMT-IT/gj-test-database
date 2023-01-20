@@ -5,6 +5,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 
+test_specimen_assoc = db.Table('db_test_specimen_assoc_assoc',
+                          db.Column('test_id', db.ForeignKey('gj_tests.id'), primary_key=True),
+                          db.Column('specimen_id', db.ForeignKey('gj_test_specimens.id'), primary_key=True)
+                          )
+
 
 class GJTest(db.Model):
     __tablename__ = 'gj_tests'
@@ -42,6 +47,8 @@ class GJTest(db.Model):
                      info={'label': u'หน่วย', 'choices': [('None', u'--โปรดเลือกหน่วย--'),
                                                           ('g', 'g'),
                                                           ('ml', 'ml')]})
+    specimens = db.relationship('GJTestSpecimen', secondary=test_specimen_assoc, lazy='subquery',
+                           backref=db.backref('gjtests', lazy=True))
 
     def __str__(self):
         return u'{}: {}'.format(self.specimen, self.specimen_transportation, self.test_date, self.test_location)
