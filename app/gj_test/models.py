@@ -128,6 +128,12 @@ class GJTestDate(db.Model):
     def __str__(self):
         return u'{}'.format(self.test_date)
 
+    def to_dict(self):
+        return {
+            'id': self.test_date,
+            'text': self.test_date
+        }
+
 
 class GJTestTimePeriodRequest(db.Model):
     __tablename__ = 'gj_test_time_period_requests'
@@ -136,6 +142,12 @@ class GJTestTimePeriodRequest(db.Model):
 
     def __str__(self):
         return u'{}'.format(self.time_period_request)
+
+    def to_dict(self):
+        return {
+            'id': self.time_period_request,
+            'text': self.time_period_request
+        }
 
 
 class GJTestWaitingPeriod(db.Model):
