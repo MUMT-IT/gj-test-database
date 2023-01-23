@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import SelectMultipleField, widgets, StringField, PasswordField, BooleanField, SubmitField, FileField
+from wtforms import SelectMultipleField, widgets, StringField, PasswordField, BooleanField, SubmitField, FileField, \
+    SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from wtforms_alchemy import model_form_factory, QuerySelectField, QuerySelectMultipleField
 
@@ -26,30 +27,6 @@ class TestListForm(ModelForm):
         model = GJTest
         exclude = ['created_at']
 
-    drop_off_location = QuerySelectMultipleField(u'สถานที่',
-                                query_factory=lambda: GJTestLocation.query.all(),
-                                allow_blank=True)
-    specimen = QuerySelectMultipleField(u'สิ่งส่งตรวจ',
-                                query_factory=lambda: GJTestSpecimen.query.all(),
-                                allow_blank=True)
-    specimen_transportation = QuerySelectMultipleField(u'การนำส่งสิ่งส่งตรวจ วัน/เวลา',
-                                query_factory=lambda: GJTestSpecimenTransportation.query.all(),
-                                allow_blank=True)
-    test_date = QuerySelectMultipleField(u'วันที่ทำการทดสอบ',
-                                query_factory=lambda: GJTestDate.query.all(),
-                                allow_blank=True)
-    time_period_request = QuerySelectMultipleField(u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้',
-                                query_factory=lambda: GJTestTimePeriodRequest.query.all(),
-                                allow_blank=True)
-    waiting_time_normal = QuerySelectMultipleField(u'ปกติ',
-                                 query_factory=lambda: GJTestWaitingPeriod.query.all(),
-                                 allow_blank=True)
-    waiting_time_urgent = QuerySelectMultipleField(u'ด่วน',
-                                 query_factory=lambda: GJTestWaitingPeriod.query.all(),
-                                 allow_blank=True)
-    test_location = QuerySelectMultipleField(u'สถานที่ทดสอบ',
-                                query_factory=lambda: GJTestLocation.query.all(),
-                                allow_blank=True)
     upload = FileField(u'อัพโหลดไฟล์')
 
 
@@ -121,14 +98,10 @@ class SpecimenForm(ModelForm):
     class Meta:
         model = GJTestSpecimen
 
-    location = QuerySelectField(u'สถานที่',
-                                query_factory=lambda: GJTestLocation.query.all(),
-                                blank_text='Select location..', allow_blank=False)
 
-
-class LocationForm(ModelForm):
-    class Meta:
-        model = GJTestLocation
+# class LocationForm(ModelForm):
+#     class Meta:
+#         model = GJTestLocation
 
 
 class TimePeriodRequestedForm(ModelForm):

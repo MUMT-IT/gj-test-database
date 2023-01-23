@@ -14,8 +14,7 @@ from app import app, mail
 from . import gj_test_bp as gj_test
 
 from .models import *
-from .forms import TestListForm, LoginForm, RegisterForm, SpecimenForm, TimePeriodRequestedForm, \
-    WaitingTimeForm, TestDateForm, SpecimenTransportationForm, ForgotPasswordForm, ResetPasswordForm
+from .forms import TestListForm, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm
 from .. import csrf
 
 ALLOWED_EXTENSIONS = ['xlsx', 'xls']
@@ -166,7 +165,6 @@ def get_all_test_locations():
     return jsonify({'results': test_locations})
 
 
-@csrf.exempt
 @gj_test.route('/login', methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -314,93 +312,6 @@ def get_tests_view_data():
                     'recordsTotal': GJTest.query.count(),
                     'draw': request.args.get('draw', type=int),
                     })
-
-
-@gj_test.route('/specimen/add', methods=['GET', 'POST'])
-def add_specimen_ref():
-    form = SpecimenForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            new_specimen = GJTestSpecimen()
-            form.populate_obj(new_specimen)
-            db.session.add(new_specimen)
-            db.session.commit()
-            flash('New specimen has been added.', 'success')
-            return redirect(url_for('gj_test.add_test', form=form))
-        else:
-            for er in form.errors:
-                flash(er, 'danger')
-    return render_template('gj_test/specimen_ref.html', form=form, url_callback=request.referrer)
-
-
-# @gj_test.route('/location/add', methods=['GET', 'POST'])
-# def add_location_ref():
-#     form = LocationForm()
-#     if request.method == 'POST':
-#         if form.validate_on_submit():
-#             new_location = GJTestLocation()
-#             form.populate_obj(new_location)
-#             db.session.add(new_location)
-#             db.session.commit()
-#             flash('New location has been added.', 'success')
-#             return redirect(url_for('gj_test.add_test', form=form))
-#     return render_template('gj_test/location_ref.html', form=form, url_callback=request.referrer)
-
-
-@gj_test.route('/time-period-requested/add', methods=['GET', 'POST'])
-def add_time_period_requested_ref():
-    form = TimePeriodRequestedForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            new_time_period_requested = GJTestTimePeriodRequest()
-            form.populate_obj(new_time_period_requested)
-            db.session.add(new_time_period_requested)
-            db.session.commit()
-            flash('New time period request has been added.', 'success')
-            return redirect(url_for('gj_test.add_test', form=form))
-    return render_template('gj_test/time_period_requested_ref.html', form=form, url_callback=request.referrer)
-
-
-@gj_test.route('/new-waiting/add', methods=['GET', 'POST'])
-def add_new_waiting_ref():
-    form = WaitingTimeForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            new_waiting_time = GJTestWaitingPeriod()
-            form.populate_obj(new_waiting_time)
-            db.session.add(new_waiting_time)
-            db.session.commit()
-            flash('New waiting has been added.', 'success')
-            return redirect(url_for('gj_test.add_test', form=form))
-    return render_template('gj_test/new_waiting_ref.html', form=form, url_callback=request.referrer)
-
-
-@gj_test.route('/test-date/add', methods=['GET', 'POST'])
-def add_test_date_ref():
-    form = TestDateForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            new_test_date = GJTestDate()
-            form.populate_obj(new_test_date)
-            db.session.add(new_test_date)
-            db.session.commit()
-            flash('New test date has been added.', 'success')
-            return redirect(url_for('gj_test.add_test', form=form))
-    return render_template('gj_test/new_test_date_ref.html', form=form, url_callback=request.referrer)
-
-
-@gj_test.route('/specimen-transportation/add', methods=['GET', 'POST'])
-def add_specimen_transportation_ref():
-    form = SpecimenTransportationForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            new_specimen_transportation = GJTestSpecimenTransportation()
-            form.populate_obj(new_specimen_transportation)
-            db.session.add(new_specimen_transportation)
-            db.session.commit()
-            flash('New specimen transportation has been added.', 'success')
-            return redirect(url_for('gj_test.add_test', form=form))
-    return render_template('gj_test/specimen_transportation.html', form=form, url_callback=request.referrer)
 
 
 @gj_test.route('/info-tests/view/<int:test_id>')
