@@ -44,6 +44,9 @@ class GJTest(db.Model):
                                                           ('Draft', 'Draft')]})
     specimens = db.relationship('GJTestSpecimen', secondary=test_specimen_assoc, lazy='subquery',
                            backref=db.backref('gjtests', lazy=True))
+    quantity_id = db.Column('quantity_id', db.ForeignKey('gj_test_specimen_quantities.id'))
+    quantity = db.relationship('GJTestSpecimenQuantity', foreign_keys=[quantity_id],
+                                    backref=db.backref('test_quantities', lazy='dynamic'))
 
     def __str__(self):
         return u'{}: {}'.format(self.specimens, self.specimen_transportation, self.test_date, self.test_location)
@@ -57,6 +60,7 @@ class GJTest(db.Model):
             'prepare': self.prepare,
             'specimens': ','.join([sp.specimen for sp in self.specimens]),
             'waiting_period': self.waiting_period.waiting_time_normal if self.waiting_period else '',
+            'quantity': self.quantity.specimen_quantity if self.quantity else '',
             'solution': self.solution,
             'test_date': self.test_date.test_date if self.test_date else '',
             'reporting_referral_values': self.reporting_referral_values,
@@ -162,6 +166,21 @@ class GJTestWaitingPeriod(db.Model):
         return {
             'id': self.waiting_time_urgent,
             'text': self.waiting_time_urgent
+        }
+
+
+class GJTestSpecimenQuantity(db.Model):
+    __tablename__ = 'gj_test_specimen_quantities'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    specimen_quantity = db.Column('specimen_quantity', db.String(), info={'label': u'ปริมาณสิ่งส่งตรวจ'})
+
+    def __str__(self):
+        return u'{}'.format(self.specimen_quantity)
+
+    def to_dict(self):
+        return {
+            'id': self.specimen_quantity,
+            'text': self.specimen_quantity
         }
 
 
