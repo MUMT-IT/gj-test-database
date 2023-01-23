@@ -26,7 +26,7 @@ class GJTest(db.Model):
     time_period_request = db.relationship('GJTestTimePeriodRequest', backref=db.backref('time_period_requests', lazy='dynamic'))
     waiting_period_id = db.Column('waiting_period_id', db.ForeignKey('gj_test_waiting_periods.id'))
     waiting_period = db.relationship('GJTestWaitingPeriod', backref=db.backref('waiting_periods', lazy='dynamic'))
-    reporting_referral_values = db.Column(db.String(), info={'label': u'การรายงานผลและค่าอ้างอิง'})
+    reporting_referral_values = db.Column(db.Text(), info={'label': u'การรายงานผลและค่าอ้างอิง'})
     interference_analysis = db.Column(db.String(), info={'label': u'สิ่งรบกวนต่อการตรวจวิเคราะห์'})
     caution = db.Column(db.String(), info={'label': u'ข้อควรระวังและอื่นๆ'})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
@@ -51,7 +51,7 @@ class GJTest(db.Model):
                            backref=db.backref('gjtests', lazy=True))
 
     def __str__(self):
-        return u'{}: {}'.format(self.specimen, self.specimen_transportation, self.test_date, self.test_location)
+        return u'{}: {}'.format(self.specimens, self.specimen_transportation, self.test_date, self.test_location)
 
     def to_dict(self):
         return {
@@ -60,12 +60,12 @@ class GJTest(db.Model):
             'code': self.code,
             'desc': self.desc,
             'prepare': self.prepare,
-            'specimen': self.specimen.specimen,
-            'waiting_period': self.waiting_period.waiting_time_normal,
+            'specimens': ','.join([sp.specimen for sp in self.specimens]),
+            'waiting_period': self.waiting_period.waiting_time_normal if self.waiting_period else '',
             'specimen_quantity': self.specimen_quantity,
             'unit': self.unit,
             'solution': self.solution,
-            'test_date': self.test_date.test_date,
+            'test_date': self.test_date.test_date if self.test_date else '',
             'reporting_referral_values': self.reporting_referral_values,
             'interference_analysis': self.interference_analysis,
             'caution': self.caution,
@@ -98,6 +98,12 @@ class GJTestSpecimenTransportation(db.Model):
     def __str__(self):
         return u'{}'.format(self.specimen_date_time)
 
+    def to_dict(self):
+        return {
+            'id': self.specimen_date_time,
+            'text': self.specimen_date_time
+        }
+
 
 class GJTestLocation(db.Model):
     __tablename__ = 'gj_test_locations'
@@ -106,6 +112,12 @@ class GJTestLocation(db.Model):
 
     def __str__(self):
         return u'{}'.format(self.location)
+
+    def to_dict(self):
+        return {
+            'id': self.location,
+            'text': self.location
+        }
 
 
 class GJTestDate(db.Model):
@@ -134,6 +146,18 @@ class GJTestWaitingPeriod(db.Model):
 
     def __str__(self):
         return u'{}:{}'.format(self.waiting_time_normal, self.waiting_time_urgent)
+
+    def normal_to_dict(self):
+        return {
+            'id': self.waiting_time_normal,
+            'text': self.waiting_time_normal
+        }
+
+    def urgent_to_dict(self):
+        return {
+            'id': self.waiting_time_urgent,
+            'text': self.waiting_time_urgent
+        }
 
 
 class User(UserMixin, db.Model):
