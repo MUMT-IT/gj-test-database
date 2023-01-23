@@ -27,7 +27,7 @@ class GJTest(db.Model):
     waiting_period_id = db.Column('waiting_period_id', db.ForeignKey('gj_test_waiting_periods.id'))
     waiting_period = db.relationship('GJTestWaitingPeriod', backref=db.backref('waiting_periods', lazy='dynamic'))
     reporting_referral_values = db.Column(db.Text(), info={'label': u'การรายงานผลและค่าอ้างอิง'})
-    interference_analysis = db.Column(db.String(), info={'label': u'สิ่งรบกวนต่อการตรวจวิเคราะห์'})
+    interference_analysis = db.Column(db.Text(), info={'label': u'สิ่งรบกวนต่อการตรวจวิเคราะห์'})
     caution = db.Column(db.String(), info={'label': u'ข้อควรระวังและอื่นๆ'})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
     test_location = db.relationship('GJTestLocation', foreign_keys=[location_id],
@@ -42,11 +42,6 @@ class GJTest(db.Model):
                      info={'label': u'สถานะ', 'choices': [('None', '--Select Status--'),
                                                           ('Avaliable', 'Avaliable'),
                                                           ('Draft', 'Draft')]})
-    specimen_quantity = db.Column('specimen_quantity', db.String(), info={'label': u'ปริมาณสิ่งส่งตรวจ'})
-    unit = db.Column('unit', db.String(),
-                     info={'label': u'หน่วย', 'choices': [('None', u'--โปรดเลือกหน่วย--'),
-                                                          ('g', 'g'),
-                                                          ('ml', 'ml')]})
     specimens = db.relationship('GJTestSpecimen', secondary=test_specimen_assoc, lazy='subquery',
                            backref=db.backref('gjtests', lazy=True))
 
@@ -62,8 +57,6 @@ class GJTest(db.Model):
             'prepare': self.prepare,
             'specimens': ','.join([sp.specimen for sp in self.specimens]),
             'waiting_period': self.waiting_period.waiting_time_normal if self.waiting_period else '',
-            'specimen_quantity': self.specimen_quantity,
-            'unit': self.unit,
             'solution': self.solution,
             'test_date': self.test_date.test_date if self.test_date else '',
             'reporting_referral_values': self.reporting_referral_values,
