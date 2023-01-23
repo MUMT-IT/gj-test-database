@@ -173,14 +173,21 @@ class GJTestSpecimenQuantity(db.Model):
     __tablename__ = 'gj_test_specimen_quantities'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     specimen_quantity = db.Column('specimen_quantity', db.String(), info={'label': u'ปริมาณสิ่งส่งตรวจ'})
+    unit = db.Column('unit', db.String(), info={'label': u'หน่วย'})
 
     def __str__(self):
-        return u'{}'.format(self.specimen_quantity)
+        return u'{} {}'.format(self.specimen_quantity, self.unit)
 
-    def to_dict(self):
+    def quantity_to_dict(self):
         return {
             'id': self.specimen_quantity,
             'text': self.specimen_quantity
+        }
+
+    def unit_to_dict(self):
+        return {
+            'id': self.unit,
+            'text': self.unit
         }
 
 
