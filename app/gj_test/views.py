@@ -30,6 +30,11 @@ def landing():
     return render_template('gj_test/landing.html')
 
 
+@gj_test.route('/index')
+def index():
+    return render_template('gj_test/index.html')
+
+
 def add_new_item_from_select(fieldname, model, attribute, attrname):
     value = request.form.get(fieldname)
     obj = model.query.filter(attribute==value).first()
@@ -40,67 +45,77 @@ def add_new_item_from_select(fieldname, model, attribute, attrname):
 
 
 @gj_test.route('/new-test/add', methods=['GET', 'POST'])
-def add_test():
-    form = TestListForm()
+@gj_test.route('/new-test/<int:test_id>/edit', methods=['GET', 'POST'])
+def add_test(test_id=None):
+    if test_id:
+        test = GJTest.query.get(test_id)
+        form = TestListForm(obj=test)
+    else:
+        form = TestListForm()
+
     if form.validate_on_submit():
-        new_test = GJTest()
-        form.populate_obj(new_test)
-        for text in request.form.getlist('specimens'):
-            specimen = GJTestSpecimen.query.filter_by(specimen=text).first()
-            if specimen:
-                new_test.specimens.append(specimen)
-            else:
-                specimen = GJTestSpecimen(specimen=text)
-                new_test.specimens.append(specimen)
-        quantity_value = request.form.get('quantity')
-        unit_value = request.form.get('unit')
-        specimen_quantity_and_unit = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=quantity_value,
-                                                                            unit=unit_value).first()
-        if not specimen_quantity_and_unit:
-            specimen_quantity_and_unit = GJTestSpecimenQuantity(specimen_quantity=quantity_value,
-                                                                unit=unit_value)
-        new_test.quantity = specimen_quantity_and_unit
+        if not test_id:
+            new_test = GJTest()
+            form.populate_obj(new_test)
+            for text in request.form.getlist('specimens'):
+                specimen = GJTestSpecimen.query.filter_by(specimen=text).first()
+                if specimen:
+                    new_test.specimens.append(specimen)
+                else:
+                    specimen = GJTestSpecimen(specimen=text)
+                    new_test.specimens.append(specimen)
+            quantity_value = request.form.get('quantity')
+            unit_value = request.form.get('unit')
+            specimen_quantity_and_unit = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=quantity_value,
+                                                                                unit=unit_value).first()
+            if not specimen_quantity_and_unit:
+                specimen_quantity_and_unit = GJTestSpecimenQuantity(specimen_quantity=quantity_value,
+                                                                    unit=unit_value)
+            new_test.quantity = specimen_quantity_and_unit
 
-        transport_date_time = add_new_item_from_select('specimen_transportation',
-                                                       GJTestSpecimenTransportation,
-                                                       GJTestSpecimenTransportation.specimen_date_time,
-                                                       'specimen_date_time')
-        new_test.specimen_transportation = transport_date_time
+            transport_date_time = add_new_item_from_select('specimen_transportation',
+                                                           GJTestSpecimenTransportation,
+                                                           GJTestSpecimenTransportation.specimen_date_time,
+                                                           'specimen_date_time')
+            new_test.specimen_transportation = transport_date_time
 
-        drop_off_location_ = add_new_item_from_select('drop_off_location',
-                                                      GJTestLocation,
-                                                      GJTestLocation.location,
-                                                      'location')
-        new_test.drop_off_location = drop_off_location_
+            drop_off_location_ = add_new_item_from_select('drop_off_location',
+                                                          GJTestLocation,
+                                                          GJTestLocation.location,
+                                                          'location')
+            new_test.drop_off_location = drop_off_location_
 
-        test_date_ = add_new_item_from_select('test_date',
-                                              GJTestDate,
-                                              GJTestDate.test_date,
-                                              'test_date')
-        new_test.test_date = test_date_
+            test_date_ = add_new_item_from_select('test_date',
+                                                  GJTestDate,
+                                                  GJTestDate.test_date,
+                                                  'test_date')
+            new_test.test_date = test_date_
 
-        normal_waiting_time_value = request.form.get('normal_waiting_time')
-        urgent_waiting_time_value = request.form.get('urgent_waiting_time')
-        waiting_time = GJTestWaitingPeriod.query.filter_by(waiting_time_normal=normal_waiting_time_value,
-                                                           waiting_time_urgent=urgent_waiting_time_value).first()
-        if not waiting_time:
-            waiting_time = GJTestWaitingPeriod(waiting_time_normal=normal_waiting_time_value,
-                                               waiting_time_urgent=urgent_waiting_time_value)
-        new_test.waiting_period = waiting_time
+            normal_waiting_time_value = request.form.get('normal_waiting_time')
+            urgent_waiting_time_value = request.form.get('urgent_waiting_time')
+            waiting_time = GJTestWaitingPeriod.query.filter_by(waiting_time_normal=normal_waiting_time_value,
+                                                               waiting_time_urgent=urgent_waiting_time_value).first()
+            if not waiting_time:
+                waiting_time = GJTestWaitingPeriod(waiting_time_normal=normal_waiting_time_value,
+                                                   waiting_time_urgent=urgent_waiting_time_value)
+            new_test.waiting_period = waiting_time
 
-        time_period_request_ = add_new_item_from_select('time_period_request',
-                                                        GJTestTimePeriodRequest,
-                                                        GJTestTimePeriodRequest.time_period_request,
-                                                        'time_period_request')
-        new_test.time_period_request = time_period_request_
+            time_period_request_ = add_new_item_from_select('time_period_request',
+                                                            GJTestTimePeriodRequest,
+                                                            GJTestTimePeriodRequest.time_period_request,
+                                                            'time_period_request')
+            new_test.time_period_request = time_period_request_
 
-        test_location_ = add_new_item_from_select('test_location',
-                                                      GJTestLocation,
-                                                      GJTestLocation.location,
-                                                      'location')
-        new_test.test_location = test_location_
+            test_location_ = add_new_item_from_select('test_location',
+                                                          GJTestLocation,
+                                                          GJTestLocation.location,
+                                                          'location')
+            new_test.test_location = test_location_
 
-        db.session.add(new_test)
+            db.session.add(new_test)
+        else:
+            form.populate_obj(test)
+            db.session.add(test)
         db.session.commit()
         flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
         return redirect(url_for('gj_test.view_tests'))
@@ -304,8 +319,8 @@ def get_tests_view_data():
         test_data = test.to_dict()
         test_data['view'] = '<a href="{}" class="button is-small is-primary is-outlined">ดูข้อมูล</a>'.format(
             url_for('gj_test.view_info_test', test_id=test.id))
-        # test_data['edit'] = '<a href="{}" class="button is-small is-danger is-outlined">แก้ไขข้อมูล </a>'.format(
-        #     url_for('gj_test.edit_test', test_id=test.id))
+        test_data['edit'] = '<a href="{}" class="button is-small is-danger is-outlined">แก้ไขข้อมูล </a>'.format(
+            url_for('gj_test.add_test', test_id=test.id))
         data.append(test_data)
     return jsonify({'data': data,
                     'recordsFiltered': total_filtered,
@@ -319,19 +334,6 @@ def view_info_test(test_id):
     test = GJTest.query.get(test_id)
     return render_template('gj_test/view_info_test.html',
                            test=test)
-
-
-@gj_test.route('/edit/<int:test_id>', methods=['GET', 'POST'])
-def edit_test(test_id):
-    test = GJTest.query.get(test_id)
-    form = TestListForm(obj=test)
-    if request.method == 'POST':
-        form.populate_obj(test)
-        db.session.add(test)
-        db.session.commit()
-        flash(u'แก้ไขข้อมูลเรียบร้อย', 'success')
-        return redirect(url_for('gj_test.view_tests'))
-    return render_template('gj_test/edit_test.html', form=form, test=test, url_callback=request.referrer)
 
 
 def allowed_file(filename):

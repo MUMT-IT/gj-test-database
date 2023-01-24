@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block page_content %}
+{% block head %}
+{{ super() }}
+<script src="sweetalert2.min.js"></script>
+<link rel="stylesheet" href="sweetalert2.min.css">
+{% endblock %}
 <section class="section">
     {% include "messages.html" %}
     <div class="container">
@@ -10,8 +15,8 @@
             </ul>
         </nav>
         <div class="columns">
-            <div class="column has-text-left">
-                <h1 class="title">ข้อมูลรายการทดสอบที่ให้บริการ</h1>
+            <div class="column has-text-centered">
+                <h1 class="title">รายการทดสอบ</h1>
                 <div class="buttons">
                     <a href="{{ url_for('gj_test.add_test') }}" class="button is-info">New Tests</a>
                 </div>
@@ -21,28 +26,12 @@
             <div class="column">
                 <table id="data" class="table is-fullwidth is-striped">
                     <thead>
-                    <th>การทดสอบ</th>
-                    <th>รหัส</th>
-                    <th>ข้อบ่งชี้ในการส่งตรวจ</th>
-<!--                    <th>การเตรียมผู้ป่วย</th>-->
-                    <th>สิ่งส่งตรวจ</th>
-                     <th>สถานะ</th>
-<!--                    <th>ปริมาณ</th>-->
-<!--                    <th>หน่วย</th>-->
-<!--                    <th>ภาชนะ</th>-->
-                    <!--                        <th>unit</th>-->
-                    <!--                        <th>การนำส่งสิ่งส่งตรวจ</th>-->
-                    <!--                        <th>วิธีการ/หลักการ</th>-->
-                    <!--                        <th>วันที่ทำการทดสอบ</th>-->
-                    <!--                        <th>ระยะเวลารอผล</th>-->
-                    <!--                        <th>การรายงานผลและค่าอ้างอิง</th>-->
-                    <!--                        <th>ระยะเวลาที่สามารถขอตรวจเพิ่มได้</th>-->
-                    <!--                        <th>สิ่งรบกวนต่อการตรวจวิเคราะห์</th>-->
-                    <!--                        <th>ข้อควรระวังและอื่นๆ</th>-->
-                    <!--                        <th>สถานที่ทำการทดสอบ</th>-->
-                    <!--                        <th>สถานะ</th>-->
-                    <th>View</th>
-                    <th>Edit</th>
+                    <th bgcolor="#B4DCFC">รหัสทดสอบ</th>
+                    <th bgcolor="#B4DCFC">ชื่อการทดสอบ</th>
+                    <th bgcolor="#B4DCFC">สิ่งส่งตรวจ</th>
+                    <th bgcolor="#B4DCFC">ระยะเวลารอผลปกติ</th>
+                    <th bgcolor="#B4DCFC">รายละเอียด</th>
+                    <th bgcolor="#B4DCFC">Edit</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -68,17 +57,12 @@
             ajax: '{{ url_for("gj_test.get_tests_view_data") }}',
             serverSide: true,
             columns: [
-                {data: 'test_name'},
                 {data: 'code'},
-                {data: 'desc'},
-                // {data: 'prepare'},
-                {data: 'specimen'},
-                {data: 'status'},
-                // {data: 'specimen_quantity'},
-                // {data: 'unit'},
-                // {data: 'specimen_container'},
+                {data: 'test_name'},
+                {data: 'specimens'},
+                {data: 'waiting_period'},
                 {data: 'view'},
-                {data: 'edit'},
+                {data: 'edit'}
 
             ],
         });
