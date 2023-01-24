@@ -40,20 +40,21 @@
                                 <td>{{ test.prepare }}</td>
                             </tr>
                             <tr>
-                                <td><label class="label">ชนิด</label></td>
-                                <td>{{ test.specimen }}</td>
-                            </tr>
-                            <tr>
-                                <td><label class="label">ปริมาณ</label></td>
-                                <td>{{ test.specimen_quantity }}</td>
-                            </tr>
-                            <tr>
-                                <td><label class="label">หน่วย</label></td>
-                                <td>{{ test.unit }}</td>
-                            </tr>
-                            <tr>
-                                <td><label class="label">ภาชนะ</label></td>
-                                <td>{{ test.specimen_container }}</td>
+                                <td><label class="label">สิ่งส่งตรวจ</label></td>
+                                <td>
+                                    <table class="table is-fullwidth">
+                                        <thead>
+                                        <th bgcolor="#C2C2C2">ชนิด</th>
+                                        <th bgcolor="#C2C2C2">ภาชนะ</th>
+                                        </thead>
+                                        {% for sp in test.specimens %}
+                                        <tr>
+                                            <td>{{ sp.specimen }}</td>
+                                            <td>{{ sp.specimen_container }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </td>
                             </tr>
                             <tr>
                                 <td><label class="label">วัน/เวลา</label></td>
@@ -72,11 +73,11 @@
                                 <td>{{ test.test_date.test_date }}</td>
                             </tr>
                             <tr>
-                                <td><label class="label">ปกติ</label></td>
+                                <td><label class="label">ระยะเวลารอผล(ปกติ)</label></td>
                                 <td>{{ test.waiting_period.waiting_time_normal }}</td>
                             </tr>
                             <tr>
-                                <td><label class="label">ด่วน</label></td>
+                                <td><label class="label">ระยะเวลารอผล(ด่วน)</label></td>
                                 <td>{{ test.waiting_period.waiting_time_urgent }}</td>
                             </tr>
                             <tr>
@@ -102,7 +103,8 @@
                         </table>
                         <div class="buttons is-centered">
                             <a href="{{ url_for('gj_test.view_tests') }}" class="button is-light">กลับ</a>
-                            <a href="{{ url_for('gj_test.add_test', test_id=test.id) }}" class="button is-danger">แก้ไข</a>
+                            <a href="{{ url_for('gj_test.add_test', test_id=test.id) }}"
+                               class="button is-danger">แก้ไข</a>
 
                         </div>
                     </div>
