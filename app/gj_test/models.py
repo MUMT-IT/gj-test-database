@@ -49,7 +49,7 @@ class GJTest(db.Model):
                                     backref=db.backref('test_quantities', lazy='dynamic'))
 
     def __str__(self):
-        return u'{}: {}'.format(self.specimens, self.specimen_transportation, self.test_date, self.test_location)
+        return u'{}: {}'.format(self.specimens, self.quantity, self.specimen_transportation, self.test_date, self.test_location)
 
     def to_dict(self):
         return {
