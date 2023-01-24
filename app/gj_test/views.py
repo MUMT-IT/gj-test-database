@@ -52,6 +52,7 @@ def add_test(test_id=None):
         form = TestListForm(obj=test)
     else:
         form = TestListForm()
+        test = None
 
     if form.validate_on_submit():
         if not test_id:
@@ -122,7 +123,7 @@ def add_test(test_id=None):
     else:
         for er in form.errors:
             flash("{} {}".format(er, form.errors[er]), 'danger')
-    return render_template('gj_test/new_test.html', form=form, url_next=request.referrer)
+    return render_template('gj_test/new_test.html', form=form, url_next=request.referrer, test=test)
 
 
 @gj_test.route('api/v1.0/specimens', methods=['GET'])
@@ -327,6 +328,31 @@ def get_tests_view_data():
                     'recordsTotal': GJTest.query.count(),
                     'draw': request.args.get('draw', type=int),
                     })
+
+
+# @gj_test.route('api/demo/item/<int:dataid>')
+# def get_data_info(dataid):
+#     data = [
+#         {
+#             'id': 1,
+#             'title': 'One',
+#             'message': 'Item 1'
+#         },
+#         {
+#             'id': 2,
+#             'title': 'Two',
+#             'message': 'Item 2'
+#         },
+#         {
+#             'id': 3,
+#             'title': 'Three',
+#             'message': 'Item 3'
+#         },
+#     ]
+#     for item in data:
+#         if item['id'] == dataid:
+#             return jsonify(item)
+#     return jsonify({})
 
 
 @gj_test.route('/info-tests/view/<int:test_id>')
