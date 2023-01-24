@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block head %}
+{{ super() }}
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+{% endblock %}
 {% block page_content %}
 
 <section class="section" id="app">
@@ -23,7 +29,9 @@
                     </div>
                     <div class="control">
                         <a class="button is-info" href="{{ url_for('gj_test.download_test_template') }}">
-                            <span class="icon"><i class="fas fa-download"></i></span>
+                            <span class="icon">
+                                <i class="fa fa-download"></i>
+                            </span>
                             <span>Download template</span>
                         </a>
                     </div>
@@ -37,7 +45,7 @@
                                 {{ form.upload(class="file-input") }}
                                 <span class="file-cta">
                                       <span class="file-icon">
-                                        <i class="fas fa-upload"></i>
+                                        <i class="fa fa-upload"></i>
                                       </span>
                                       <span class="file-label">
                                         {{ form.upload.label }}
