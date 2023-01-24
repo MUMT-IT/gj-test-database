@@ -384,18 +384,44 @@ def add_many_tests():
             df = read_excel(upfile)
             for idx, rec in df.iterrows():
                 no, test_name, code, desc, prepare, specimen, specimen_quantity, unit, specimen_container, \
-                specimen_transportation, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent,\
+                specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent,\
                 reporting_referral_values, interference_analysis, time_period_request, caution, test_location = rec
 
-                specimens = GJTestSpecimen.query.filter_by(specimen=specimen).first()
-                if not specimens:
-                    specimens = GJTestSpecimen(specimen=specimen)
+                specimen_ = GJTestSpecimen.query.filter_by(specimen=specimen, specimen_container=specimen_container).first()
+                if not specimen_:
+                    specimen_ = GJTestSpecimen(specimen=specimen, specimen_container=specimen_container)
+                specimen_quantity = str(specimen_quantity)
+                specimen_quantity_ = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=specimen_quantity,
+                                                                            unit=unit).first()
+                if not specimen_quantity_:
+                    specimen_quantity_ = GJTestSpecimenQuantity(specimen_quantity=specimen_quantity,
+                                                                unit=unit)
+
+                specimen_transportation_ = GJTestSpecimenTransportation.query.filter_by(specimen_date_time=specimen_date_time).first()
+                if not specimen_transportation_:
+                    specimen_transportation_ = GJTestSpecimenTransportation(specimen_date_time=specimen_date_time)
+
+                drop_off_location_ = GJTestLocation.query.filter_by(location=drop_off_location).first()
+                if not drop_off_location_:
+                    drop_off_location_ = GJTestLocation(location=drop_off_location)
+
+                test_date_ = GJTestDate.query.filter_by(test_date=test_date).first()
+                if not test_date_:
+                    test_date_ = GJTestDate(test_date_=test_date)
 
                 waiting_time = GJTestWaitingPeriod.query.filter_by(waiting_time_normal=waiting_time_normal,
-                                                                   waiting_time_urgent=waiting_time_urgent)
+                                                                   waiting_time_urgent=waiting_time_urgent).first()
                 if not waiting_time:
                     waiting_time = GJTestWaitingPeriod(waiting_time_normal=waiting_time_normal,
                                                        waiting_time_urgent=waiting_time_urgent)
+
+                time_period_request_ = GJTestTimePeriodRequest.query.filter_by(time_period_request=time_period_request).first()
+                if not time_period_request_:
+                    time_period_request_ = GJTestTimePeriodRequest(time_period_request=time_period_request)
+
+                test_location_ = GJTestLocation.query.filter_by(location=test_location).first()
+                if not test_location_:
+                    test_location_ = GJTestLocation(location=test_location)
 
                 test_ = GJTest.query.filter_by(code=code).first()
                 if not test_:
@@ -404,19 +430,19 @@ def add_many_tests():
                         code=code,
                         desc=desc,
                         prepare=prepare,
-                        specimens=specimens,
-                        specimen_quantity=specimen_quantity,
-                        unit=unit,
-                        specimen_container=specimen_container,
-                        specimen_transportation=specimen_transportation,
-                        drop_off_location=drop_off_location,
+                        quantity=specimen_quantity_,
+                        specimen_transportation=specimen_transportation_,
+                        drop_off_location=drop_off_location_,
                         solution=method,
+                        test_date=test_date_,
                         waiting_period=waiting_time,
                         reporting_referral_values=reporting_referral_values,
                         interference_analysis=interference_analysis,
+                        time_period_request=time_period_request_,
                         caution=caution,
-                        test_location=test_location
+                        test_location=test_location_
                     )
+                    new_test.specimens.append(specimen_)
                     db.session.add(new_test)
                     db.session.commit()
                     flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
