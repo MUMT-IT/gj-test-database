@@ -35,7 +35,7 @@ app.config['MAIL_DEFAULT_SENDER'] = ('MUMT-GJ',
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
-login_manager.login_view = "login"
+login_manager.login_view = "gj_test.login"
 csrf = CSRFProtect(app)
 admin = Admin(app)
 mail = Mail(app)
@@ -49,15 +49,15 @@ from app.gj_test import models
 from .gj_test.models import *
 
 
-admin.add_views(ModelView(GJTest, db.session, category='GJ Test'))
-admin.add_views(ModelView(GJTestSpecimen, db.session, category='GJ Test'))
-admin.add_views(ModelView(GJTestSpecimenQuantity, db.session, category='GJ Test'))
-admin.add_views(ModelView(GJTestSpecimenTransportation, db.session, category='GJ Test'))
-admin.add_views(ModelView(GJTestLocation, db.session, category='GJ Test'))
-admin.add_views(ModelView(GJTestDate, db.session, category='GJ Test'))
-admin.add_views(ModelView(GJTestTimePeriodRequest, db.session, category='GJ Test'))
-admin.add_views(ModelView(GJTestWaitingPeriod, db.session, category='GJ Test'))
-admin.add_views(ModelView(User, db.session, category='GJ Test'))
+admin.add_views(ModelView(GJTest, db.session, category='Test'))
+admin.add_views(ModelView(GJTestSpecimen, db.session, category='Test'))
+admin.add_views(ModelView(GJTestSpecimenQuantity, db.session, category='Test'))
+admin.add_views(ModelView(GJTestSpecimenTransportation, db.session, category='Test'))
+admin.add_views(ModelView(GJTestLocation, db.session, category='Test'))
+admin.add_views(ModelView(GJTestDate, db.session, category='Test'))
+admin.add_views(ModelView(GJTestTimePeriodRequest, db.session, category='Test'))
+admin.add_views(ModelView(GJTestWaitingPeriod, db.session, category='Test'))
+admin.add_views(ModelView(User, db.session, category='User'))
 
 
 @login_manager.user_loader
