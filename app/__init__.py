@@ -11,6 +11,7 @@ from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from datetime import timedelta
 
+
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
         return current_user.is_authenticated
@@ -31,23 +32,19 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = ('MUMT-GJ',
                                      os.environ.get('MAIL_USERNAME'))
 
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = "gj_test.login"
 csrf = CSRFProtect(app)
-admin = Admin(app)
+admin = Admin(app, index_view=MyAdminIndexView())
 mail = Mail(app)
 
+from app.gj_test import gj_test_bp
 
-from . import gj_test
+app.register_blueprint(gj_test_bp)
 
-app.register_blueprint(gj_test.gj_test_bp)
-from app.gj_test import models
-
-from .gj_test.models import *
-
+from app.gj_test.models import *
 
 admin.add_views(ModelView(GJTest, db.session, category='Test'))
 admin.add_views(ModelView(GJTestSpecimen, db.session, category='Test'))

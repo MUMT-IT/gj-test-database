@@ -4,6 +4,7 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 {% endblock %}
 {% block page_content %}
+{% include "gj_test/nav.html" %}
 <section class="section">
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -13,8 +14,8 @@
                 <li class="is-active"><a href="#" aria-current="page">เพิ่มข้อมูล</a></li>
             </ul>
         </nav>
+        {% include "messages.html" %}
         <div class="columns">
-            {% include "messages.html" %}
             <div class="column has-text-centered">
                 <h1 class="title">เพิ่มข้อมูลการทดสอบ</h1>
             </div>

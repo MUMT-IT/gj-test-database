@@ -1,12 +1,10 @@
 import os
 
 from flask import flash, redirect, url_for, render_template, request, jsonify, abort, send_from_directory
-from flask_admin.helpers import is_safe_url
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_mail import Message
 from itsdangerous import TimedJSONWebSignatureSerializer
 from pandas import read_excel, isna, DataFrame
-from sqlalchemy.sql.functions import user
 from werkzeug.utils import secure_filename
 
 from app import app, mail
@@ -25,7 +23,7 @@ def send_mail(recp, title, message):
     mail.send(message)
 
 
-@gj_test.route('/landing')
+@gj_test.route('/')
 @login_required
 def landing():
     return render_template('gj_test/landing.html')
@@ -293,7 +291,7 @@ def forgot_password():
 
 @gj_test.route('/tests/view')
 def view_tests():
-    return render_template('gj_test/view_tests.html', url_callback=request.referrer)
+    return render_template('gj_test/view_tests.html')
 
 
 @gj_test.route('/api/view-tests')
@@ -312,12 +310,10 @@ def get_tests_view_data():
     data = []
     for test in query:
         test_data = test.to_dict()
-        test_data['view'] = '<a href="{}" class="button is-small is-primary is-outlined">ดูข้อมูล</a>'.format(
-            url_for('gj_test.view_info_test', test_id=test.id))
-        test_data['view_by_general_user'] = '<a href="{}" class="button is-small is-info is-outlined">ดูข้อมูล</a>'.format(
-            url_for('gj_test.view_info_test_by_general_user', test_id=test.id))
-        test_data['edit'] = '<a href="{}" class="button is-small is-danger is-outlined">แก้ไขข้อมูล </a>'.format(
-            url_for('gj_test.add_test', test_id=test.id))
+        test_data['view'] = '<a href="{}" class="button is-small is-rounded is-info is-outlined">ดูข้อมูล</a>'\
+            .format(url_for('gj_test.view_info_test', test_id=test.id))
+        test_data['view_by_general_user'] = '<a href="{}" class="button is-small is-rounded is-info">ดูข้อมูล</a>'\
+            .format(url_for('gj_test.view_info_test_by_general_user', test_id=test.id))
         data.append(test_data)
     return jsonify({'data': data,
                     'recordsFiltered': total_filtered,
