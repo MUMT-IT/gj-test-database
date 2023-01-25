@@ -59,74 +59,92 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">{{ form.specimen.label }}
-                                <a href="{{ url_for('gj_test.add_specimen_ref') }}"
-                                   class="button is-small is-info is-rounded">
-                                       <span class="icon-text">
-                                           <span class="icon">
-                                               <i class="fa-solid fa-plus"></i>
-                                           </span>
-                                           <span>เพิ่ม</span>
-                                       </span>
-                                </a>
-                            </label>
-                            <div>
-                                {{ form.specimen(class="select js-example-basic-multiple", multiple="multiple") }}
-                            </div>
+                            <label class="label">ชนิดสิ่งส่งตรวจ</label>
+                            <select class="js-example-basic-multiple" id="specimens" name="specimens"
+                                    multiple="multiple">
+                                {% for sp in test.specimens %}
+                                <option value="{{ sp.specimen }}" selected="selected">{{ sp.specimen }}</option>
+                                {% endfor %}
+                            </select>
+                            <p class="help is-danger">ชนิดสิ่งส่งตรวจสามารถเลือกได้มากกว่า 1 รายการ
+                                กรณีที่ต้องการเพิ่มสิ่งส่งตรวจใหม่
+                                สามารถพิมพ์สิ่งส่งตรวจในช่องแล้วเลือกหรือคลิก tab</p>
                         </div>
                         <div class="field-body">
                             <div class="field">
-                                <label class="label">{{ form.specimen_quantity.label }}</label>
+                                <label class="label">ปริมาณสิ่งส่งตรวจ
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#quantity')">
+                                    </input>
+                                </label>
                                 <div class="control">
-                                    {{ form.specimen_quantity(class="input") }}
+                                    <select class="js-example-basic-single" id="quantity"
+                                            name="quantity">
+                                        {% if test %}
+                                        <option value="{{ test.quantity.specimen_quantity }}" selected="selected">
+                                            {{ test.quantity.specimen_quantity }}
+                                        </option>
+                                         {% endif %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label">{{ form.unit.label }}</label>
-                                <div class="select is-fullwidth">
-                                    {{ form.unit() }}
+                                <label class="label">หน่วย
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#unit')">
+                                    </input>
+                                </label>
+                                <div class="control">
+                                    <select class="js-example-basic-single" id="unit"
+                                            name="unit">
+                                        {% if test %}
+                                        <option value="{{ test.quantity.unit }}" selected="selected">{{
+                                            test.quantity.unit }}
+                                        </option>
+                                        {% endif %}
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="field">
-                            <label class="label">{{ form.specimen_container.label }}</label>
+                        <div class="field"><br>
+                            <label class="label">วัน/เวลาการนำส่งสิ่งส่งตรวจ
+                                <input class="button is-small is-rounded is-info"
+                                       value="Add"
+                                       type="button"
+                                       onclick="addItem('#specimen_transportation')">
+                                </input>
+                            </label>
                             <div class="control">
-                                {{ form.specimen_container(class="input") }}
+                                <select class="js-example-basic-single" id="specimen_transportation"
+                                        name="specimen_transportation">
+                                    {% if test %}
+                                    <option value="{{ test.specimen_transportation }}" selected="selected">{{
+                                        test.specimen_transportation }}
+                                    </option>
+                                    {% endif %}
+                                </select>
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">{{ form.specimen_transportation.label }}
-                                <a href="{{ url_for('gj_test.add_specimen_transportation_ref') }}"
-                                   class="button is-small is-info is-rounded">
-                                        <span class="icon-text">
-                                        <span class="icon">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </span>
-                                        <span>เพิ่ม</span>
-                                       </span>
-                                </a>
+                            <label class="label">สถานที่
+                                <input class="button is-small is-rounded is-info"
+                                       value="Add"
+                                       type="button"
+                                       onclick="addItem('#drop_off_location')">
+                                </input>
                             </label>
-                            <div>
-                                {{ form.specimen_transportation(class="select js-example-basic-multiple",
-                                multiple="multiple") }}
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">{{ form.drop_off_location.label }}
-                                <a href="{{ url_for('gj_test.add_location_ref') }}"
-                                   class="button is-small is-info is-rounded">
-                                        <span class="icon-text">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-plus"></i>
-                                            </span>
-                                            <span>เพิ่ม</span>
-                                       </span>
-                                </a>
-                            </label>
-                            <div>
-                                {{ form.drop_off_location(class="select js-example-basic-multiple",
-                                multiple="multiple") }}
-                            </div>
+                            <select class="js-example-basic-single" id="drop_off_location"
+                                    name="drop_off_location">
+                                {% if test %}
+                                <option value="{{ test.drop_off_location }}" selected="selected">{{
+                                    test.drop_off_location }}
+                                </option>
+                                {% endif %}
+                            </select>
                         </div>
                         <div class="field">
                             <label class="label">{{ form.solution.label }}</label>
@@ -135,63 +153,84 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">{{ form.test_date.label }}
-                                <a href="{{ url_for('gj_test.add_test_date_ref') }}"
-                                   class="button is-small is-info is-rounded">
-                                        <span class="icon-text">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-plus"></i>
-                                            </span>
-                                            <span>เพิ่ม</span>
-                                       </span>
-                                </a>
+                            <label class="label">วันที่ทำการทดสอบ
+                                <input class="button is-small is-rounded is-info"
+                                       value="Add"
+                                       type="button"
+                                       onclick="addItem('#test_date')">
+                                </input>
                             </label>
-                            <div>
-                                {{ form.test_date(class="select js-example-basic-multiple", multiple="multiple") }}
-                            </div>
+                            <select class="js-example-basic-single" id="test_date"
+                                    name="test_date">
+                                {% if test %}
+                                <option value="{{ test.test_date }}" selected="selected">{{ test.test_date }}</option>
+                                {% endif %}
+                            </select>
                         </div>
                         <div class="field">
-                            <label class="label">{{ form.waiting_time_normal.label }}</label>
-                            <div class="control">
-                                {{ form.waiting_time_normal(class="select js-example-basic-multiple",
-                                multiple="multiple") }}
-                            </div>
+                            <label class="label">ระยะเวลารอผล(ปกติ)
+                                <input class="button is-small is-rounded is-info"
+                                       value="Add"
+                                       type="button"
+                                       onclick="addItem('#normal_waiting_time')">
+                                </input>
+                            </label>
+                            <select class="js-example-basic-single" id="normal_waiting_time"
+                                    name="normal_waiting_time">
+                                {% if test %}
+                                <option value="{{ test.waiting_period.waiting_time_normal }}" selected="selected">
+                                    {{ test.waiting_period.waiting_time_normal }}
+                                </option>
+                                {% endif %}
+                            </select>
                         </div>
                         <div class="field">
-                            <label class="label">{{ form.waiting_time_urgent.label }}</label>
-                            <div class="control">
-                                {{ form.waiting_time_urgent(class="select js-example-basic-multiple",
-                                multiple="multiple") }}
-                            </div>
+                            <label class="label">ระยะเวลารอผล(ด่วน)
+                                <input class="button is-small is-rounded is-info"
+                                       value="Add"
+                                       type="button"
+                                       onclick="addItem('#urgent_waiting_time')">
+                                </input>
+                            </label>
+                            <select class="js-example-basic-single" id="urgent_waiting_time"
+                                    name="urgent_waiting_time">
+                                {% if test %}
+                                <option value="{{ test.waiting_period.waiting_time_urgent }}" selected="selected">
+                                    {{ test.waiting_period.waiting_time_urgent }}
+                                </option>
+                                {% endif %}
+                            </select>
                         </div>
 
                         <div class="field">
                             <label class="label">{{ form.reporting_referral_values.label }}</label>
                             <div class="control">
-                                {{ form.reporting_referral_values(class="input") }}
+                                {{ form.reporting_referral_values(class="textarea") }}
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">{{ form.time_period_request.label }}
-                                <a href="{{ url_for('gj_test.add_time_period_requested_ref') }}"
-                                   class="button is-small is-info is-rounded">
-                                        <span class="icon-text">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-plus"></i>
-                                            </span>
-                                            <span>เพิ่ม</span>
-                                       </span>
-                                </a>
-                            </label>
-                            <div>
-                                {{ form.time_period_request(class="select js-example-basic-multiple",
-                                multiple="multiple") }}
+                            <div class="control">
+                                <label class="label">ระยะเวลาที่สามารถขอตรวจเพิ่มได้
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#time_period_request')">
+                                    </input>
+                                </label>
+                                <select class="js-example-basic-single" id="time_period_request"
+                                        name="time_period_request">
+                                    {% if test %}
+                                    <option value="{{ test.time_period_request }}" selected="selected">{{
+                                        test.time_period_request }}
+                                    </option>
+                                    {% endif %}
+                                </select>
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">{{ form.interference_analysis.label }}</label>
                             <div class="control">
-                                {{ form.interference_analysis(class="input") }}
+                                {{ form.interference_analysis(class="textarea") }}
                             </div>
                         </div>
                         <div class="field">
@@ -201,26 +240,28 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">{{ form.test_location.label }}
-                                <a href="{{ url_for('gj_test.add_location_ref') }}"
-                                   class="button is-small is-info is-rounded">
-                                    <span class="icon-text">
-                                        <span class="icon">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </span>
-                                        <span>เพิ่ม</span>
-                                    </span>
-                                </a>
-                            </label>
-                            <div>
-                                {{ form.test_location(class="select js-example-basic-multiple", multiple="multiple") }}
+                            <div class="control">
+                                <label class="label">สถานที่ทดสอบ
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#test_location')">
+                                    </input>
+                                </label>
+                                <select class="js-example-basic-single" id="test_location"
+                                        name="test_location">
+                                    {% if test %}
+                                    <option value="{{ test.test_location }}" selected="selected">{{ test.test_location }}
+                                    </option>
+                                    {% endif %}
+                                </select>
                             </div>
                         </div>
                         <br>
                         <div class="field is-grouped is-grouped-centered">
                             <div class="buttons">
                                 <button class="button is-success" type="submit" value="submit">บันทึก</button>
-                                <a href="{{ url_callback }}"
+                                <a href="{{ url_next }}"
                                    class="button is-danger">ยกเลิก</a>
                             </div>
                         </div>
@@ -236,9 +277,112 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(() => {
-        $('.js-example-basic-multiple').select2({
-            width: '1075px',
+        $('#specimens').select2({
+            width: '100%',
+            tags: true,
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_specimens') }}",
+                dataType: "json"
+            }
         });
+        $('#quantity').select2({
+            width: '100%',
+            tags: true,
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_specimen_quantity_and_unit', mode='specimen_quantity') }}",
+                dataType: "json"
+            }
+        });
+        $('#unit').select2({
+            width: '100%',
+            tags: true,
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_specimen_quantity_and_unit', mode='unit') }}",
+                dataType: "json"
+            }
+        });
+        $('#specimen_transportation').select2({
+            width: '100%',
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_specimen_transportations') }}",
+                dataType: "json"
+            }
+        });
+        $('#drop_off_location').select2({
+            width: '100%',
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_drop_off_locations') }}",
+                dataType: "json"
+            }
+        });
+        $('#test_date').select2({
+            width: '100%',
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_test_dates') }}",
+                dataType: "json"
+            }
+        });
+        $('#normal_waiting_time').select2({
+            width: '100%',
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_waiting_time', mode='normal') }}",
+                dataType: "json"
+            }
+        });
+        $('#urgent_waiting_time').select2({
+            width: '100%',
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_waiting_time', mode='urgent') }}",
+                dataType: "json"
+            }
+        });
+        $('#time_period_request').select2({
+            width: '100%',
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_time_period_requests') }}",
+                dataType: "json"
+            }
+        });
+        $('#test_location').select2({
+            width: '100%',
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_test_locations') }}",
+                dataType: "json"
+            }
+        });
+
+    });
+</script>
+<script>
+
+    function addItem(controlId) {
+        // Passing a control ID so that this code can be reused with all selectors.
+        let selector = $(controlId);
+        let newItem = prompt('Enter new item:');
+        if (newItem !== null && newItem !== "") {
+            if (selector.find("option[value='" + newItem + "']").length) {
+                selector.val(newItem).trigger('change');
+            } else {
+                let newOption = new Option(newItem, newItem, true, true);
+                selector.append(newOption).trigger('change');
+            }
+        }
+    }
+</script>
+<script>
+    $('#reporting_referral_values').summernote({
+        placeholder: 'Hello stand alone ui',
+        tabsize: 2,
+        height: 120,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ]
     });
 </script>
 {% endblock %}

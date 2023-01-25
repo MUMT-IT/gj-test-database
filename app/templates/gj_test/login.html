@@ -19,14 +19,19 @@
                     <h3 class="title has-text-black">Login</h3>
                     <hr class="login-hr">
                     <p class="subtitle has-text-black">Please login to proceed.</p>
+                     {% for field, error in errors.items() %}
+                    <div class="notification is-danger">
+                        <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+                        <span><strong>{{ field }}:</strong> {{ ', '.join(error) }}</span>
+                    </div>
+                    {% endfor %}
                     <div class="box">
                         <form method="POST" action="/login">
-                            {{ form.csrf_token }}
-<!--                            {{ form.hidden_tag() }}-->
+                             {{ form.hidden_tag() }}
                             <div class="field">
-                                <label>{{ form.email.label }}</label>
+                                <label>{{ form.username.label }}</label>
                                 <div class="control">
-                                    {{ form.email(class="input") }}
+                                    {{ form.username(class="input") }}
                                 </div>
                             </div>
                             <div class="field">
@@ -36,10 +41,8 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="checkbox">
-                                  <input type="checkbox">
-                                  Remember me
-                                </label>
+                                {{ form.remember_me.label }}
+                                {{ form.remember_me() }}
                             </div>
                             <div class="buttons is-centered">
                                 <input type="submit" class="button is-block is-info is-large is-fullwidth" value="Login">
@@ -48,7 +51,7 @@
                     </div>
                     <p class="has-text-grey">
                         <a href="{{ url_for('gj_test.register')}}">Register</a> &nbsp;·&nbsp;
-                        <a href="../">Forgot Password</a> &nbsp;·&nbsp;
+                        <a href="{{ url_for('gj_test.forgot_password')}}">Forgot Password</a> &nbsp;·&nbsp;
                         <a href="../">Need Help?</a>
                     </p>
                 </div>
