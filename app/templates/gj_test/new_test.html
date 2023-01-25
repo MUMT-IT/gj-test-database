@@ -82,9 +82,11 @@
                                 <div class="control">
                                     <select class="js-example-basic-single" id="quantity"
                                             name="quantity">
+                                        {% if test %}
                                         <option value="{{ test.quantity.specimen_quantity }}" selected="selected">
                                             {{ test.quantity.specimen_quantity }}
                                         </option>
+                                         {% endif %}
                                     </select>
                                 </div>
                             </div>
@@ -99,9 +101,11 @@
                                 <div class="control">
                                     <select class="js-example-basic-single" id="unit"
                                             name="unit">
+                                        {% if test %}
                                         <option value="{{ test.quantity.unit }}" selected="selected">{{
                                             test.quantity.unit }}
                                         </option>
+                                        {% endif %}
                                     </select>
                                 </div>
                             </div>
@@ -117,9 +121,11 @@
                             <div class="control">
                                 <select class="js-example-basic-single" id="specimen_transportation"
                                         name="specimen_transportation">
+                                    {% if test %}
                                     <option value="{{ test.specimen_transportation }}" selected="selected">{{
                                         test.specimen_transportation }}
                                     </option>
+                                    {% endif %}
                                 </select>
                             </div>
                         </div>
@@ -133,9 +139,11 @@
                             </label>
                             <select class="js-example-basic-single" id="drop_off_location"
                                     name="drop_off_location">
+                                {% if test %}
                                 <option value="{{ test.drop_off_location }}" selected="selected">{{
                                     test.drop_off_location }}
                                 </option>
+                                {% endif %}
                             </select>
                         </div>
                         <div class="field">
@@ -154,7 +162,9 @@
                             </label>
                             <select class="js-example-basic-single" id="test_date"
                                     name="test_date">
+                                {% if test %}
                                 <option value="{{ test.test_date }}" selected="selected">{{ test.test_date }}</option>
+                                {% endif %}
                             </select>
                         </div>
                         <div class="field">
@@ -167,9 +177,11 @@
                             </label>
                             <select class="js-example-basic-single" id="normal_waiting_time"
                                     name="normal_waiting_time">
+                                {% if test %}
                                 <option value="{{ test.waiting_period.waiting_time_normal }}" selected="selected">
                                     {{ test.waiting_period.waiting_time_normal }}
                                 </option>
+                                {% endif %}
                             </select>
                         </div>
                         <div class="field">
@@ -182,9 +194,11 @@
                             </label>
                             <select class="js-example-basic-single" id="urgent_waiting_time"
                                     name="urgent_waiting_time">
+                                {% if test %}
                                 <option value="{{ test.waiting_period.waiting_time_urgent }}" selected="selected">
                                     {{ test.waiting_period.waiting_time_urgent }}
                                 </option>
+                                {% endif %}
                             </select>
                         </div>
 
@@ -205,9 +219,11 @@
                                 </label>
                                 <select class="js-example-basic-single" id="time_period_request"
                                         name="time_period_request">
+                                    {% if test %}
                                     <option value="{{ test.time_period_request }}" selected="selected">{{
                                         test.time_period_request }}
                                     </option>
+                                    {% endif %}
                                 </select>
                             </div>
                         </div>
@@ -234,9 +250,10 @@
                                 </label>
                                 <select class="js-example-basic-single" id="test_location"
                                         name="test_location">
-                                    <option value="{{ test.test_location }}" selected="selected">{{ test.test_location
-                                        }}
+                                    {% if test %}
+                                    <option value="{{ test.test_location }}" selected="selected">{{ test.test_location }}
                                     </option>
+                                    {% endif %}
                                 </select>
                             </div>
                         </div>
