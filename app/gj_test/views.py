@@ -26,6 +26,7 @@ def send_mail(recp, title, message):
 
 
 @gj_test.route('/landing')
+@login_required
 def landing():
     return render_template('gj_test/landing.html')
 
@@ -183,14 +184,7 @@ def get_all_test_locations():
 
 @gj_test.route('/login', methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
-        next = request.args.get('next')
-        if not is_safe_url(next):
-            return abort(400)
-        if next:
-            return redirect(next)
-        else:
-            return redirect(url_for('gj_test.landing'))
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -320,6 +314,8 @@ def get_tests_view_data():
         test_data = test.to_dict()
         test_data['view'] = '<a href="{}" class="button is-small is-primary is-outlined">ดูข้อมูล</a>'.format(
             url_for('gj_test.view_info_test', test_id=test.id))
+        test_data['view_by_general_user'] = '<a href="{}" class="button is-small is-info is-outlined">ดูข้อมูล</a>'.format(
+            url_for('gj_test.view_info_test_by_general_user', test_id=test.id))
         test_data['edit'] = '<a href="{}" class="button is-small is-danger is-outlined">แก้ไขข้อมูล </a>'.format(
             url_for('gj_test.add_test', test_id=test.id))
         data.append(test_data)
@@ -359,6 +355,13 @@ def get_tests_view_data():
 def view_info_test(test_id):
     test = GJTest.query.get(test_id)
     return render_template('gj_test/view_info_test.html',
+                           test=test)
+
+
+@gj_test.route('/info-tests/general_user/view/<int:test_id>')
+def view_info_test_by_general_user(test_id):
+    test = GJTest.query.get(test_id)
+    return render_template('gj_test/view_info_test_by_general_user.html',
                            test=test)
 
 
