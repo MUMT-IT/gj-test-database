@@ -4,8 +4,12 @@
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
+                {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('gj_test.landing') }}">หน้าหลัก</a></li>
                 <li><a href="{{ url_for('gj_test.add_test', test_id=test.id) }}">แก้ไขข้อมูล</a></li>
+                {% else %}
+                <li><a href="{{ url_for('gj_test.index') }}">หน้าหลัก</a></li>
+                {% endif %}
                 <li class="is-active"><a href="#" aria-current="page">ข้อมูล</a></li>
             </ul>
         </nav>
@@ -103,9 +107,10 @@
                         </table>
                         <div class="buttons is-centered">
                             <a href="{{ request.referrer }}" class="button is-light">กลับ</a>
+                            {% if current_user.is_authenticated %}
                             <a href="{{ url_for('gj_test.add_test', test_id=test.id) }}"
                                class="button is-danger">แก้ไข</a>
-
+                            {% endif %}
                         </div>
                     </div>
                 </div>

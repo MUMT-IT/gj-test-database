@@ -311,8 +311,6 @@ def get_tests_view_data():
         test_data = test.to_dict()
         test_data['view'] = '<a href="{}" class="button is-small is-rounded is-info is-outlined">ดูข้อมูล</a>'\
             .format(url_for('gj_test.view_info_test', test_id=test.id))
-        test_data['view_by_general_user'] = '<a href="{}" class="button is-small is-rounded is-info">ดูข้อมูล</a>'\
-            .format(url_for('gj_test.view_info_test_by_general_user', test_id=test.id))
         data.append(test_data)
     return jsonify({'data': data,
                     'recordsFiltered': total_filtered,
@@ -350,13 +348,6 @@ def get_tests_view_data():
 def view_info_test(test_id):
     test = GJTest.query.get(test_id)
     return render_template('gj_test/view_info_test.html',
-                           test=test)
-
-
-@gj_test.route('/info-tests/general_user/view/<int:test_id>')
-def view_info_test_by_general_user(test_id):
-    test = GJTest.query.get(test_id)
-    return render_template('gj_test/view_info_test_by_general_user.html',
                            test=test)
 
 
