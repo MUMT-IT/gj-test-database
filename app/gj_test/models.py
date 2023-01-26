@@ -47,9 +47,12 @@ class GJTest(db.Model):
     quantity_id = db.Column('quantity_id', db.ForeignKey('gj_test_specimen_quantities.id'))
     quantity = db.relationship('GJTestSpecimenQuantity', foreign_keys=[quantity_id],
                                     backref=db.backref('test_quantities', lazy='dynamic'))
+    container_id = db.Column('container_id', db.ForeignKey('gj_test_specimen_containers.id'))
+    container = db.relationship('GJTestSpecimenContainer', foreign_keys=[container_id],
+                               backref=db.backref('test_containers', lazy='dynamic'))
 
     def __str__(self):
-        return u'{}: {}'.format(self.specimens, self.quantity, self.specimen_transportation, self.test_date, self.test_location)
+        return u'{}: {}'.format(self.specimens, self.quantity, self.container, self.specimen_transportation, self.test_date, self.test_location)
 
     def to_dict(self):
         return {
@@ -61,6 +64,7 @@ class GJTest(db.Model):
             'specimens': ','.join([sp.specimen for sp in self.specimens]),
             'waiting_period': self.waiting_period.waiting_time_normal if self.waiting_period else '',
             'quantity': self.quantity.specimen_quantity if self.quantity else '',
+            'container': self.container.specimen_container if self.container else '',
             'solution': self.solution,
             'test_date': self.test_date.test_date if self.test_date else '',
             'reporting_referral_values': self.reporting_referral_values,
@@ -187,6 +191,21 @@ class GJTestSpecimenQuantity(db.Model):
         return {
             'id': self.unit,
             'text': self.unit
+        }
+
+
+class GJTestSpecimenContainer(db.Model):
+    __tablename__ = 'gj_test_specimen_containers'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    specimen_container = db.Column('specimen_container', db.String(), info={'label': u'ภาชนะสิ่งส่งตรวจ'})
+
+    def __str__(self):
+        return u'{}'.format(self.specimen_container)
+
+    def to_dict(self):
+        return {
+            'id': self.specimen_container,
+            'text': self.specimen_container
         }
 
 
