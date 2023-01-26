@@ -59,58 +59,6 @@
                                 {{ form.prepare(class="textarea") }}
                             </div>
                         </div>
-                        <div class="field">
-                            <label class="label">ชนิดสิ่งส่งตรวจ</label>
-                            <select class="js-example-basic-multiple" id="specimens" name="specimens"
-                                    multiple="multiple">
-                                {% for sp in test.specimens %}
-                                <option value="{{ sp.specimen }}" selected="selected">{{ sp.specimen }}</option>
-                                {% endfor %}
-                            </select>
-                            <p class="help is-danger">ชนิดสิ่งส่งตรวจสามารถเลือกได้มากกว่า 1 รายการ
-                                กรณีที่ต้องการเพิ่มสิ่งส่งตรวจใหม่
-                                สามารถพิมพ์สิ่งส่งตรวจในช่องแล้วเลือกหรือคลิก tab</p>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <label class="label">ปริมาณสิ่งส่งตรวจ
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#quantity')">
-                                    </input>
-                                </label>
-                                <div class="control">
-                                    <select class="js-example-basic-single" id="quantity"
-                                            name="quantity">
-                                        {% if test %}
-                                        <option value="{{ test.quantity.specimen_quantity }}" selected="selected">
-                                            {{ test.quantity.specimen_quantity }}
-                                        </option>
-                                         {% endif %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">หน่วย
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#unit')">
-                                    </input>
-                                </label>
-                                <div class="control">
-                                    <select class="js-example-basic-single" id="unit"
-                                            name="unit">
-                                        {% if test %}
-                                        <option value="{{ test.quantity.unit }}" selected="selected">{{
-                                            test.quantity.unit }}
-                                        </option>
-                                        {% endif %}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                         <div class="field"><br>
                             <label class="label">วัน/เวลาการนำส่งสิ่งส่งตรวจ
                                 <input class="button is-small is-rounded is-info"
@@ -252,7 +200,8 @@
                                 <select class="js-example-basic-single" id="test_location"
                                         name="test_location">
                                     {% if test %}
-                                    <option value="{{ test.test_location }}" selected="selected">{{ test.test_location }}
+                                    <option value="{{ test.test_location }}" selected="selected">{{ test.test_location
+                                        }}
                                     </option>
                                     {% endif %}
                                 </select>
@@ -267,6 +216,81 @@
                             </div>
                         </div>
                     </form>
+                    <div id="specimen_list"></div>
+                    <form id="specimens_form" hx-post="{{ url_for('gj_test.add_specimens') }}" hx-target="#specimen_list" hx-swap="innerHTML">
+                        <input type="hidden" value="{{ csrf_token() }}" name="csrf_token">
+                        <div class="field">
+                            <label class="label">ชนิดสิ่งส่งตรวจ</label>
+                            <select class="js-example-basic-multiple" id="specimens" name="specimens">
+                                {% for sp in test.specimens %}
+                                <option value="{{ sp.specimen }}" selected="selected">{{ sp.specimen }}</option>
+                                {% endfor %}
+                            </select>
+                            <p class="help is-danger">ชนิดสิ่งส่งตรวจสามารถเลือกได้มากกว่า 1 รายการ
+                                กรณีที่ต้องการเพิ่มสิ่งส่งตรวจใหม่
+                                สามารถพิมพ์สิ่งส่งตรวจในช่องแล้วเลือกหรือคลิก tab</p>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                            <label class="label">ภาชนะสิ่งส่งตรวจ
+                                <input class="button is-small is-rounded is-info"
+                                       value="Add"
+                                       type="button"
+                                       onclick="addItem('#specimen_container')">
+                                </input>
+                            </label>
+                            <div class="control">
+                                <select class="js-example-basic-single" id="specimen_container"
+                                        name="specimen_container">
+                                    {% if test %}
+                                    <option value="{{ test.specimen_container.specimen_quantity }}" selected="selected">
+                                        {{ test.specimen_container.specimen_quantity }}
+                                    </option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                            <div class="field">
+                                <label class="label">ปริมาณสิ่งส่งตรวจ
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#quantity')">
+                                    </input>
+                                </label>
+                                <div class="control">
+                                    <select class="js-example-basic-single" id="quantity"
+                                            name="quantity">
+                                        {% if test %}
+                                        <option value="{{ test.quantity.specimen_quantity }}" selected="selected">
+                                            {{ test.quantity.specimen_quantity }}
+                                        </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">หน่วย
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#unit')">
+                                    </input>
+                                </label>
+                                <div class="control">
+                                    <select class="js-example-basic-single" id="unit"
+                                            name="unit">
+                                        {% if test %}
+                                        <option value="{{ test.quantity.unit }}" selected="selected">{{
+                                            test.quantity.unit }}
+                                        </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                            <input type="submit" value="Add"/>
+                        </form>
                 </div>
             </div>
         </div>
@@ -280,7 +304,6 @@
     $(document).ready(() => {
         $('#specimens').select2({
             width: '100%',
-            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_specimens') }}",
                 dataType: "json"
@@ -299,6 +322,22 @@
             tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_specimen_quantity_and_unit', mode='unit') }}",
+                dataType: "json"
+            }
+        });
+        $('#specimens_source').select2({
+            width: '100%',
+            tags: true,
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_specimens_sources') }}",
+                dataType: "json"
+            }
+        });
+        $('#specimen_container').select2({
+            width: '100%',
+            tags: true,
+            ajax: {
+                url: "{{ url_for('gj_test.get_all_containers') }}",
                 dataType: "json"
             }
         });
@@ -385,5 +424,14 @@
             ['view', ['fullscreen', 'codeview', 'help']]
         ]
     });
+</script>
+<script>
+    function onClearInput() {
+        $('#specimens').val(null).trigger('change');
+        $('#specimen_container').val(null).trigger('change');
+        $('#quantity').val(null).trigger('change');
+        $('#unit').val(null).trigger('change');
+    }
+    document.addEventListener('clearInput', onClearInput)
 </script>
 {% endblock %}
