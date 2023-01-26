@@ -10,6 +10,12 @@ test_specimen_assoc = db.Table('db_test_specimen_assoc_assoc',
                           db.Column('specimen_id', db.ForeignKey('gj_test_specimens.id'), primary_key=True)
                           )
 
+test_specimen_source_assoc = db.Table('db_test_specimen_source_assoc',
+                          db.Column('test_id', db.ForeignKey('gj_tests.id'), primary_key=True),
+                          db.Column('source_id', db.ForeignKey('gj_test_specimen_sources.id'), primary_key=True)
+                          )
+
+
 
 class GJTest(db.Model):
     __tablename__ = 'gj_tests'
@@ -47,12 +53,11 @@ class GJTest(db.Model):
     quantity_id = db.Column('quantity_id', db.ForeignKey('gj_test_specimen_quantities.id'))
     quantity = db.relationship('GJTestSpecimenQuantity', foreign_keys=[quantity_id],
                                     backref=db.backref('test_quantities', lazy='dynamic'))
-    container_id = db.Column('container_id', db.ForeignKey('gj_test_specimen_containers.id'))
-    container = db.relationship('GJTestSpecimenContainer', foreign_keys=[container_id],
-                               backref=db.backref('test_containers', lazy='dynamic'))
+    specimens_source = db.relationship('GJTestSpecimenSource', secondary=test_specimen_source_assoc,
+                                         lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
 
     def __str__(self):
-        return u'{}: {}'.format(self.specimens, self.quantity, self.container, self.specimen_transportation, self.test_date, self.test_location)
+        return u'{}: {}'.format(self.specimens, self.specimens_resource, self.quantity, self.specimen_transportation, self.test_date, self.test_location)
 
     def to_dict(self):
         return {
@@ -62,9 +67,9 @@ class GJTest(db.Model):
             'desc': self.desc,
             'prepare': self.prepare,
             'specimens': ','.join([sp.specimen for sp in self.specimens]),
+            'specimens_source': self.specimens_source,
             'waiting_period': self.waiting_period.waiting_time_normal if self.waiting_period else '',
             'quantity': self.quantity.specimen_quantity if self.quantity else '',
-            'container': self.container.specimen_container if self.container else '',
             'solution': self.solution,
             'test_date': self.test_date.test_date if self.test_date else '',
             'reporting_referral_values': self.reporting_referral_values,
@@ -207,6 +212,17 @@ class GJTestSpecimenContainer(db.Model):
             'id': self.specimen_container,
             'text': self.specimen_container
         }
+
+
+class GJTestSpecimenSource(db.Model):
+    __tablename__ = 'gj_test_specimen_sources'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    specimen_type = db.Column('specimen_type', db.String(), info={'label': u'ชนิดสิ่งส่งตรวจ'})
+    specimen_quantity = db.Column('specimen_quantity', db.String(), info={'label': u'ปริมาณสิ่งส่งตรวจ'})
+    specimen_container = db.Column('specimen_container', db.String(), info={'label': u'ภาชนะสิ่งส่งตรวจ'})
+
+    def __str__(self):
+        return u'{}:{}'.format(self.specimen_type, self.specimen_quantity, self.specimen_container)
 
 
 class User(UserMixin, db.Model):
