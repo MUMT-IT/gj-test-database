@@ -6,15 +6,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
 test_specimen_assoc = db.Table('db_test_specimen_assoc_assoc',
-                          db.Column('test_id', db.ForeignKey('gj_tests.id'), primary_key=True),
-                          db.Column('specimen_id', db.ForeignKey('gj_test_specimens.id'), primary_key=True)
-                          )
+                               db.Column('test_id', db.ForeignKey('gj_tests.id'), primary_key=True),
+                               db.Column('specimen_id', db.ForeignKey('gj_test_specimens.id'), primary_key=True)
+                               )
 
 test_specimen_source_assoc = db.Table('db_test_specimen_source_assoc',
-                          db.Column('test_id', db.ForeignKey('gj_tests.id'), primary_key=True),
-                          db.Column('source_id', db.ForeignKey('gj_test_specimen_sources.id'), primary_key=True)
-                          )
-
+                                      db.Column('test_id', db.ForeignKey('gj_tests.id'), primary_key=True),
+                                      db.Column('source_id', db.ForeignKey('gj_test_specimen_sources.id'),
+                                                primary_key=True)
+                                      )
 
 
 class GJTest(db.Model):
@@ -29,7 +29,8 @@ class GJTest(db.Model):
     test_date_id = db.Column('test_date_id', db.ForeignKey('gj_test_dates.id'))
     test_date = db.relationship('GJTestDate', backref=db.backref('test_dates', lazy='dynamic'))
     time_period_request_id = db.Column('time_period_request_id', db.ForeignKey('gj_test_time_period_requests.id'))
-    time_period_request = db.relationship('GJTestTimePeriodRequest', backref=db.backref('time_period_requests', lazy='dynamic'))
+    time_period_request = db.relationship('GJTestTimePeriodRequest',
+                                          backref=db.backref('time_period_requests', lazy='dynamic'))
     waiting_period_id = db.Column('waiting_period_id', db.ForeignKey('gj_test_waiting_periods.id'))
     waiting_period = db.relationship('GJTestWaitingPeriod', backref=db.backref('waiting_periods', lazy='dynamic'))
     reporting_referral_values = db.Column(db.Text(), info={'label': u'การรายงานผลและค่าอ้างอิง'})
@@ -41,26 +42,24 @@ class GJTest(db.Model):
     drop_off_location_id = db.Column('drop_off_location_id', db.ForeignKey('gj_test_locations.id'))
     drop_off_location = db.relationship('GJTestLocation', foreign_keys=[drop_off_location_id],
                                         backref=db.backref('location_drop_off', lazy='dynamic'))
-    specimen_transportation_id = db.Column('specimen_transportation_id', db.ForeignKey('gj_test_specimen_transportations.id'))
+    specimen_transportation_id = db.Column('specimen_transportation_id',
+                                           db.ForeignKey('gj_test_specimen_transportations.id'))
     specimen_transportation = db.relationship('GJTestSpecimenTransportation', foreign_keys=[specimen_transportation_id],
-                                        backref=db.backref('specimen_transportations', lazy='dynamic'))
+                                              backref=db.backref('specimen_transportations', lazy='dynamic'))
     status = db.Column('status', db.String(),
-                     info={'label': u'สถานะ', 'choices': [('None', '--Select Status--'),
-                                                          ('Avaliable', 'Avaliable'),
-                                                          ('Draft', 'Draft')]})
+                       info={'label': u'สถานะ', 'choices': [('None', '--Select Status--'),
+                                                            ('Avaliable', 'Avaliable'),
+                                                            ('Draft', 'Draft')]})
     specimens = db.relationship('GJTestSpecimen', secondary=test_specimen_assoc, lazy='subquery',
-                           backref=db.backref('gjtests', lazy=True))
+                                backref=db.backref('gjtests', lazy=True))
     quantity_id = db.Column('quantity_id', db.ForeignKey('gj_test_specimen_quantities.id'))
     quantity = db.relationship('GJTestSpecimenQuantity', foreign_keys=[quantity_id],
-                                    backref=db.backref('test_quantities', lazy='dynamic'))
+                               backref=db.backref('test_quantities', lazy='dynamic'))
     specimen_container_id = db.Column('specimen_container_id', db.ForeignKey('gj_test_specimen_containers.id'))
     specimen_container = db.relationship('GJTestSpecimenContainer', foreign_keys=[specimen_container_id],
-                               backref=db.backref('test_containers', lazy='dynamic'))
+                                         backref=db.backref('test_containers', lazy='dynamic'))
     specimens_source = db.relationship('GJTestSpecimenSource', secondary=test_specimen_source_assoc,
-                                         lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
-
-    def __str__(self):
-        return u'{}: {}'.format(self.specimens, self.specimens_resource, self.quantity, self.specimen_transportation, self.test_date, self.test_location)
+                                       lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
 
     def to_dict(self):
         return {
@@ -70,7 +69,6 @@ class GJTest(db.Model):
             'desc': self.desc,
             'prepare': self.prepare,
             'specimens': ','.join([sp.specimen for sp in self.specimens]),
-            'specimens_source': self.specimens_source,
             'waiting_period': self.waiting_period.waiting_time_normal if self.waiting_period else '',
             'quantity': self.quantity.specimen_quantity if self.quantity else '',
             'solution': self.solution,
@@ -146,7 +144,8 @@ class GJTestDate(db.Model):
 class GJTestTimePeriodRequest(db.Model):
     __tablename__ = 'gj_test_time_period_requests'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
-    time_period_request = db.Column('time_period_request', db.String(), info={'label': u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้'})
+    time_period_request = db.Column('time_period_request', db.String(),
+                                    info={'label': u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้'})
 
     def __str__(self):
         return u'{}'.format(self.time_period_request)
@@ -251,5 +250,3 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-
