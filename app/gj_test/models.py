@@ -74,7 +74,6 @@ class GJTestSpecimen(db.Model):
     __tablename__ = 'gj_test_specimens'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     specimen = db.Column('specimen', db.String(), info={'label': u'สิ่งส่งตรวจ'})
-    specimen_container = db.Column('specimen_container', db.String(), info={'label': u'ภาชนะสิ่งส่งตรวจ'})
 
     def __str__(self):
         return u'{}'.format(self.specimen)
