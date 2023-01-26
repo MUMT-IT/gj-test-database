@@ -53,6 +53,9 @@ class GJTest(db.Model):
     quantity_id = db.Column('quantity_id', db.ForeignKey('gj_test_specimen_quantities.id'))
     quantity = db.relationship('GJTestSpecimenQuantity', foreign_keys=[quantity_id],
                                     backref=db.backref('test_quantities', lazy='dynamic'))
+    specimen_container_id = db.Column('specimen_container_id', db.ForeignKey('gj_test_specimen_containers.id'))
+    specimen_container = db.relationship('GJTestSpecimenContainer', foreign_keys=[specimen_container_id],
+                               backref=db.backref('test_containers', lazy='dynamic'))
     specimens_source = db.relationship('GJTestSpecimenSource', secondary=test_specimen_source_assoc,
                                          lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
 
