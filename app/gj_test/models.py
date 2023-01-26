@@ -220,12 +220,15 @@ class GJTestSpecimenContainer(db.Model):
 class GJTestSpecimenSource(db.Model):
     __tablename__ = 'gj_test_specimen_sources'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
-    specimen_type = db.Column('specimen_type', db.String(), info={'label': u'ชนิดสิ่งส่งตรวจ'})
-    specimen_quantity = db.Column('specimen_quantity', db.String(), info={'label': u'ปริมาณสิ่งส่งตรวจ'})
-    specimen_container = db.Column('specimen_container', db.String(), info={'label': u'ภาชนะสิ่งส่งตรวจ'})
+    specimens_id = db.Column('specimens_id', db.ForeignKey('gj_test_specimens.id'))
+    specimens = db.relationship(GJTestSpecimen)
+    specimen_quantity_id = db.Column('specimen_quantity_id', db.ForeignKey('gj_test_specimen_quantities.id'))
+    specimen_quantity = db.relationship(GJTestSpecimenQuantity)
+    specimen_container_id = db.Column('specimen_container_id', db.ForeignKey('gj_test_specimen_containers.id'))
+    specimen_container = db.relationship(GJTestSpecimenContainer)
 
     def __str__(self):
-        return u'{}:{}'.format(self.specimen_type, self.specimen_quantity, self.specimen_container)
+        return u'{}:{}'.format(self.specimens, self.specimen_quantity, self.specimen_container)
 
 
 class User(UserMixin, db.Model):
