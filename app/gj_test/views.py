@@ -429,10 +429,14 @@ def add_many_tests():
                 specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent, \
                 reporting_referral_values, interference_analysis, time_period_request, caution, test_location = rec
 
-                specimen_ = GJTestSpecimen.query.filter_by(specimen=specimen,
-                                                           specimen_container=specimen_container).first()
+                specimen_ = GJTestSpecimen.query.filter_by(specimen=specimen).first()
                 if not specimen_:
-                    specimen_ = GJTestSpecimen(specimen=specimen, specimen_container=specimen_container)
+                    specimen_ = GJTestSpecimen(specimen=specimen)
+
+                specimen_container_ = GJTestSpecimenContainer.query.filter_by(specimen_container=specimen_container).first()
+                if not specimen_container_:
+                    specimen_container_ = GJTestSpecimenContainer(specimen_container=specimen_container)
+
                 specimen_quantity = str(specimen_quantity)
                 specimen_quantity_ = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=specimen_quantity,
                                                                             unit=unit).first()
@@ -476,6 +480,7 @@ def add_many_tests():
                         desc=desc,
                         prepare=prepare,
                         quantity=specimen_quantity_,
+                        specimen_container=specimen_container_,
                         specimen_transportation=specimen_transportation_,
                         drop_off_location=drop_off_location_,
                         solution=method,
