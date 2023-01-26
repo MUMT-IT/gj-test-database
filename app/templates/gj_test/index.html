@@ -2,49 +2,9 @@
 {% block head %}
 {{ super() }}
 <title>Index</title>
-<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
 {% endblock %}
 {% block page_content %}
-<!-- NavBar va a todo lo ancho -->
-<nav class="navbar" role="navigation" aria-label="main navigation">
-
-    <div class="navbar-menu">
-        <div class="navbar-end">
-            <div class="field is-grouped">
-                <p class="control">
-                    <a class="button is-small" href="{{ url_for('gj_test.register') }}">
-                        <span class="icon">
-                            <i class="fa fa-user-plus"></i>
-                        </span>
-                        <span>
-                            Register
-                        </span>
-                    </a>
-                </p>
-                <p class="control">
-                    <a class="button is-small is-info is-outlined" href="{{ url_for('gj_test.login') }}">
-                        <span class="icon">
-                            <i class="fa fa-user"></i>
-                        </span>
-                        <span>Login</span>
-                    </a>
-                </p>
-                <p class="control">
-                    <a class="button is-small is-info is-outlined" href="{{ url_for('gj_test.logout') }}">
-                         <span class="icon">
-                            <i class="fa fa-sign-out"></i>
-                        </span>
-                        <span>Logout</span>
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<section class="hero is-medium">
+<section class="section">
     <div class="columns">
         <div class="column has-text-centered">
             <h1 class="title">รายการทดสอบ</h1>
@@ -56,39 +16,19 @@
             <div class="column">
                 <table id="data" class="table is-fullwidth is-striped">
                     <thead>
-                        <th bgcolor="#B4DCFC">รหัสทดสอบ</th>
-                        <th bgcolor="#B4DCFC">ชื่อการทดสอบ</th>
-                        <th bgcolor="#B4DCFC">สิ่งส่งตรวจ</th>
-                        <th bgcolor="#B4DCFC">ระยะเวลารอผลปกติ</th>
-                        <th bgcolor="#B4DCFC">รายละเอียด</th>
+                        <th>รหัสทดสอบ</th>
+                        <th>ชื่อการทดสอบ</th>
+                        <th>สิ่งส่งตรวจ</th>
+                        <th>ระยะเวลารอผลปกติ</th>
+                        <th>รายละเอียด</th>
                     </thead>
                 </table>
             </div>
         </div>
     </div>
 </section>
-
-<!--<table class="table is-striped is-bordered">-->
-<!--  <tr>-->
-<!--    <td>One</td>-->
-<!--    <td>-->
-<!--      <button onclick="onViewClick(1)">view</button>-->
-<!--    </td>-->
-<!--  </tr>-->
-<!--  <tr>-->
-<!--    <td>Two</td>-->
-<!--    <td>-->
-<!--      <button onclick="onViewClick(2)">view</button>-->
-<!--    </td>-->
-<!--  </tr>-->
-<!--  <tr>-->
-<!--    <td>Three</td>-->
-<!--    <td>-->
-<!--      <button onclick="onViewClick(3)">view</button>-->
-<!--    </td>-->
-<!--  </tr>-->
-<!--</table>-->
 {% endblock %}
+{% block footer %}{% endblock %}
 {% block scripts %}
 {{ super() }}
 <script>
@@ -106,25 +46,6 @@
             ],
         });
     });
-</script>
-<script>
-  function onViewClick (dataId) {
-    fetch(`/api/demo/item/${dataId}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(response.statusText)
-        }
-        return response.json().then((data)=>{
-          Swal.fire({
-            title: `${data.title}'s info`,
-            text: data.message
-          })
-        })
-      })
-      .catch(error => {
-        Swal.showValidationMessage(`Request failed: ${error}`)
-      })
-  }
 </script>
 {% endblock %}
 

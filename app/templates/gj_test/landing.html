@@ -30,49 +30,7 @@
 </style>
 {% endblock %}
 {% block page_content %}
-<!-- NavBar va a todo lo ancho -->
-<nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a href="https://mt.mahidol.ac.th/en/home/">
-            <img src="{{ url_for('static', filename='img/mumt-logo.png') }}" alt="Logo" width="250">
-        </a>
-    </div>
-
-    <div class="navbar-menu">
-        <div class="navbar-end">
-            <div class="field is-grouped">
-                <p class="control">
-                    <a class="button is-small" href="{{ url_for('gj_test.register') }}">
-                        <span class="icon">
-                            <i class="fa fa-user-plus"></i>
-                        </span>
-                        <span>
-                            Register
-                        </span>
-                    </a>
-                </p>
-                <p class="control">
-                    <a class="button is-small is-info is-outlined" href="{{ url_for('gj_test.login') }}">
-                        <span class="icon">
-                            <i class="fa fa-user"></i>
-                        </span>
-                        <span>Login</span>
-                    </a>
-                </p>
-                <p class="control">
-                    <a class="button is-small is-info is-outlined" href="{{ url_for('gj_test.logout') }}">
-                         <span class="icon">
-                            <i class="fa fa-sign-out"></i>
-                        </span>
-                        <span>Logout</span>
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<!-- Hero del producto -->
+{% include "gj_test/nav.html" %}
 <section class="hero is-white is-fullheight">
     <div class="hero-body">
         <div class="container">
@@ -109,6 +67,7 @@
     </div>
 </section>
 <section class="hero is-medium">
+    {% include "messages.html" %}
     <div class="columns">
         <div class="column has-text-centered">
             <h1 class="title">รายการทดสอบ</h1>
