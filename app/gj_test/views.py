@@ -422,7 +422,7 @@ def add_many_tests():
 
                 test_date_ = GJTestDate.query.filter_by(test_date=test_date).first()
                 if not test_date_:
-                    test_date_ = GJTestDate(test_date_=test_date)
+                    test_date_ = GJTestDate(test_date=test_date)
 
                 waiting_time = GJTestWaitingPeriod.query.filter_by(waiting_time_normal=waiting_time_normal,
                                                                    waiting_time_urgent=waiting_time_urgent).first()
