@@ -20,8 +20,8 @@ test_specimen_source_assoc = db.Table('db_test_specimen_source_assoc',
 class GJTest(db.Model):
     __tablename__ = 'gj_tests'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
-    test_name = db.Column('test_name', db.String(), info={'label': u'ชื่อการทดสอบ'})
-    code = db.Column('code', db.String(), unique=True, info={'label': u'รหัส'})
+    test_name = db.Column('test_name', db.String(), info={'label': u'ชื่อการทดสอบ'}, nullable=False)
+    code = db.Column('code', db.String(), unique=True, info={'label': u'รหัส'}, nullable=False)
     desc = db.Column('desc', db.Text(), info={'label': u'ข้อบ่งชี้ในการส่งตรวจ'})
     prepare = db.Column(db.Text(), info={'label': u'การเตรียมผู้ป่วย'})
     created_at = db.Column('created_at', db.DateTime(timezone=True), server_default=func.now())
@@ -50,14 +50,6 @@ class GJTest(db.Model):
                        info={'label': u'สถานะ', 'choices': [('None', '--Select Status--'),
                                                             ('Avaliable', 'Avaliable'),
                                                             ('Draft', 'Draft')]})
-    specimens = db.relationship('GJTestSpecimen', secondary=test_specimen_assoc, lazy='subquery',
-                                backref=db.backref('gjtests', lazy=True))
-    quantity_id = db.Column('quantity_id', db.ForeignKey('gj_test_specimen_quantities.id'))
-    quantity = db.relationship('GJTestSpecimenQuantity', foreign_keys=[quantity_id],
-                               backref=db.backref('test_quantities', lazy='dynamic'))
-    specimen_container_id = db.Column('specimen_container_id', db.ForeignKey('gj_test_specimen_containers.id'))
-    specimen_container = db.relationship('GJTestSpecimenContainer', foreign_keys=[specimen_container_id],
-                                         backref=db.backref('test_containers', lazy='dynamic'))
     specimens_source = db.relationship('GJTestSpecimenSource', secondary=test_specimen_source_assoc,
                                        lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
 

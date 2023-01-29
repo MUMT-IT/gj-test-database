@@ -6,6 +6,7 @@ from flask_login import LoginManager, current_user
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_session import Session
 from flask_wtf import CSRFProtect
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
@@ -35,6 +36,8 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = ('MUMT-GJ',
                                      os.environ.get('MAIL_USERNAME'))
+app.config['SESSION_TYPE'] = 'filesystem'
+
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -43,6 +46,7 @@ login_manager.login_view = "gj_test.login"
 csrf = CSRFProtect(app)
 admin = Admin(app, index_view=MyAdminIndexView())
 mail = Mail(app)
+Session(app)
 
 from app.gj_test import gj_test_bp
 
