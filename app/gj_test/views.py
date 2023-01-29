@@ -1,10 +1,11 @@
 import os
 
-from flask import flash, redirect, url_for, render_template, request, jsonify, abort, send_from_directory
+from flask import flash, redirect, url_for, render_template, request, jsonify, send_from_directory, session, \
+    make_response
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_mail import Message
 from itsdangerous import TimedJSONWebSignatureSerializer
-from pandas import read_excel, isna, DataFrame
+from pandas import read_excel, DataFrame
 from werkzeug.utils import secure_filename
 
 from app import app, mail
@@ -36,11 +37,34 @@ def index():
 
 def add_new_item_from_select(fieldname, model, attribute, attrname):
     value = request.form.get(fieldname)
-    obj = model.query.filter(attribute==value).first()
+    obj = model.query.filter(attribute == value).first()
     if not obj:
         obj = model()
         setattr(obj, attrname, value)
     return obj
+
+
+@gj_test.route('/new-specimens/add', methods=['POST'])
+def add_specimens():
+    specimens = request.form.get('specimens')
+    specimen_container = request.form.get('specimen_container')
+    quantity = request.form.get('quantity')
+    unit = request.form.get('unit')
+    print(session['specimens_list'])
+    if 'specimens_list' in session:
+        session['specimens_list'].append((specimens, specimen_container, quantity, unit))
+    else:
+        session['specimens_list'] = [(specimens, specimen_container, quantity, unit)]
+
+    resp = '<table class="table is-narrow">'
+    for sp, c, q, u in session['specimens_list']:
+        resp += '''
+        <tr><td>{}</td><td>{}</td><td>{} {}</td></tr>
+        '''.format(sp, c, q, u)
+    resp += '</table>'
+    r = make_response(resp)
+    r.headers['HX-Trigger'] = 'clearInput'
+    return r
 
 
 @gj_test.route('/new-test/add', methods=['GET', 'POST'])
@@ -57,21 +81,36 @@ def add_test(test_id=None):
         if not test_id:
             new_test = GJTest()
             form.populate_obj(new_test)
-            for text in request.form.getlist('specimens'):
-                specimen = GJTestSpecimen.query.filter_by(specimen=text).first()
-                if specimen:
-                    new_test.specimens.append(specimen)
-                else:
-                    specimen = GJTestSpecimen(specimen=text)
-                    new_test.specimens.append(specimen)
-            quantity_value = request.form.get('quantity')
-            unit_value = request.form.get('unit')
-            specimen_quantity_and_unit = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=quantity_value,
-                                                                                unit=unit_value).first()
-            if not specimen_quantity_and_unit:
-                specimen_quantity_and_unit = GJTestSpecimenQuantity(specimen_quantity=quantity_value,
-                                                                    unit=unit_value)
-            new_test.quantity = specimen_quantity_and_unit
+            print(session['specimens_list'])
+            for s, c, q, u in session['specimens_list']:
+                specimen = GJTestSpecimen.query.filter_by(specimen=s).first()
+                if not specimen:
+                    specimen = GJTestSpecimen(specimen=s)
+
+                container = GJTestSpecimenContainer.query.filter_by(specimen_container=c).first()
+                if not container:
+                    container = GJTestSpecimenContainer(specimen_container=c)
+
+                quantity = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=q,
+                                                                  unit=u).first()
+                if not quantity:
+                    quantity = GJTestSpecimenQuantity(specimen_quantity=q,
+                                                      unit=u)
+                db.session.add(specimen)
+                db.session.add(quantity)
+                db.session.add(container)
+                db.session.commit()
+
+                specimen_source_ = GJTestSpecimenSource.query.filter(GJTestSpecimenSource.specimens == specimen,
+                                                                     GJTestSpecimenSource.specimen_quantity == quantity,
+                                                                     GJTestSpecimenSource.specimen_container == container).first()
+                if not specimen_source_:
+                    specimen_source_ = GJTestSpecimenSource(specimens=specimen,
+                                                            specimen_quantity=quantity,
+                                                            specimen_container=container)
+                new_test.specimens_source.append(specimen_source_)
+                print(specimen_source_.specimens)
+            # del session['specimens_list']
 
             transport_date_time = add_new_item_from_select('specimen_transportation',
                                                            GJTestSpecimenTransportation,
@@ -107,9 +146,9 @@ def add_test(test_id=None):
             new_test.time_period_request = time_period_request_
 
             test_location_ = add_new_item_from_select('test_location',
-                                                          GJTestLocation,
-                                                          GJTestLocation.location,
-                                                          'location')
+                                                      GJTestLocation,
+                                                      GJTestLocation.location,
+                                                      'location')
             new_test.test_location = test_location_
 
             db.session.add(new_test)
@@ -129,6 +168,18 @@ def add_test(test_id=None):
 def get_all_specimens():
     specimens = [specimen.to_dict() for specimen in GJTestSpecimen.query.all()]
     return jsonify({'results': specimens})
+
+
+@gj_test.route('api/v1.0/specimens_sources', methods=['GET'])
+def get_all_specimens_sources():
+    specimens_sources = [specimens_source.to_dict() for specimens_source in GJTestSpecimenSource.query.all()]
+    return jsonify({'results': specimens_sources})
+
+
+@gj_test.route('api/v1.0/containers', methods=['GET'])
+def get_all_containers():
+    containers = [specimen_container.to_dict() for specimen_container in GJTestSpecimenContainer.query.all()]
+    return jsonify({'results': containers})
 
 
 @gj_test.route('api/v1.0/specimen_quantity_and_unit/<mode>')
@@ -170,7 +221,8 @@ def get_all_waiting_time(mode):
 
 @gj_test.route('api/v1.0/time_period_requests', methods=['GET'])
 def get_all_time_period_requests():
-    time_period_requests = [time_period_request.to_dict() for time_period_request in GJTestTimePeriodRequest.query.all()]
+    time_period_requests = [time_period_request.to_dict() for time_period_request in
+                            GJTestTimePeriodRequest.query.all()]
     return jsonify({'results': time_period_requests})
 
 
@@ -309,7 +361,7 @@ def get_tests_view_data():
     data = []
     for test in query:
         test_data = test.to_dict()
-        test_data['view'] = '<a href="{}" class="button is-small is-rounded is-info is-outlined">ดูข้อมูล</a>'\
+        test_data['view'] = '<a href="{}" class="button is-small is-rounded is-info is-outlined">ดูข้อมูล</a>' \
             .format(url_for('gj_test.view_info_test', test_id=test.id))
         data.append(test_data)
     return jsonify({'data': data,
@@ -317,31 +369,6 @@ def get_tests_view_data():
                     'recordsTotal': GJTest.query.count(),
                     'draw': request.args.get('draw', type=int),
                     })
-
-
-# @gj_test.route('api/demo/item/<int:dataid>')
-# def get_data_info(dataid):
-#     data = [
-#         {
-#             'id': 1,
-#             'title': 'One',
-#             'message': 'Item 1'
-#         },
-#         {
-#             'id': 2,
-#             'title': 'Two',
-#             'message': 'Item 2'
-#         },
-#         {
-#             'id': 3,
-#             'title': 'Three',
-#             'message': 'Item 3'
-#         },
-#     ]
-#     for item in data:
-#         if item['id'] == dataid:
-#             return jsonify(item)
-#     return jsonify({})
 
 
 @gj_test.route('/info-tests/view/<int:test_id>')
@@ -399,12 +426,17 @@ def add_many_tests():
             df = read_excel(upfile)
             for idx, rec in df.iterrows():
                 no, test_name, code, desc, prepare, specimen, specimen_quantity, unit, specimen_container, \
-                specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent,\
+                specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent, \
                 reporting_referral_values, interference_analysis, time_period_request, caution, test_location = rec
 
-                specimen_ = GJTestSpecimen.query.filter_by(specimen=specimen, specimen_container=specimen_container).first()
+                specimen_ = GJTestSpecimen.query.filter_by(specimen=specimen).first()
                 if not specimen_:
-                    specimen_ = GJTestSpecimen(specimen=specimen, specimen_container=specimen_container)
+                    specimen_ = GJTestSpecimen(specimen=specimen)
+
+                specimen_container_ = GJTestSpecimenContainer.query.filter_by(specimen_container=specimen_container).first()
+                if not specimen_container_:
+                    specimen_container_ = GJTestSpecimenContainer(specimen_container=specimen_container)
+
                 specimen_quantity = str(specimen_quantity)
                 specimen_quantity_ = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=specimen_quantity,
                                                                             unit=unit).first()
@@ -412,7 +444,8 @@ def add_many_tests():
                     specimen_quantity_ = GJTestSpecimenQuantity(specimen_quantity=specimen_quantity,
                                                                 unit=unit)
 
-                specimen_transportation_ = GJTestSpecimenTransportation.query.filter_by(specimen_date_time=specimen_date_time).first()
+                specimen_transportation_ = GJTestSpecimenTransportation.query.filter_by(
+                    specimen_date_time=specimen_date_time).first()
                 if not specimen_transportation_:
                     specimen_transportation_ = GJTestSpecimenTransportation(specimen_date_time=specimen_date_time)
 
@@ -422,7 +455,7 @@ def add_many_tests():
 
                 test_date_ = GJTestDate.query.filter_by(test_date=test_date).first()
                 if not test_date_:
-                    test_date_ = GJTestDate(test_date_=test_date)
+                    test_date_ = GJTestDate(test_date=test_date)
 
                 waiting_time = GJTestWaitingPeriod.query.filter_by(waiting_time_normal=waiting_time_normal,
                                                                    waiting_time_urgent=waiting_time_urgent).first()
@@ -430,7 +463,8 @@ def add_many_tests():
                     waiting_time = GJTestWaitingPeriod(waiting_time_normal=waiting_time_normal,
                                                        waiting_time_urgent=waiting_time_urgent)
 
-                time_period_request_ = GJTestTimePeriodRequest.query.filter_by(time_period_request=time_period_request).first()
+                time_period_request_ = GJTestTimePeriodRequest.query.filter_by(
+                    time_period_request=time_period_request).first()
                 if not time_period_request_:
                     time_period_request_ = GJTestTimePeriodRequest(time_period_request=time_period_request)
 
@@ -446,6 +480,7 @@ def add_many_tests():
                         desc=desc,
                         prepare=prepare,
                         quantity=specimen_quantity_,
+                        specimen_container=specimen_container_,
                         specimen_transportation=specimen_transportation_,
                         drop_off_location=drop_off_location_,
                         solution=method,

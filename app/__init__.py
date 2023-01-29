@@ -21,7 +21,11 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config.from_prefixed_env()
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres', 'postgresql')
+database_url = os.environ.get('DATABASE_URL')
+if database_url.startswith('postgresql'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres', 'postgresql')
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(seconds=20)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -49,6 +53,7 @@ from app.gj_test.models import *
 admin.add_views(ModelView(GJTest, db.session, category='Test'))
 admin.add_views(ModelView(GJTestSpecimen, db.session, category='Test'))
 admin.add_views(ModelView(GJTestSpecimenQuantity, db.session, category='Test'))
+admin.add_views(ModelView(GJTestSpecimenContainer, db.session, category='Test'))
 admin.add_views(ModelView(GJTestSpecimenTransportation, db.session, category='Test'))
 admin.add_views(ModelView(GJTestLocation, db.session, category='Test'))
 admin.add_views(ModelView(GJTestDate, db.session, category='Test'))
