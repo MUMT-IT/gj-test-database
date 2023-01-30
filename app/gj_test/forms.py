@@ -56,14 +56,15 @@ class LoginForm(ModelForm):
 
 class RegisterForm(ModelForm):
     username = StringField('Username',
-            validators=[DataRequired(), Length(min=3, max=32)])
+                           validators=[DataRequired(), Length(min=3, max=32)])
     email = StringField('Email',
-            validators=[DataRequired(), Email(), Length(min=6, max=40)])
+                        validators=[DataRequired(), Email(), Length(min=6, max=40)])
     password = PasswordField('Password',
-            validators=[DataRequired(), Length(min=8, max=64)])
+                             validators=[DataRequired(), Length(min=8, max=64)])
     confirm = PasswordField('Verify password',
-            validators=[DataRequired(), EqualTo('password',
-            message='Passwords must match')])
+                            validators=[DataRequired(),
+                                        EqualTo('password',
+                                                message='Passwords must match')])
 
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
@@ -122,5 +123,3 @@ class TestDateForm(ModelForm):
 class SpecimenTransportationForm(ModelForm):
     class Meta:
         model = GJTestSpecimenTransportation
-
-

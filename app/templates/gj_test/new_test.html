@@ -216,7 +216,28 @@
                             </div>
                         </div>
                     </form>
-                    <div id="specimen_list"></div>
+                    <div id="specimen_list">
+                        <table class="table is-narrow is-striped">
+                            <thead>
+                            <th>ชนิด</th>
+                            <th>ภาชนะ</th>
+                            <th>ปริมาณ</th>
+                            <th></th>
+                            </thead>
+                            <tbody>
+                            {% for source in test.specimens_source %}
+                            <tr>
+                                <td>{{source.specimens}}</td>
+                                <td>{{source.specimen_container}}</td>
+                                <td>{{source.specimen_quantity}}</td>
+                                <td>
+                                    <button class="button is-rounded is-small is-danger">X</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                     <form id="specimens_form" hx-post="{{ url_for('gj_test.add_specimens') }}" hx-target="#specimen_list" hx-swap="innerHTML">
                         <input type="hidden" value="{{ csrf_token() }}" name="csrf_token">
                         <div class="field">
