@@ -6,6 +6,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 from flask_mail import Message
 from itsdangerous import TimedJSONWebSignatureSerializer
 from pandas import read_excel, DataFrame
+from sqlalchemy import and_
 from werkzeug.utils import secure_filename
 
 from app import app, mail
@@ -514,7 +515,8 @@ def add_many_tests():
                     test_location_ = GJTestLocation(location=test_location)
 
                 specimen_source_ = GJTestSpecimenSource.query.filter(GJTestSpecimenSource.specimens == specimen_obj,
-                                                                     GJTestSpecimenSource.specimen_quantity == specimen_quantity_obj,
+                                                                     and_(GJTestSpecimenSource.specimen_quantity == specimen_quantity_obj,
+                                                                     GJTestSpecimenSource.specimen_quantity.has(unit=unit)),
                                                                      GJTestSpecimenSource.specimen_container == specimen_container_obj).first()
                 if not specimen_source_:
                     specimen_source_ = GJTestSpecimenSource(specimens=specimen_obj,
