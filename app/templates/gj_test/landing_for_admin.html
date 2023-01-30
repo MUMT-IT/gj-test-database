@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+<title>Landing for Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+{% endblock %}
+{% block page_content %}
+<section class="hero is-fullheight">
+    <div class="hero-body">
+        <img src="{{ url_for('static', filename='img/photo.jpeg') }}" width="750">
+        <div class="container has-text-centered">
+            <div class="column is-6 is-offset-3">
+                <h1 class="title is-1 ">Welcome to</h1>
+                <h2 class="subtitle">List of tests available <br> at Golden Jubilee Medical Center.
+                </h2>
+                <a class="button is-primary is-outlined" href="{{ url_for('gj_test.login') }}">
+                    <span class="icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </span>
+                    <span>Login</span>
+                </a>&ensp;
+                <a class="button is-danger is-outlined" href="{{ url_for('gj_test.register') }}">
+                    <span class="icon">
+                        <i class="fas fa-registered"></i>
+                    </span>
+                    <span>Register</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+
+{% endblock %}

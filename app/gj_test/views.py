@@ -24,7 +24,7 @@ def send_mail(recp, title, message):
     mail.send(message)
 
 
-@gj_test.route('/')
+@gj_test.route('/landing')
 @login_required
 def landing():
     return render_template('gj_test/landing.html')
@@ -33,6 +33,11 @@ def landing():
 @gj_test.route('/index')
 def index():
     return render_template('gj_test/index.html')
+
+
+@gj_test.route('/')
+def landing_for_admin():
+    return render_template('gj_test/landing_for_admin.html')
 
 
 def add_new_item_from_select(fieldname, model, attribute, attrname):
