@@ -50,23 +50,32 @@ def add_new_item_from_select(fieldname, model, attribute, attrname):
 
 
 @gj_test.route('/new-specimens/add', methods=['POST'])
+@login_required
 def add_specimens():
     specimens = request.form.get('specimens')
     specimen_container = request.form.get('specimen_container')
     quantity = request.form.get('quantity')
     unit = request.form.get('unit')
-    print(session['specimens_list'])
     if 'specimens_list' in session:
         session['specimens_list'].append((specimens, specimen_container, quantity, unit))
     else:
         session['specimens_list'] = [(specimens, specimen_container, quantity, unit)]
 
     resp = '<table class="table is-narrow">'
+    resp += '''
+        <thead>
+        <th>ชนิด</th>
+        <th>ภาชนะ</th>
+        <th>ปริมาณ</th>
+        <th></th>
+        </thead>
+        <tbody>
+    '''
     for sp, c, q, u in session['specimens_list']:
         resp += '''
         <tr><td>{}</td><td>{}</td><td>{} {}</td></tr>
         '''.format(sp, c, q, u)
-    resp += '</table>'
+    resp += '</tbody></table>'
     r = make_response(resp)
     r.headers['HX-Trigger'] = 'clearInput'
     return r
@@ -74,10 +83,49 @@ def add_specimens():
 
 @gj_test.route('/new-test/add', methods=['GET', 'POST'])
 @gj_test.route('/new-test/<int:test_id>/edit', methods=['GET', 'POST'])
+@login_required
 def add_test(test_id=None):
+    def add_specimens_source():
+        for s, c, q, u in session['specimens_list']:
+            specimen = GJTestSpecimen.query.filter_by(specimen=s).first()
+            if not specimen:
+                specimen = GJTestSpecimen(specimen=s)
+
+            container = GJTestSpecimenContainer.query.filter_by(specimen_container=c).first()
+            if not container:
+                container = GJTestSpecimenContainer(specimen_container=c)
+
+            quantity = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=q,
+                                                              unit=u).first()
+            if not quantity:
+                quantity = GJTestSpecimenQuantity(specimen_quantity=q,
+                                                  unit=u)
+            db.session.add(specimen)
+            db.session.add(quantity)
+            db.session.add(container)
+            db.session.commit()
+
+            specimen_source_ = GJTestSpecimenSource.query.filter(GJTestSpecimenSource.specimens == specimen,
+                                                                 GJTestSpecimenSource.specimen_quantity == quantity,
+                                                                 GJTestSpecimenSource.specimen_container == container).first()
+            if not specimen_source_:
+                specimen_source_ = GJTestSpecimenSource(specimens=specimen,
+                                                        specimen_quantity=quantity,
+                                                        specimen_container=container)
+            yield specimen_source_
+
     if test_id:
         test = GJTest.query.get(test_id)
         form = TestListForm(obj=test)
+        specimens_list = session.get('specimens_list', [])
+        if not specimens_list:
+            for source in test.specimens_source:
+                specimens_list.append([str(source.specimens),
+                                       str(source.specimen_container),
+                                       str(source.specimen_quantity.specimen_quantity),
+                                       str(source.specimen_quantity.unit),
+                                       ])
+            session['specimens_list'] = specimens_list
     else:
         form = TestListForm()
         test = None
@@ -86,36 +134,9 @@ def add_test(test_id=None):
         if not test_id:
             new_test = GJTest()
             form.populate_obj(new_test)
-            print(session['specimens_list'])
-            for s, c, q, u in session['specimens_list']:
-                specimen = GJTestSpecimen.query.filter_by(specimen=s).first()
-                if not specimen:
-                    specimen = GJTestSpecimen(specimen=s)
-
-                container = GJTestSpecimenContainer.query.filter_by(specimen_container=c).first()
-                if not container:
-                    container = GJTestSpecimenContainer(specimen_container=c)
-
-                quantity = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=q,
-                                                                  unit=u).first()
-                if not quantity:
-                    quantity = GJTestSpecimenQuantity(specimen_quantity=q,
-                                                      unit=u)
-                db.session.add(specimen)
-                db.session.add(quantity)
-                db.session.add(container)
-                db.session.commit()
-
-                specimen_source_ = GJTestSpecimenSource.query.filter(GJTestSpecimenSource.specimens == specimen,
-                                                                     GJTestSpecimenSource.specimen_quantity == quantity,
-                                                                     GJTestSpecimenSource.specimen_container == container).first()
-                if not specimen_source_:
-                    specimen_source_ = GJTestSpecimenSource(specimens=specimen,
-                                                            specimen_quantity=quantity,
-                                                            specimen_container=container)
-                new_test.specimens_source.append(specimen_source_)
-                print(specimen_source_.specimens)
-            # del session['specimens_list']
+            for source in add_specimens_source():
+                new_test.specimens_source.append(source)
+            del session['specimens_list']
 
             transport_date_time = add_new_item_from_select('specimen_transportation',
                                                            GJTestSpecimenTransportation,
@@ -159,7 +180,10 @@ def add_test(test_id=None):
             db.session.add(new_test)
         else:
             form.populate_obj(test)
+            for source in add_specimens_source():
+                test.specimens_source.append(source)
             db.session.add(test)
+            del session['specimens_list']
         db.session.commit()
         flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
         return redirect(url_for('gj_test.view_tests'))
@@ -170,24 +194,28 @@ def add_test(test_id=None):
 
 
 @gj_test.route('api/v1.0/specimens', methods=['GET'])
+@login_required
 def get_all_specimens():
     specimens = [specimen.to_dict() for specimen in GJTestSpecimen.query.all()]
     return jsonify({'results': specimens})
 
 
 @gj_test.route('api/v1.0/specimens_sources', methods=['GET'])
+@login_required
 def get_all_specimens_sources():
     specimens_sources = [specimens_source.to_dict() for specimens_source in GJTestSpecimenSource.query.all()]
     return jsonify({'results': specimens_sources})
 
 
 @gj_test.route('api/v1.0/containers', methods=['GET'])
+@login_required
 def get_all_containers():
     containers = [specimen_container.to_dict() for specimen_container in GJTestSpecimenContainer.query.all()]
     return jsonify({'results': containers})
 
 
 @gj_test.route('api/v1.0/specimen_quantity_and_unit/<mode>')
+@login_required
 def get_all_specimen_quantity_and_unit(mode):
     if mode == "specimen_quantity":
         data = [q.quantity_to_dict() for q in GJTestSpecimenQuantity.query.all()]
@@ -197,6 +225,7 @@ def get_all_specimen_quantity_and_unit(mode):
 
 
 @gj_test.route('api/v1.0/specimen_transportations', methods=['GET'])
+@login_required
 def get_all_specimen_transportations():
     specimen_transportations = [specimen_transportation.to_dict() for specimen_transportation in
                                 GJTestSpecimenTransportation.query.all()]
@@ -204,18 +233,21 @@ def get_all_specimen_transportations():
 
 
 @gj_test.route('api/v1.0/drop_off_locations', methods=['GET'])
+@login_required
 def get_all_drop_off_locations():
     drop_off_locations = [location.to_dict() for location in GJTestLocation.query.all()]
     return jsonify({'results': drop_off_locations})
 
 
 @gj_test.route('api/v1.0/test_dates', methods=['GET'])
+@login_required
 def get_all_test_dates():
     test_dates = [test_date.to_dict() for test_date in GJTestDate.query.all()]
     return jsonify({'results': test_dates})
 
 
 @gj_test.route('api/v1.0/waiting_time/<mode>')
+@login_required
 def get_all_waiting_time(mode):
     if mode == "normal":
         data = [w.normal_to_dict() for w in GJTestWaitingPeriod.query.all()]
@@ -225,6 +257,7 @@ def get_all_waiting_time(mode):
 
 
 @gj_test.route('api/v1.0/time_period_requests', methods=['GET'])
+@login_required
 def get_all_time_period_requests():
     time_period_requests = [time_period_request.to_dict() for time_period_request in
                             GJTestTimePeriodRequest.query.all()]
@@ -232,6 +265,7 @@ def get_all_time_period_requests():
 
 
 @gj_test.route('api/v1.0/test_locations', methods=['GET'])
+@login_required
 def get_all_test_locations():
     test_locations = [location.to_dict() for location in GJTestLocation.query.all()]
     return jsonify({'results': test_locations})
@@ -259,12 +293,12 @@ def login():
 
 
 @gj_test.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('gj_test.login'))
 
 
-@csrf.exempt
 @gj_test.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm()
@@ -351,6 +385,7 @@ def view_tests():
 
 
 @gj_test.route('/api/view-tests')
+@login_required
 def get_tests_view_data():
     query = GJTest.query
     search = request.args.get('search[value]')
@@ -419,6 +454,7 @@ def download_test_template():
 
 
 @gj_test.route('tests/add-many', methods=['GET', 'POST'])
+@login_required
 def add_many_tests():
     form = TestListForm()
     if request.method == 'POST':
