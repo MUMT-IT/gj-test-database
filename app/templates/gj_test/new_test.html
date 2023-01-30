@@ -9,7 +9,6 @@
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><a href="{{ url_for('gj_test.landing') }}">หน้าหลัก</a></li>
                 <li><a href="{{ url_for('gj_test.view_tests') }}">ดูข้อมูล</a></li>
                 <li class="is-active"><a href="#" aria-current="page">เพิ่มข้อมูล</a></li>
             </ul>
@@ -325,6 +324,7 @@
     $(document).ready(() => {
         $('#specimens').select2({
             width: '100%',
+            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_specimens') }}",
                 dataType: "json"
