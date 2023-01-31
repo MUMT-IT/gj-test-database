@@ -31,6 +31,7 @@
 {% endblock %}
 {% block page_content %}
 {% include "gj_test/nav.html" %}
+{% include "messages.html" %}
 <section class="hero is-white is-fullheight">
     <div class="hero-body">
         <div class="container">
@@ -67,7 +68,6 @@
     </div>
 </section>
 <section class="hero is-medium">
-    {% include "messages.html" %}
     <div class="columns">
         <div class="column has-text-centered">
             <h1 class="title">รายการทดสอบ</h1>
@@ -80,7 +80,6 @@
                     <thead>
                         <th bgcolor="#B4DCFC">รหัสทดสอบ</th>
                         <th bgcolor="#B4DCFC">ชื่อการทดสอบ</th>
-                        <th bgcolor="#B4DCFC">สิ่งส่งตรวจ</th>
                         <th bgcolor="#B4DCFC">ระยะเวลารอผลปกติ</th>
                         <th bgcolor="#B4DCFC">รายละเอียด</th>
                     </thead>
@@ -108,11 +107,11 @@
 {{ super() }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/TypewriterJS/2.13.1/core.min.js"></script>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-<script src="sweetalert2.min.js"></script>
-<link rel="stylesheet" href="sweetalert2.min.css">
 <script>
     new Typewriter('#typewriter', {
-        strings: ['รหัสทดสอบ', 'ชื่อการทดสอบ', 'สิ่งส่งตรวจ', 'รายงานผล'],
+        strings: ['รหัสทดสอบ', 'ชื่อการทดสอบ', 'สิ่งส่งตรวจ', 'ข้อบ่งชี้ในการส่งตรวจ', 'การเตรียมผู้ป่วย', 'วัน/เวลา',
+            'สถานที่', 'วิธี/หลักการ', 'วันที่ทำการทดสอบ', 'ระยะเวลารอผล(ปกติ)', 'ระยะเวลารอผล(ด่วน)', 'การรายงานผลและค่าอ้างอิง',
+            'ระยะเวลาที่สามารถขอตรวจเพิ่มได้', 'สิ่งรบกวนต่อการตรวจวิเคราะห์', 'ข้อควรระวังและอื่นๆ', 'สถานที่ทำการทดสอบ'],
         autoStart: true,
         loop: true,
     });
@@ -131,21 +130,12 @@
             columns: [
                 {data: 'code'},
                 {data: 'test_name'},
-                {data: 'specimens'},
                 {data: 'waiting_period'},
                 {data: 'view'}
             ],
         });
     });
 </script>
-<!--<script>-->
-<!--     Swal.fire({-->
-<!--      icon: 'error',-->
-<!--      title: 'Oops...',-->
-<!--      text: 'Something went wrong!',-->
-<!--      footer: '<a href="">Why do I have this issue?</a>'-->
-<!--    })-->
-<!--</script>-->
 {% endblock %}
 
 
