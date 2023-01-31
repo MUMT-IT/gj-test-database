@@ -107,11 +107,11 @@
 {{ super() }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/TypewriterJS/2.13.1/core.min.js"></script>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-<script src="sweetalert2.min.js"></script>
-<link rel="stylesheet" href="sweetalert2.min.css">
 <script>
     new Typewriter('#typewriter', {
-        strings: ['รหัสทดสอบ', 'ชื่อการทดสอบ', 'สิ่งส่งตรวจ', 'รายงานผล'],
+        strings: ['รหัสทดสอบ', 'ชื่อการทดสอบ', 'สิ่งส่งตรวจ', 'ข้อบ่งชี้ในการส่งตรวจ', 'การเตรียมผู้ป่วย', 'วัน/เวลา',
+            'สถานที่', 'วิธี/หลักการ', 'วันที่ทำการทดสอบ', 'ระยะเวลารอผล(ปกติ)', 'ระยะเวลารอผล(ด่วน)', 'การรายงานผลและค่าอ้างอิง',
+            'ระยะเวลาที่สามารถขอตรวจเพิ่มได้', 'สิ่งรบกวนต่อการตรวจวิเคราะห์', 'ข้อควรระวังและอื่นๆ', 'สถานที่ทำการทดสอบ'],
         autoStart: true,
         loop: true,
     });
@@ -136,14 +136,6 @@
         });
     });
 </script>
-<!--<script>-->
-<!--     Swal.fire({-->
-<!--      icon: 'error',-->
-<!--      title: 'Oops...',-->
-<!--      text: 'Something went wrong!',-->
-<!--      footer: '<a href="">Why do I have this issue?</a>'-->
-<!--    })-->
-<!--</script>-->
 {% endblock %}
 
 
