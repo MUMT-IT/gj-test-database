@@ -242,10 +242,19 @@ def get_all_containers():
 @gj_test.route('api/v1.0/specimen_quantity_and_unit/<mode>')
 @login_required
 def get_all_specimen_quantity_and_unit(mode):
+    data = []
     if mode == "specimen_quantity":
-        data = [q.quantity_to_dict() for q in GJTestSpecimenQuantity.query.all()]
+        for source in GJTestSpecimenQuantity.query.all():
+            data.append({
+                'id': source.id,
+                'text': u'{}'.format(source.specimen_quantity)
+            })
     else:
-        data = [q.unit_to_dict() for q in GJTestSpecimenQuantity.query.all()]
+        for source in GJTestSpecimenQuantity.query.all():
+            data.append({
+                'id': source.id,
+                'text': u'{}'.format(source.unit)
+            })
     return jsonify({'results': data})
 
 
