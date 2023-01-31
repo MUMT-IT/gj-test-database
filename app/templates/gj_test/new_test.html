@@ -22,6 +22,89 @@
         <div class="columns">
             <div class="column is-10 is-offset-1">
                 <div class="box">
+                    <div id="specimen_list">
+                        <table class="table is-narrow is-striped">
+                            <thead>
+                            <th>ชนิด</th>
+                            <th>ภาชนะ</th>
+                            <th>ปริมาณ</th>
+                            <th></th>
+                            </thead>
+                            <tbody>
+                            {% for source in test.specimens_source %}
+                            <tr>
+                                <td>{{source.specimens}}</td>
+                                <td>{{source.specimen_container}}</td>
+                                <td>{{source.specimen_quantity}}</td>
+                                <td>
+                                    <button class="button is-rounded is-small is-danger" hx-delete="{{ url_for('gj_test.delete_specimens',
+                                    ind=loop.index0)}}">X
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <form id="specimens_form" hx-post="{{ url_for('gj_test.add_specimens') }}"
+                          hx-target="#specimen_list" hx-swap="innerHTML">
+                        <input type="hidden" value="{{ csrf_token() }}" name="csrf_token">
+                        <div class="field">
+                            <label class="label">ชนิดสิ่งส่งตรวจ</label>
+                            <select class="js-example-basic-multiple" id="specimens" name="specimens"></select>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <label class="label">ภาชนะสิ่งส่งตรวจ
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#specimen_container')">
+                                    </input>
+                                </label>
+                                <div class="control">
+                                    <select class="js-example-basic-single" id="specimen_container"
+                                            name="specimen_container">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">ปริมาณสิ่งส่งตรวจ
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#quantity')">
+                                    </input>
+                                </label>
+                                <div class="control">
+                                    <select class="js-example-basic-single" id="quantity"
+                                            name="quantity">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">หน่วย
+                                    <input class="button is-small is-rounded is-info"
+                                           value="Add"
+                                           type="button"
+                                           onclick="addItem('#unit')">
+                                    </input>
+                                </label>
+                                <div class="control">
+                                    <select class="js-example-basic-single" id="unit"
+                                            name="unit">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field"><br>
+                            <div class="buttons is-centered">
+                                <button class="button is-success" type="submit" value="Add">เพิ่มสิ่งส่งตรวจ</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr width=50% size=5 color=770088>
+                    <br>
                     <form method="post">
                         {{ form.hidden_tag() }}
                         <div class="field">
@@ -97,7 +180,7 @@
                         <div class="field">
                             <label class="label">{{ form.solution.label }}</label>
                             <div class="control">
-                                {{ form.solution(class="input") }}
+                                {{ form.solution(class="textarea") }}
                             </div>
                         </div>
                         <div class="field">
@@ -215,102 +298,6 @@
                             </div>
                         </div>
                     </form>
-                    <div id="specimen_list">
-                        <table class="table is-narrow is-striped">
-                            <thead>
-                            <th>ชนิด</th>
-                            <th>ภาชนะ</th>
-                            <th>ปริมาณ</th>
-                            <th></th>
-                            </thead>
-                            <tbody>
-                            {% for source in test.specimens_source %}
-                            <tr>
-                                <td>{{source.specimens}}</td>
-                                <td>{{source.specimen_container}}</td>
-                                <td>{{source.specimen_quantity}}</td>
-                                <td>
-                                    <button class="button is-rounded is-small is-danger">X</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <form id="specimens_form" hx-post="{{ url_for('gj_test.add_specimens') }}" hx-target="#specimen_list" hx-swap="innerHTML">
-                        <input type="hidden" value="{{ csrf_token() }}" name="csrf_token">
-                        <div class="field">
-                            <label class="label">ชนิดสิ่งส่งตรวจ</label>
-                            <select class="js-example-basic-multiple" id="specimens" name="specimens">
-                                {% for sp in test.specimens %}
-                                <option value="{{ sp.specimen }}" selected="selected">{{ sp.specimen }}</option>
-                                {% endfor %}
-                            </select>
-                            <p class="help is-danger">ชนิดสิ่งส่งตรวจสามารถเลือกได้มากกว่า 1 รายการ
-                                กรณีที่ต้องการเพิ่มสิ่งส่งตรวจใหม่
-                                สามารถพิมพ์สิ่งส่งตรวจในช่องแล้วเลือกหรือคลิก tab</p>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                            <label class="label">ภาชนะสิ่งส่งตรวจ
-                                <input class="button is-small is-rounded is-info"
-                                       value="Add"
-                                       type="button"
-                                       onclick="addItem('#specimen_container')">
-                                </input>
-                            </label>
-                            <div class="control">
-                                <select class="js-example-basic-single" id="specimen_container"
-                                        name="specimen_container">
-                                    {% if test %}
-                                    <option value="{{ test.specimen_container.specimen_quantity }}" selected="selected">
-                                        {{ test.specimen_container.specimen_quantity }}
-                                    </option>
-                                    {% endif %}
-                                </select>
-                            </div>
-                        </div>
-                            <div class="field">
-                                <label class="label">ปริมาณสิ่งส่งตรวจ
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#quantity')">
-                                    </input>
-                                </label>
-                                <div class="control">
-                                    <select class="js-example-basic-single" id="quantity"
-                                            name="quantity">
-                                        {% if test %}
-                                        <option value="{{ test.quantity.specimen_quantity }}" selected="selected">
-                                            {{ test.quantity.specimen_quantity }}
-                                        </option>
-                                        {% endif %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">หน่วย
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#unit')">
-                                    </input>
-                                </label>
-                                <div class="control">
-                                    <select class="js-example-basic-single" id="unit"
-                                            name="unit">
-                                        {% if test %}
-                                        <option value="{{ test.quantity.unit }}" selected="selected">{{
-                                            test.quantity.unit }}
-                                        </option>
-                                        {% endif %}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                            <input type="submit" value="Add"/>
-                        </form>
                 </div>
             </div>
         </div>
@@ -453,6 +440,7 @@
         $('#quantity').val(null).trigger('change');
         $('#unit').val(null).trigger('change');
     }
+
     document.addEventListener('clearInput', onClearInput)
 </script>
 {% endblock %}

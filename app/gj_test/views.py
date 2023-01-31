@@ -82,6 +82,30 @@ def add_specimens():
     return r
 
 
+@gj_test.route('/specimens/delete/<int:ind>', methods=['DELETE'])
+@login_required
+def delete_specimens(ind):
+    session['specimen_list'].pop(ind)
+    resp = '<table class="table is-narrow">'
+    resp += '''
+            <thead>
+            <th>ชนิด</th>
+            <th>ภาชนะ</th>
+            <th>ปริมาณ</th>
+            <th></th>
+            </thead>
+            <tbody>
+        '''
+    for sp, c, q, u in session['specimens_list']:
+        resp += '''
+            <tr><td>{}</td><td>{}</td><td>{} {}</td></tr>
+            '''.format(sp, c, q, u)
+    resp += '</tbody></table>'
+    r = make_response(resp)
+    r.headers['HX-Trigger'] = 'clearInput'
+    return r
+
+
 @gj_test.route('/new-test/add', methods=['GET', 'POST'])
 @gj_test.route('/new-test/<int:test_id>/edit', methods=['GET', 'POST'])
 @login_required
