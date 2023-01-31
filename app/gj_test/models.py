@@ -25,7 +25,7 @@ class GJTest(db.Model):
     desc = db.Column('desc', db.Text(), info={'label': u'ข้อบ่งชี้ในการส่งตรวจ'})
     prepare = db.Column(db.Text(), info={'label': u'การเตรียมผู้ป่วย'})
     created_at = db.Column('created_at', db.DateTime(timezone=True), server_default=func.now())
-    solution = db.Column('solution', db.String(), info={'label': u'วิธีการ/หลักการ'})
+    solution = db.Column('solution', db.Text(), info={'label': u'วิธีการ/หลักการ'})
     test_date_id = db.Column('test_date_id', db.ForeignKey('gj_test_dates.id'))
     test_date = db.relationship('GJTestDate', backref=db.backref('test_dates', lazy='dynamic'))
     time_period_request_id = db.Column('time_period_request_id', db.ForeignKey('gj_test_time_period_requests.id'))
@@ -47,8 +47,7 @@ class GJTest(db.Model):
     specimen_transportation = db.relationship('GJTestSpecimenTransportation', foreign_keys=[specimen_transportation_id],
                                               backref=db.backref('specimen_transportations', lazy='dynamic'))
     status = db.Column('status', db.String(),
-                       info={'label': u'สถานะ', 'choices': [('None', '--Select Status--'),
-                                                            ('Avaliable', 'Avaliable'),
+                       info={'label': u'สถานะ', 'choices': [('Avaliable', 'Avaliable'),
                                                             ('Draft', 'Draft')]})
     specimens_source = db.relationship('GJTestSpecimenSource', secondary=test_specimen_source_assoc,
                                        lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
