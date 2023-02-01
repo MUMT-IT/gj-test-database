@@ -321,7 +321,7 @@
             width: '100%',
             tags: true,
             ajax: {
-                url: "{{ url_for('gj_test.get_all_specimen_quantity_and_unit', mode='specimen_quantity') }}",
+                url: "{{ url_for('gj_test.get_all_specimen_quantity') }}",
                 dataType: "json"
             }
         });
@@ -329,15 +329,7 @@
             width: '100%',
             tags: true,
             ajax: {
-                url: "{{ url_for('gj_test.get_all_specimen_quantity_and_unit', mode='unit') }}",
-                dataType: "json"
-            }
-        });
-        $('#specimens_source').select2({
-            width: '100%',
-            tags: true,
-            ajax: {
-                url: "{{ url_for('gj_test.get_all_specimens_sources') }}",
+                url: "{{ url_for('gj_test.get_all_specimens_unit') }}",
                 dataType: "json"
             }
         });
