@@ -57,6 +57,7 @@ from app.gj_test.models import *
 admin.add_views(ModelView(GJTest, db.session, category='Test'))
 admin.add_views(ModelView(GJTestSpecimen, db.session, category='Test'))
 admin.add_views(ModelView(GJTestSpecimenQuantity, db.session, category='Test'))
+admin.add_views(ModelView(GJTestSpecimenUnit, db.session, category='Test'))
 admin.add_views(ModelView(GJTestSpecimenContainer, db.session, category='Test'))
 admin.add_views(ModelView(GJTestSpecimenTransportation, db.session, category='Test'))
 admin.add_views(ModelView(GJTestLocation, db.session, category='Test'))
