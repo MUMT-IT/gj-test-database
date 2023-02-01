@@ -120,22 +120,28 @@ def add_test(test_id=None):
             if not container:
                 container = GJTestSpecimenContainer(specimen_container=c)
 
-            quantity = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=q,
-                                                              unit=u).first()
+            quantity = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=q).first()
             if not quantity:
-                quantity = GJTestSpecimenQuantity(specimen_quantity=q,
-                                                  unit=u)
+                quantity = GJTestSpecimenQuantity(specimen_quantity=q)
+
+            unit = GJTestSpecimenUnit.query.filter_by(specimens_unit=u).first()
+            if not unit:
+                unit = GJTestSpecimenUnit(specimens_unit=u)
+
             db.session.add(specimen)
             db.session.add(quantity)
             db.session.add(container)
+            db.session.add(unit)
             db.session.commit()
 
             specimen_source_ = GJTestSpecimenSource.query.filter(GJTestSpecimenSource.specimens == specimen,
                                                                  GJTestSpecimenSource.specimen_quantity == quantity,
+                                                                 GJTestSpecimenSource.specimens_unit == unit,
                                                                  GJTestSpecimenSource.specimen_container == container).first()
             if not specimen_source_:
                 specimen_source_ = GJTestSpecimenSource(specimens=specimen,
                                                         specimen_quantity=quantity,
+                                                        specimens_unit=unit,
                                                         specimen_container=container)
             yield specimen_source_
 
@@ -148,7 +154,7 @@ def add_test(test_id=None):
                 specimens_list.append([str(source.specimens),
                                        str(source.specimen_container),
                                        str(source.specimen_quantity.specimen_quantity),
-                                       str(source.specimen_quantity.unit),
+                                       str(source.specimens_unit.specimens_unit),
                                        ])
             session['specimens_list'] = specimens_list
     else:
@@ -225,13 +231,6 @@ def get_all_specimens():
     return jsonify({'results': specimens})
 
 
-@gj_test.route('api/v1.0/specimens_sources', methods=['GET'])
-@login_required
-def get_all_specimens_sources():
-    specimens_sources = [specimens_source.to_dict() for specimens_source in GJTestSpecimenSource.query.all()]
-    return jsonify({'results': specimens_sources})
-
-
 @gj_test.route('api/v1.0/containers', methods=['GET'])
 @login_required
 def get_all_containers():
@@ -239,23 +238,18 @@ def get_all_containers():
     return jsonify({'results': containers})
 
 
-@gj_test.route('api/v1.0/specimen_quantity_and_unit/<mode>')
+@gj_test.route('api/v1.0/specimen_quantity', methods=['GET'])
 @login_required
-def get_all_specimen_quantity_and_unit(mode):
-    data = []
-    if mode == "specimen_quantity":
-        for source in GJTestSpecimenQuantity.query.all():
-            data.append({
-                'id': source.id,
-                'text': u'{}'.format(source.specimen_quantity)
-            })
-    else:
-        for source in GJTestSpecimenQuantity.query.all():
-            data.append({
-                'id': source.id,
-                'text': u'{}'.format(source.unit)
-            })
-    return jsonify({'results': data})
+def get_all_specimen_quantity():
+    quantities = [specimen_quantity.to_dict() for specimen_quantity in GJTestSpecimenQuantity.query.all()]
+    return jsonify({'results': quantities})
+
+
+@gj_test.route('api/v1.0/specimens_unit', methods=['GET'])
+@login_required
+def get_all_specimens_unit():
+    units = [specimens_unit.to_dict() for specimens_unit in GJTestSpecimenUnit.query.all()]
+    return jsonify({'results': units})
 
 
 @gj_test.route('api/v1.0/specimen_transportations', methods=['GET'])
