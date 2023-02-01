@@ -494,7 +494,7 @@ def add_many_tests():
         if upfile and allowed_file(upfile.filename):
             df = read_excel(upfile)
             for idx, rec in df.iterrows():
-                no, test_name, code, desc, prepare, specimen, specimen_quantity, unit, specimen_container, \
+                no, test_name, code, desc, prepare, specimen, specimen_quantity, specimens_unit, specimen_container, \
                 specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent, \
                 reporting_referral_values, interference_analysis, time_period_request, caution, test_location = rec
 
@@ -507,11 +507,13 @@ def add_many_tests():
                     specimen_container_obj = GJTestSpecimenContainer(specimen_container=specimen_container)
 
                 specimen_quantity = str(specimen_quantity)
-                specimen_quantity_obj = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=specimen_quantity,
-                                                                            unit=unit).first()
+                specimen_quantity_obj = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=specimen_quantity).first()
                 if not specimen_quantity_obj:
-                    specimen_quantity_obj = GJTestSpecimenQuantity(specimen_quantity=specimen_quantity,
-                                                                unit=unit)
+                    specimen_quantity_obj = GJTestSpecimenQuantity(specimen_quantity=specimen_quantity)
+
+                unit_obj = GJTestSpecimenUnit.query.filter_by(specimens_unit=specimens_unit).first()
+                if not unit_obj:
+                    unit_obj = GJTestSpecimenUnit(specimens_unit=specimens_unit)
 
                 specimen_transportation_ = GJTestSpecimenTransportation.query.filter_by(
                     specimen_date_time=specimen_date_time).first()
@@ -541,15 +543,15 @@ def add_many_tests():
                 if not test_location_:
                     test_location_ = GJTestLocation(location=test_location)
 
-                specimen_source_ = GJTestSpecimenSource.query.filter(GJTestSpecimenSource.specimens == specimen_obj,
-                                                                     and_(GJTestSpecimenSource.specimen_quantity == specimen_quantity_obj,
-                                                                     GJTestSpecimenSource.specimen_quantity.has(unit=unit)),
-                                                                     GJTestSpecimenSource.specimen_container == specimen_container_obj).first()
+                specimen_source_ = GJTestSpecimenSource.query.filter_by(specimens=specimen_obj,
+                                                                    specimen_quantity=specimen_quantity_obj,
+                                                                    specimens_unit=unit_obj,
+                                                                    specimen_container=specimen_container_obj).first()
                 if not specimen_source_:
                     specimen_source_ = GJTestSpecimenSource(specimens=specimen_obj,
                                                             specimen_quantity=specimen_quantity_obj,
+                                                            specimens_unit=unit_obj,
                                                             specimen_container=specimen_container_obj)
-
 
                 test_ = GJTest.query.filter_by(code=code).first()
                 if not test_:
@@ -558,8 +560,6 @@ def add_many_tests():
                         code=code,
                         desc=desc,
                         prepare=prepare,
-                        quantity=specimen_quantity_obj,
-                        specimen_container=specimen_container_obj,
                         specimen_transportation=specimen_transportation_,
                         drop_off_location=drop_off_location_,
                         solution=method,
