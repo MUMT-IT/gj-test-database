@@ -174,12 +174,27 @@ class GJTestSpecimenQuantity(db.Model):
     specimen_quantity = db.Column('specimen_quantity', db.String(), info={'label': u'ปริมาณสิ่งส่งตรวจ'})
 
     def __str__(self):
-        return u'{} {}'.format(self.specimen_quantity)
+        return u'{}'.format(self.specimen_quantity)
 
     def to_dict(self):
         return {
             'id': self.specimen_quantity,
             'text': self.specimen_quantity
+        }
+
+
+class GJTestSpecimenUnit(db.Model):
+    __tablename__ = 'gj_test_specimen_units'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    specimens_unit = db.Column('specimens_unit', db.String(), info={'label': u'หน่วย'})
+
+    def __str__(self):
+        return u'{}'.format(self.specimens_unit)
+
+    def to_dict(self):
+        return {
+            'id': self.specimens_unit,
+            'text': self.specimens_unit
         }
 
 
@@ -207,9 +222,11 @@ class GJTestSpecimenSource(db.Model):
     specimen_quantity = db.relationship(GJTestSpecimenQuantity)
     specimen_container_id = db.Column('specimen_container_id', db.ForeignKey('gj_test_specimen_containers.id'))
     specimen_container = db.relationship(GJTestSpecimenContainer)
+    specimens_unit_id = db.Column('specimens_unit_id', db.ForeignKey('gj_test_specimen_units.id'))
+    specimens_unit = db.relationship(GJTestSpecimenUnit)
 
     def __str__(self):
-        return u'{}:{}'.format(self.specimens, self.specimen_quantity, self.specimen_container)
+        return u'{}:{}'.format(self.specimens, self.specimen_quantity, self.specimen_container, self.specimens_unit)
 
 
 class User(UserMixin, db.Model):
