@@ -12,20 +12,30 @@
             <img src="{{ url_for('static', filename='img/photo_landing_gj.jpg') }}" width="750">
             <div class="column is-6 is-offset-3">
                 <h1 class="title is-1 ">Welcome to</h1>
-                <h2 class="subtitle">List of tests available <br> at Golden Jubilee Medical Center.
-                </h2>
-                <a class="button is-primary is-outlined" href="{{ url_for('gj_test.login') }}">
-                    <span class="icon">
-                        <i class="fas fa-sign-in-alt"></i>
-                    </span>
-                    <span>Login</span>
-                </a>&ensp;
-                <a class="button is-danger is-outlined" href="{{ url_for('gj_test.register') }}">
-                    <span class="icon">
-                        <i class="fas fa-registered"></i>
-                    </span>
-                    <span>Register</span>
-                </a>
+                <h2 class="subtitle">List of tests available <br> at Golden Jubilee Medical Center.</h2>
+                <div class="buttons is-centered">
+                {% if current_user.is_authenticated %}
+                    <a class="button is-primary" href="{{ url_for('gj_test.landing') }}">
+                        <span class="icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </span>
+                        <span>Enter</span>
+                    </a>
+                {% else %}
+                    <a class="button is-primary is-outlined" href="{{ url_for('gj_test.login') }}">
+                        <span class="icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </span>
+                        <span>Login</span>
+                    </a>
+                    <a class="button is-danger is-outlined" href="{{ url_for('gj_test.register') }}">
+                        <span class="icon">
+                            <i class="fas fa-registered"></i>
+                        </span>
+                        <span>Register</span>
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

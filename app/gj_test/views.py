@@ -4,6 +4,7 @@ from flask import flash, redirect, url_for, render_template, request, jsonify, s
     make_response
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_mail import Message
+from flask_wtf.csrf import generate_csrf
 from itsdangerous import TimedJSONWebSignatureSerializer
 from pandas import read_excel, DataFrame
 from sqlalchemy import and_
@@ -50,9 +51,10 @@ def add_new_item_from_select(fieldname, model, attribute, attrname):
     return obj
 
 
-@gj_test.route('/new-specimens/add', methods=['POST'])
+@gj_test.route('/tests/specimens/add', methods=['POST'])
+@gj_test.route('/tests/<int:test_id>/specimens/add', methods=['POST'])
 @login_required
-def add_specimens():
+def add_specimens(test_id=None):
     specimens = request.form.get('specimens')
     specimen_container = request.form.get('specimen_container')
     quantity = request.form.get('quantity')
@@ -62,7 +64,7 @@ def add_specimens():
     else:
         session['specimens_list'] = [(specimens, specimen_container, quantity, unit)]
 
-    resp = '<table class="table is-narrow">'
+    resp = '<table class="table is-bordered is-fullwidth is-narrow">'
     resp += '''
         <thead>
         <th>ชนิด</th>
@@ -72,21 +74,46 @@ def add_specimens():
         </thead>
         <tbody>
     '''
-    for sp, c, q, u in session['specimens_list']:
-        resp += '''
-        <tr><td>{}</td><td>{}</td><td>{} {}</td></tr>
-        '''.format(sp, c, q, u)
+    for n, src in enumerate(session['specimens_list']):
+        sp, c, q, u = src
+        url = url_for('gj_test.delete_specimens', test_id=test_id, ind=n)
+        resp += f'''
+        <tr>
+            <td>{sp}</td>
+            <td>{c}</td>
+            <td>{q} {u}</td>
+            <td>
+                <button class="button is-rounded is-small is-danger"
+                        hx-headers='{{"X-CSRFToken": "{generate_csrf()}" }}'
+                        hx-confirm="Are you sure you wish to delete this specimens source?"
+                        hx-target="#specimen_list"
+                        hx-swap="innerHTML"
+                        hx-delete="{url}">
+                    X
+                </button>
+            </td>
+        </tr>
+        '''
     resp += '</tbody></table>'
     r = make_response(resp)
     r.headers['HX-Trigger'] = 'clearInput'
     return r
 
 
-@gj_test.route('/specimens/delete/<int:ind>', methods=['DELETE'])
+@gj_test.route('/tests/specimens-source/delete/<int:ind>', methods=['DELETE'])
+@gj_test.route('/tests/<int:test_id>/specimens-source/delete/<int:ind>', methods=['DELETE'])
 @login_required
-def delete_specimens(ind):
-    session['specimen_list'].pop(ind)
-    resp = '<table class="table is-narrow">'
+def delete_specimens(ind, test_id=None):
+    if test_id:
+        test = GJTest.query.get(test_id)
+        session['specimens_list'].pop(ind)
+        for src in test.specimens_source:
+            if src.to_tuple() not in session['specimens_list']:
+                db.session.delete(src)
+        db.session.commit()
+    else:
+        session['specimens_list'].pop(ind)
+    resp = '<table class="table is-fullwidth is-bordered is-narrow">'
     resp += '''
             <thead>
             <th>ชนิด</th>
@@ -96,10 +123,26 @@ def delete_specimens(ind):
             </thead>
             <tbody>
         '''
-    for sp, c, q, u in session['specimens_list']:
-        resp += '''
-            <tr><td>{}</td><td>{}</td><td>{} {}</td></tr>
-            '''.format(sp, c, q, u)
+    for n, src in enumerate(session['specimens_list'], start=0):
+        sp, c, q, u = src
+        url = url_for('gj_test.delete_specimens', test_id=test_id, ind=n)
+        resp += f'''
+            <tr>
+                <td>{sp}</td>
+                <td>{c}</td>
+                <td>{q} {u}</td>
+                <td>
+                    <button class="button is-rounded is-small is-danger"
+                            hx-headers='{{"X-CSRFToken": "{generate_csrf()}" }}'
+                            hx-confirm="Are you sure you wish to delete this specimens source?"
+                            hx-target="#specimen_list"
+                            hx-swap="innerHTML"
+                            hx-delete="{url}">
+                        X
+                    </button>
+                </td>
+            </tr>
+            '''
     resp += '</tbody></table>'
     r = make_response(resp)
     r.headers['HX-Trigger'] = 'clearInput'
@@ -209,13 +252,14 @@ def add_test(test_id=None):
             new_test.test_location = test_location_
 
             db.session.add(new_test)
+            db.session.commit()
         else:
             form.populate_obj(test)
             for source in add_specimens_source():
                 test.specimens_source.append(source)
             db.session.add(test)
+            db.session.commit()
             del session['specimens_list']
-        db.session.commit()
         flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
         return redirect(url_for('gj_test.view_tests'))
     else:
