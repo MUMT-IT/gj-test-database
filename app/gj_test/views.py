@@ -191,11 +191,10 @@ def add_test(test_id=None):
     if test_id:
         test = GJTest.query.get(test_id)
         form = TestListForm(obj=test)
-        specimens_list = session.get('specimens_list', [])
-        if not specimens_list:
+        if request.method == 'GET':
+            session['specimens_list'] = []
             for source in test.specimens_source:
-                specimens_list.append(source.to_tuple())
-            session['specimens_list'] = specimens_list
+                session['specimens_list'].append(source.to_tuple())
     else:
         form = TestListForm()
         test = None
@@ -543,19 +542,27 @@ def add_many_tests():
                 specimen_obj = GJTestSpecimen.query.filter_by(specimen=specimen).first()
                 if not specimen_obj:
                     specimen_obj = GJTestSpecimen(specimen=specimen)
+                    db.session.add(specimen_obj)
+                    db.session.commit()
 
                 specimen_container_obj = GJTestSpecimenContainer.query.filter_by(specimen_container=specimen_container).first()
                 if not specimen_container_obj:
                     specimen_container_obj = GJTestSpecimenContainer(specimen_container=specimen_container)
+                    db.session.add(specimen_container_obj)
+                    db.session.commit()
 
                 specimen_quantity = str(specimen_quantity)
                 specimen_quantity_obj = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=specimen_quantity).first()
                 if not specimen_quantity_obj:
                     specimen_quantity_obj = GJTestSpecimenQuantity(specimen_quantity=specimen_quantity)
+                    db.session.add(specimen_quantity_obj)
+                    db.session.commit()
 
                 unit_obj = GJTestSpecimenUnit.query.filter_by(specimens_unit=specimens_unit).first()
                 if not unit_obj:
                     unit_obj = GJTestSpecimenUnit(specimens_unit=specimens_unit)
+                    db.session.add(unit_obj)
+                    db.session.commit()
 
                 specimen_transportation_ = GJTestSpecimenTransportation.query.filter_by(
                     specimen_date_time=specimen_date_time).first()
