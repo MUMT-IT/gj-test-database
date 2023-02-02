@@ -108,10 +108,12 @@
                             </tr>
                         </table>
                         <div class="buttons is-centered">
-                            <a href="{{ url_for('gj_test.index') }}" class="button is-light">กลับ</a>
                             {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('gj_test.view_tests') }}" class="button is-light">กลับ</a>
                             <a href="{{ url_for('gj_test.add_test', test_id=test.id) }}"
                                class="button is-danger">แก้ไข</a>
+                            {% else %}
+                            <a href="{{ url_for('gj_test.index') }}" class="button is-light">กลับ</a>
                             {% endif %}
                         </div>
                     </div>
