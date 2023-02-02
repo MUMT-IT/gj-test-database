@@ -632,3 +632,14 @@ def add_many_tests():
         for er in form.errors:
             flash(er, 'danger')
     return render_template('gj_test/tests_upload.html', form=form)
+
+
+@gj_test.route('/tests/<int:test_id>/delete')
+@login_required
+def delete_test(test_id):
+    if test_id:
+        test = GJTest.query.get(test_id)
+        flash(u'Test has been removed.', 'danger')
+        db.session.delete(test)
+        db.session.commit()
+        return redirect(url_for('gj_test.view_tests', test_id=test_id))
