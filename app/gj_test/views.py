@@ -194,15 +194,13 @@ def add_test(test_id=None):
         specimens_list = session.get('specimens_list', [])
         if not specimens_list:
             for source in test.specimens_source:
-                specimens_list.append([str(source.specimens),
-                                       str(source.specimen_container),
-                                       str(source.specimen_quantity.specimen_quantity),
-                                       str(source.specimens_unit.specimens_unit),
-                                       ])
+                specimens_list.append(source.to_tuple())
             session['specimens_list'] = specimens_list
     else:
         form = TestListForm()
         test = None
+        if request.method == 'GET':
+            del session['specimens_list']
 
     if form.validate_on_submit():
         if not test_id:
