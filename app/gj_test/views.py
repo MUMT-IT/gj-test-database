@@ -89,7 +89,9 @@ def add_specimens(test_id=None):
                         hx-target="#specimen_list"
                         hx-swap="innerHTML"
                         hx-delete="{url}">
-                    X
+                    <span class="icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </span>
                 </button>
             </td>
         </tr>
@@ -138,7 +140,9 @@ def delete_specimens(ind, test_id=None):
                             hx-target="#specimen_list"
                             hx-swap="innerHTML"
                             hx-delete="{url}">
-                        X
+                        <span class="icon">
+                            <i class="fas fa-trash-alt"></i>
+                        </span>
                     </button>
                 </td>
             </tr>

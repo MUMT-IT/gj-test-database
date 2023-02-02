@@ -57,7 +57,12 @@
                         </div>
                         <div class="field"><br>
                             <div class="buttons is-centered">
-                                <button class="button is-success" type="submit" value="Add">เพิ่มสิ่งส่งตรวจ</button>
+                                <button class="button is-success" type="submit" value="Add">
+                                    <span class="icon">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </span>
+                                    <span>เพิ่มสิ่งส่งตรวจ</span>
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -93,7 +98,9 @@
                                                 hx-target="#specimen_list"
                                                 hx-swap="innerHTML"
                                                 hx-delete="{{ url_for('gj_test.delete_specimens', ind=loop.index0, test_id=test.id or None)}}">
-                                            X
+                                            <span class="icon">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
                                         </button>
                                     </td>
                                 </tr>
