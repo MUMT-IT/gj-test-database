@@ -22,30 +22,6 @@
         <div class="columns">
             <div class="column is-10 is-offset-1">
                 <div class="box">
-                    <div id="specimen_list">
-                        <table class="table is-narrow is-striped">
-                            <thead>
-                            <th>ชนิด</th>
-                            <th>ภาชนะ</th>
-                            <th>ปริมาณ</th>
-                            <th></th>
-                            </thead>
-                            <tbody>
-                            {% for source in test.specimens_source %}
-                            <tr>
-                                <td>{{source.specimens}}</td>
-                                <td>{{source.specimen_container}}</td>
-                                <td>{{source.specimen_quantity}}</td>
-                                <td>
-                                    <button class="button is-rounded is-small is-danger" hx-delete="{{ url_for('gj_test.delete_specimens',
-                                    ind=loop.index0)}}">X
-                                    </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
                     <form id="specimens_form" hx-post="{{ url_for('gj_test.add_specimens') }}"
                           hx-target="#specimen_list" hx-swap="innerHTML">
                         <input type="hidden" value="{{ csrf_token() }}" name="csrf_token">
@@ -55,13 +31,7 @@
                         </div>
                         <div class="field-body">
                             <div class="field">
-                                <label class="label">ภาชนะสิ่งส่งตรวจ
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#specimen_container')">
-                                    </input>
-                                </label>
+                                <label class="label">ภาชนะสิ่งส่งตรวจ</label>
                                 <div class="control">
                                     <select class="js-example-basic-single" id="specimen_container"
                                             name="specimen_container">
@@ -69,13 +39,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label">ปริมาณสิ่งส่งตรวจ
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#quantity')">
-                                    </input>
-                                </label>
+                                <label class="label">ปริมาณสิ่งส่งตรวจ</label>
                                 <div class="control">
                                     <select class="js-example-basic-single" id="quantity"
                                             name="quantity">
@@ -83,13 +47,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label">หน่วย
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#unit')">
-                                    </input>
-                                </label>
+                                <label class="label">หน่วย</label>
                                 <div class="control">
                                     <select class="js-example-basic-single" id="unit"
                                             name="unit">
@@ -99,12 +57,16 @@
                         </div>
                         <div class="field"><br>
                             <div class="buttons is-centered">
-                                <button class="button is-success" type="submit" value="Add">เพิ่มสิ่งส่งตรวจ</button>
+                                <button class="button is-success" type="submit" value="Add">
+                                    <span class="icon">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </span>
+                                    <span>เพิ่มสิ่งส่งตรวจ</span>
+                                </button>
                             </div>
                         </div>
                     </form>
-                    <hr width=50% size=5 color=770088>
-                    <br>
+                    <hr>
                     <form method="post">
                         {{ form.hidden_tag() }}
                         <div class="field">
@@ -113,6 +75,38 @@
                                 {{ form.test_name(class="input is-danger") }}
                             </div>
                             <p class="help is-danger">Required</p>
+                        </div>
+                        <label class="label">รายการสิ่งส่งตรวจ (specimens)</label>
+                        <div id="specimen_list" class="field">
+                            <table class="table is-fullwidth is-narrow is-striped is-bordered">
+                                <thead>
+                                <th>ชนิด</th>
+                                <th>ภาชนะ</th>
+                                <th>ปริมาณ</th>
+                                <th></th>
+                                </thead>
+                                <tbody>
+                                {% for sp, c, q, u in session['specimens_list'] %}
+                                <tr>
+                                    <td>{{ sp }}</td>
+                                    <td>{{ c }}</td>
+                                    <td>{{ q }} {{ u }}</td>
+                                    <td>
+                                        <button class="button is-rounded is-small is-danger"
+                                                hx-headers='{"X-CSRFToken": "{{ csrf_token() }}" }'
+                                                hx-confirm="Are you sure you wish to delete this specimens source?"
+                                                hx-target="#specimen_list"
+                                                hx-swap="innerHTML"
+                                                hx-delete="{{ url_for('gj_test.delete_specimens', ind=loop.index0, test_id=test.id or None)}}">
+                                            <span class="icon">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                         <div class="field-body">
                             <div class="field">
@@ -292,9 +286,8 @@
                         <br>
                         <div class="field is-grouped is-grouped-centered">
                             <div class="buttons">
+                                <a href="{{ url_next or url_for('gj_test.index') }}" class="button is-danger">ยกเลิก</a>
                                 <button class="button is-success" type="submit" value="submit">บันทึก</button>
-                                <a href="{{ url_next }}"
-                                   class="button is-danger">ยกเลิก</a>
                             </div>
                         </div>
                     </form>
@@ -392,22 +385,6 @@
         });
 
     });
-</script>
-<script>
-
-    function addItem(controlId) {
-        // Passing a control ID so that this code can be reused with all selectors.
-        let selector = $(controlId);
-        let newItem = prompt('Enter new item:');
-        if (newItem !== null && newItem !== "") {
-            if (selector.find("option[value='" + newItem + "']").length) {
-                selector.val(newItem).trigger('change');
-            } else {
-                let newOption = new Option(newItem, newItem, true, true);
-                selector.append(newOption).trigger('change');
-            }
-        }
-    }
 </script>
 <script>
     $('#reporting_referral_values').summernote({

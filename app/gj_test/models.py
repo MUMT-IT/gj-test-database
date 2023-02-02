@@ -228,6 +228,13 @@ class GJTestSpecimenSource(db.Model):
     def __str__(self):
         return u'{}:{}'.format(self.specimens, self.specimen_quantity, self.specimen_container, self.specimens_unit)
 
+    def to_tuple(self):
+        return str(self.specimens),\
+            str(self.specimen_container),\
+            str(self.specimen_quantity.specimen_quantity),\
+            str(self.specimens_unit.specimens_unit)
+
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'

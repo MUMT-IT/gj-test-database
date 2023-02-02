@@ -19,7 +19,12 @@
             <div class="column has-text-centered">
                 <h1 class="title">รายการทดสอบ</h1>
                 <div class="buttons">
-                    <a href="{{ url_for('gj_test.add_test') }}" class="button is-info is-outlined">เพิ่มรายการทดสอบ</a>
+                    <a href="{{ url_for('gj_test.add_test') }}" class="button is-info">
+                        <span class="icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </span>
+                        <span>เพิ่มรายการทดสอบ</span>
+                    </a>
                 </div>
             </div>
         </div>
