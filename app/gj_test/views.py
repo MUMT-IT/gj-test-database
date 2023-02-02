@@ -191,19 +191,17 @@ def add_test(test_id=None):
                                                         specimens_unit=unit,
                                                         specimen_container=container)
             yield specimen_source_
+    if request.method == 'GET':
+        session['specimens_list'] = []
 
     if test_id:
         test = GJTest.query.get(test_id)
         form = TestListForm(obj=test)
-        if request.method == 'GET':
-            session['specimens_list'] = []
-            for source in test.specimens_source:
-                session['specimens_list'].append(source.to_tuple())
+        for source in test.specimens_source:
+            session['specimens_list'].append(source.to_tuple())
     else:
         form = TestListForm()
         test = None
-        if request.method == 'GET':
-            del session['specimens_list']
 
     if form.validate_on_submit():
         if not test_id:
@@ -538,6 +536,7 @@ def add_many_tests():
             upfile.save(filename)
         if upfile and allowed_file(upfile.filename):
             df = read_excel(upfile)
+            df = df.fillna("")
             for idx, rec in df.iterrows():
                 no, test_name, code, desc, prepare, specimen, specimen_quantity, specimens_unit, specimen_container, \
                 specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent, \
@@ -627,7 +626,7 @@ def add_many_tests():
                     new_test.specimens_source.append(specimen_source_)
                     db.session.add(new_test)
                     db.session.commit()
-                    flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
+            flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
             return redirect(url_for('gj_test.view_tests'))
     else:
         for er in form.errors:
