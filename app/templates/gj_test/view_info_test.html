@@ -50,12 +50,14 @@
                                         <thead>
                                         <th>ชนิด</th>
                                         <th>ปริมาณ</th>
+                                        <th>หน่วย</th>
                                         <th>ภาชนะ</th>
                                         </thead>
                                         {% for sp in test.specimens_source %}
                                         <tr>
                                             <td>{{ sp.specimens }}</td>
                                             <td>{{ sp.specimen_quantity }}</td>
+                                            <td>{{ sp.specimens_unit }}</td>
                                             <td>{{ sp.specimen_container }}</td>
                                         </tr>
                                         {% endfor %}
