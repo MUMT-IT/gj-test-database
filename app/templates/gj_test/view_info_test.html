@@ -108,6 +108,10 @@
                                 <td><label class="label">สถานที่ทำการทดสอบ</label></td>
                                 <td>{{ test.test_location.location }}</td>
                             </tr>
+                            <tr>
+                                <td><label class="label">Status</label></td>
+                                <td>{{ test.status }}</td>
+                            </tr>
                         </table>
                         <div class="buttons is-centered">
                             {% if current_user.is_authenticated %}
