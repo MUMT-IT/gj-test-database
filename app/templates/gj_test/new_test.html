@@ -136,13 +136,7 @@
                             </div>
                         </div>
                         <div class="field"><br>
-                            <label class="label">วัน/เวลาการนำส่งสิ่งส่งตรวจ
-                                <input class="button is-small is-rounded is-info"
-                                       value="Add"
-                                       type="button"
-                                       onclick="addItem('#specimen_transportation')">
-                                </input>
-                            </label>
+                            <label class="label">วัน/เวลาการนำส่งสิ่งส่งตรวจ</label>
                             <div class="control">
                                 <select class="js-example-basic-single" id="specimen_transportation"
                                         name="specimen_transportation">
@@ -155,13 +149,7 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">สถานที่
-                                <input class="button is-small is-rounded is-info"
-                                       value="Add"
-                                       type="button"
-                                       onclick="addItem('#drop_off_location')">
-                                </input>
-                            </label>
+                            <label class="label">สถานที่</label>
                             <select class="js-example-basic-single" id="drop_off_location"
                                     name="drop_off_location">
                                 {% if test %}
@@ -178,13 +166,7 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">วันที่ทำการทดสอบ
-                                <input class="button is-small is-rounded is-info"
-                                       value="Add"
-                                       type="button"
-                                       onclick="addItem('#test_date')">
-                                </input>
-                            </label>
+                            <label class="label">วันที่ทำการทดสอบ</label>
                             <select class="js-example-basic-single" id="test_date"
                                     name="test_date">
                                 {% if test %}
@@ -193,13 +175,7 @@
                             </select>
                         </div>
                         <div class="field">
-                            <label class="label">ระยะเวลารอผล(ปกติ)
-                                <input class="button is-small is-rounded is-info"
-                                       value="Add"
-                                       type="button"
-                                       onclick="addItem('#normal_waiting_time')">
-                                </input>
-                            </label>
+                            <label class="label">ระยะเวลารอผล(ปกติ)</label>
                             <select class="js-example-basic-single" id="normal_waiting_time"
                                     name="normal_waiting_time">
                                 {% if test %}
@@ -210,13 +186,7 @@
                             </select>
                         </div>
                         <div class="field">
-                            <label class="label">ระยะเวลารอผล(ด่วน)
-                                <input class="button is-small is-rounded is-info"
-                                       value="Add"
-                                       type="button"
-                                       onclick="addItem('#urgent_waiting_time')">
-                                </input>
-                            </label>
+                            <label class="label">ระยะเวลารอผล(ด่วน)</label>
                             <select class="js-example-basic-single" id="urgent_waiting_time"
                                     name="urgent_waiting_time">
                                 {% if test %}
@@ -235,13 +205,7 @@
                         </div>
                         <div class="field">
                             <div class="control">
-                                <label class="label">ระยะเวลาที่สามารถขอตรวจเพิ่มได้
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#time_period_request')">
-                                    </input>
-                                </label>
+                                <label class="label">ระยะเวลาที่สามารถขอตรวจเพิ่มได้</label>
                                 <select class="js-example-basic-single" id="time_period_request"
                                         name="time_period_request">
                                     {% if test %}
@@ -266,13 +230,7 @@
                         </div>
                         <div class="field">
                             <div class="control">
-                                <label class="label">สถานที่ทดสอบ
-                                    <input class="button is-small is-rounded is-info"
-                                           value="Add"
-                                           type="button"
-                                           onclick="addItem('#test_location')">
-                                    </input>
-                                </label>
+                                <label class="label">สถานที่ทดสอบ</label>
                                 <select class="js-example-basic-single" id="test_location"
                                         name="test_location">
                                     {% if test %}
@@ -336,6 +294,7 @@
         });
         $('#specimen_transportation').select2({
             width: '100%',
+            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_specimen_transportations') }}",
                 dataType: "json"
@@ -343,6 +302,7 @@
         });
         $('#drop_off_location').select2({
             width: '100%',
+            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_drop_off_locations') }}",
                 dataType: "json"
@@ -350,6 +310,7 @@
         });
         $('#test_date').select2({
             width: '100%',
+            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_test_dates') }}",
                 dataType: "json"
@@ -357,6 +318,7 @@
         });
         $('#normal_waiting_time').select2({
             width: '100%',
+            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_waiting_time', mode='normal') }}",
                 dataType: "json"
@@ -364,6 +326,7 @@
         });
         $('#urgent_waiting_time').select2({
             width: '100%',
+            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_waiting_time', mode='urgent') }}",
                 dataType: "json"
@@ -371,6 +334,7 @@
         });
         $('#time_period_request').select2({
             width: '100%',
+            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_time_period_requests') }}",
                 dataType: "json"
@@ -378,6 +342,7 @@
         });
         $('#test_location').select2({
             width: '100%',
+            tags: true,
             ajax: {
                 url: "{{ url_for('gj_test.get_all_test_locations') }}",
                 dataType: "json"
