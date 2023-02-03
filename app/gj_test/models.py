@@ -35,7 +35,7 @@ class GJTest(db.Model):
     waiting_period = db.relationship('GJTestWaitingPeriod', backref=db.backref('waiting_periods', lazy='dynamic'))
     reporting_referral_values = db.Column(db.Text(), info={'label': u'การรายงานผลและค่าอ้างอิง'})
     interference_analysis = db.Column(db.Text(), info={'label': u'สิ่งรบกวนต่อการตรวจวิเคราะห์'})
-    caution = db.Column(db.String(), info={'label': u'ข้อควรระวังและอื่นๆ'})
+    caution = db.Column(db.Text(), info={'label': u'ข้อควรระวังและอื่นๆ'})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
     test_location = db.relationship('GJTestLocation', foreign_keys=[location_id],
                                     backref=db.backref('test_locations', lazy='dynamic'))
