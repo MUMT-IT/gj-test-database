@@ -461,8 +461,8 @@ def get_tests_view_data():
     query = GJTest.query
     search = request.args.get('search[value]')
     query = query.filter(db.or_(
-        GJTest.test_name.like(u'%{}%'.format(search)),
-        GJTest.code.like(u'%{}%'.format(search)),
+        GJTest.test_name.ilike(u'%{}%'.format(search)),
+        GJTest.code.ilike(u'%{}%'.format(search)),
 
     ))
     start = request.args.get('start', type=int)
