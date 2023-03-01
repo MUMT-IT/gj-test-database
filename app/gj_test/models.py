@@ -241,9 +241,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(), unique=True, index=True)
     username = db.Column(db.String(), unique=True)
-    permission = db.Column('permission', db.String(),
-                       info={'label': u'สิทธิการเข้าถึง', 'choices': [('Admin', 'Admin'),
-                                                            ('User', 'User')]})
+    permission = db.Column('permission', db.Boolean(), default=False)
     password_hash = db.Column(db.String())
 
     def __repr__(self):
