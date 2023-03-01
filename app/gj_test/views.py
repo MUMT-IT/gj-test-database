@@ -540,7 +540,7 @@ def add_many_tests():
             for idx, rec in df.iterrows():
                 no, test_name, code, desc, prepare, specimen, specimen_quantity, specimens_unit, specimen_container, \
                 specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent, \
-                reporting_referral_values, interference_analysis, time_period_request, caution, test_location = rec
+                reporting_referral_values, time_period_request, interference_analysis, caution, test_location = rec
 
                 specimen_obj = GJTestSpecimen.query.filter_by(specimen=specimen).first()
                 if not specimen_obj:
@@ -618,8 +618,8 @@ def add_many_tests():
                         test_date=test_date_,
                         waiting_period=waiting_time,
                         reporting_referral_values=reporting_referral_values,
-                        interference_analysis=interference_analysis,
                         time_period_request=time_period_request_,
+                        interference_analysis=interference_analysis,
                         caution=caution,
                         test_location=test_location_
                     )
