@@ -7,7 +7,6 @@ from flask_mail import Message
 from flask_wtf.csrf import generate_csrf
 from itsdangerous import TimedJSONWebSignatureSerializer
 from pandas import read_excel, DataFrame
-from sqlalchemy import and_
 from werkzeug.utils import secure_filename
 
 from app import app, mail
@@ -16,7 +15,7 @@ from . import gj_test_bp as gj_test
 
 from .models import *
 from .forms import TestListForm, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm
-from .. import csrf
+from functools import wraps
 
 ALLOWED_EXTENSIONS = ['xlsx', 'xls']
 
@@ -26,7 +25,18 @@ def send_mail(recp, title, message):
     mail.send(message)
 
 
+def active_user(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_active:
+            flash('You do not have permission to view access this page. Please contact admin!', 'warning')
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @gj_test.route('/landing')
+@active_user
 @login_required
 def landing():
     return render_template('gj_test/landing.html')
@@ -351,7 +361,6 @@ def login():
             password = form.password.data
             if user.verify_password(password):
                 login_user(user, form.remember_me.data)
-                flash(u'Logged in successfully ลงทะเบียนสำเร็จ', 'success')
                 return redirect(url_for('gj_test.landing'))
             else:
                 flash(u'Wrong password, try again. รหัสผ่านไม่ถูกต้อง โปรดลองอีกครั้ง', 'danger')
@@ -456,7 +465,6 @@ def view_tests():
 
 
 @gj_test.route('/api/view-tests')
-@login_required
 def get_tests_view_data():
     query = GJTest.query
     search = request.args.get('search[value]')
