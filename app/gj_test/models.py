@@ -242,6 +242,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(), unique=True, index=True)
     username = db.Column(db.String(), unique=True)
     is_admin = db.Column('is_admin', db.Boolean(), default=False)
+    is_active = db.Column('is_active', db.Boolean(), default=False)
     password_hash = db.Column(db.String())
 
     def __repr__(self):
