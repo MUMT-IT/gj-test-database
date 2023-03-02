@@ -1,6 +1,7 @@
 import os
+from functools import wraps
 
-from flask import Flask
+from flask import Flask, flash, redirect
 from dotenv import load_dotenv
 from flask_login import LoginManager, current_user
 from flask_mail import Mail
@@ -15,7 +16,7 @@ from datetime import timedelta
 
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin
 
 
 load_dotenv()
@@ -37,7 +38,6 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = ('MUMT-GJ',
                                      os.environ.get('MAIL_USERNAME'))
 app.config['SESSION_TYPE'] = 'filesystem'
-
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -70,3 +70,13 @@ admin.add_views(ModelView(User, db.session, category='User'))
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+def active_user(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.is_active:
+            flash('You do not have permission to view access this page.', 'warning')
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return decorated_function
