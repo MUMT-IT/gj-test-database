@@ -1,7 +1,7 @@
 import os
-from functools import wraps
 
-from flask import Flask, flash, redirect
+
+from flask import Flask
 from dotenv import load_dotenv
 from flask_login import LoginManager, current_user
 from flask_mail import Mail
@@ -72,11 +72,3 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-def active_user(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.is_active:
-            flash('You do not have permission to view access this page.', 'warning')
-            return redirect('/login')
-        return f(*args, **kwargs)
-    return decorated_function
