@@ -258,3 +258,16 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class GJTestLog(db.Model):
+    __tablename__ = 'gj_test_logs'
+    id = db.Column('id', db.Integer(), primary_key=True, autoincrement=True)
+    test_id = db.Column('test_id', db.ForeignKey('gj_tests.id'))
+    test = db.relationship(GJTest, backref=db.backref('test_logs', lazy='dynamic'))
+    activity = db.Column('activity', db.String(), info={'label': u'กิจกรรมการดำเนินการ'})
+    user_id = db.Column('user_id', db.ForeignKey('users.id'))
+    user = db.relationship(User, backref=db.backref('history_users', lazy='dynamic'))
+
+    def __str__(self):
+        return u'{}:{}'.format(self.test, self.user)
