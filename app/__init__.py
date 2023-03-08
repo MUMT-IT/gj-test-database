@@ -21,6 +21,29 @@ class MyAdminIndexView(AdminIndexView):
 
 load_dotenv()
 
+
+from logging.config import dictConfig
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {
+        'file': {
+            'class': 'logging.FileHandler',
+            'formatter': 'default',
+            'filename': 'run_log.txt'
+        }
+    },
+    'loggers': {
+        'client': {
+            'level': 'INFO',
+            'handlers': ['file']
+        },
+    },
+})
+
 app = Flask(__name__)
 app.config.from_prefixed_env()
 database_url = os.environ.get('DATABASE_URL')
