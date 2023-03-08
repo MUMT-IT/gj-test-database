@@ -1,5 +1,5 @@
 import os
-
+import logging
 from flask import flash, redirect, url_for, render_template, request, jsonify, send_from_directory, session, \
     make_response
 from flask_login import login_required, login_user, logout_user, current_user
@@ -19,6 +19,7 @@ from functools import wraps
 
 ALLOWED_EXTENSIONS = ['xlsx', 'xls']
 
+logger = logging.getLogger('client')
 
 def send_mail(recp, title, message):
     message = Message(subject=title, body=message, recipients=recp)
@@ -259,11 +260,12 @@ def add_test(test_id=None):
                                                       GJTestLocation.location,
                                                       'location')
             new_test.test_location = test_location_
-
+            logger.info(f'ADD NEW TEST:{new_test.id}, {new_test.code} BY {current_user}')
             db.session.add(new_test)
             db.session.commit()
         else:
             form.populate_obj(test)
+            logger.info(f'EDIT TEST:{test.id}, {test.code} BY {current_user}')
             for source in add_specimens_source():
                 test.specimens_source.append(source)
             db.session.add(test)
@@ -361,6 +363,7 @@ def login():
             password = form.password.data
             if user.verify_password(password):
                 login_user(user, form.remember_me.data)
+                app.logger.info('%s logged in successfully', user.username)
                 return redirect(url_for('gj_test.landing'))
             else:
                 flash(u'Wrong password, try again. รหัสผ่านไม่ถูกต้อง โปรดลองอีกครั้ง', 'danger')
@@ -612,6 +615,8 @@ def add_many_tests():
                                                             specimen_quantity=specimen_quantity_obj,
                                                             specimens_unit=unit_obj,
                                                             specimen_container=specimen_container_obj)
+                    db.session.add(specimen_source_)
+                    db.session.commit()
 
                 test_ = GJTest.query.filter_by(code=code).first()
                 if not test_:
@@ -634,7 +639,13 @@ def add_many_tests():
                     new_test.specimens_source.append(specimen_source_)
                     db.session.add(new_test)
                     db.session.commit()
+                else:
+                    if specimen_source_ not in test_.specimens_source:
+                        test_.specimens_source.append(specimen_source_)
+                    db.session.add(test_)
+                    db.session.commit()
             flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
+            logger.info(f'UPLOAD TEST BY {current_user}')
             return redirect(url_for('gj_test.view_tests'))
     else:
         for er in form.errors:
@@ -648,6 +659,7 @@ def delete_test(test_id):
     if test_id:
         test = GJTest.query.get(test_id)
         flash(u'Test has been removed.', 'danger')
+        logger.info(f'DELETE TEST:{test.id}, {test.code} BY {current_user}')
         db.session.delete(test)
         db.session.commit()
         return redirect(url_for('gj_test.view_tests', test_id=test_id))
