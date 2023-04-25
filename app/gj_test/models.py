@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from flask_login import UserMixin
 from sqlalchemy import func
+from sqlalchemy_continuum import make_versioned
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
@@ -17,7 +18,11 @@ test_specimen_source_assoc = db.Table('db_test_specimen_source_assoc',
                                       )
 
 
+make_versioned(user_cls=None)
+
+
 class GJTest(db.Model):
+    __versioned__ = {}
     __tablename__ = 'gj_tests'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     test_name = db.Column('test_name', db.String(), info={'label': u'ชื่อการทดสอบ'}, nullable=False)

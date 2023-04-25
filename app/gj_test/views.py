@@ -263,6 +263,14 @@ def add_test(test_id=None):
             logger.info(f'ADD NEW TEST:{new_test.id}, {new_test.code} BY {current_user}')
             db.session.add(new_test)
             db.session.commit()
+
+            version = new_test.versions[0]
+            new_test.test_name = u'Added Test'
+            db.session.commit()
+
+            version.revert()
+            db.session.commit()
+            print(new_test.test_name)
         else:
             form.populate_obj(test)
             logger.info(f'EDIT TEST:{test.id}, {test.code} BY {current_user}')
@@ -270,6 +278,14 @@ def add_test(test_id=None):
                 test.specimens_source.append(source)
             db.session.add(test)
             db.session.commit()
+
+            version = test.versions[0]
+            test.test_name = u'Edited Test'
+            db.session.commit()
+
+            version.revert()
+            db.session.commit()
+            print(test.test_name)
             del session['specimens_list']
         flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
         return redirect(url_for('gj_test.view_tests'))
