@@ -1,10 +1,11 @@
-# -*- coding:utf-8 -*-
 from flask_login import UserMixin
 from sqlalchemy import func
 from sqlalchemy_continuum import make_versioned
+from sqlalchemy_continuum.plugins import FlaskPlugin
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from app import db
+
+make_versioned(plugins=[FlaskPlugin()])
 
 test_specimen_assoc = db.Table('db_test_specimen_assoc_assoc',
                                db.Column('test_id', db.ForeignKey('gj_tests.id'), primary_key=True),
@@ -16,9 +17,6 @@ test_specimen_source_assoc = db.Table('db_test_specimen_source_assoc',
                                       db.Column('source_id', db.ForeignKey('gj_test_specimen_sources.id'),
                                                 primary_key=True)
                                       )
-
-
-make_versioned(user_cls=None)
 
 
 class GJTest(db.Model):
@@ -234,11 +232,10 @@ class GJTestSpecimenSource(db.Model):
         return u'{}:{}'.format(self.specimens, self.specimen_quantity, self.specimen_container, self.specimens_unit)
 
     def to_tuple(self):
-        return str(self.specimens),\
-            str(self.specimen_container),\
-            str(self.specimen_quantity.specimen_quantity),\
+        return str(self.specimens), \
+            str(self.specimen_container), \
+            str(self.specimen_quantity.specimen_quantity), \
             str(self.specimens_unit.specimens_unit)
-
 
 
 class User(UserMixin, db.Model):
@@ -263,5 +260,3 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-
