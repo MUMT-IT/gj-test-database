@@ -1,3 +1,4 @@
+import sqlalchemy
 from flask_login import UserMixin
 from sqlalchemy import func
 from sqlalchemy_continuum import make_versioned
@@ -5,7 +6,7 @@ from sqlalchemy_continuum.plugins import FlaskPlugin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
-make_versioned(plugins=[FlaskPlugin()])
+make_versioned(plugins=[FlaskPlugin()], user_cls=None)
 
 test_specimen_assoc = db.Table('db_test_specimen_assoc_assoc',
                                db.Column('test_id', db.ForeignKey('gj_tests.id'), primary_key=True),
@@ -260,3 +261,6 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+sqlalchemy.orm.configure_mappers()
