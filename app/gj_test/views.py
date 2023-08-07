@@ -1,5 +1,5 @@
 import os
-
+import logging
 from flask import flash, redirect, url_for, render_template, request, jsonify, send_from_directory, session, \
     make_response
 from flask_login import login_required, login_user, logout_user, current_user
@@ -7,7 +7,6 @@ from flask_mail import Message
 from flask_wtf.csrf import generate_csrf
 from itsdangerous import TimedJSONWebSignatureSerializer
 from pandas import read_excel, DataFrame
-from sqlalchemy import and_
 from werkzeug.utils import secure_filename
 
 from app import app, mail
@@ -16,17 +15,29 @@ from . import gj_test_bp as gj_test
 
 from .models import *
 from .forms import TestListForm, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm
-from .. import csrf
+from functools import wraps
 
 ALLOWED_EXTENSIONS = ['xlsx', 'xls']
 
+logger = logging.getLogger('client')
 
 def send_mail(recp, title, message):
     message = Message(subject=title, body=message, recipients=recp)
     mail.send(message)
 
 
+def active_user(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_active:
+            flash('You do not have permission to view access this page. Please contact admin!', 'warning')
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @gj_test.route('/landing')
+@active_user
 @login_required
 def landing():
     return render_template('gj_test/landing.html')
@@ -249,15 +260,32 @@ def add_test(test_id=None):
                                                       GJTestLocation.location,
                                                       'location')
             new_test.test_location = test_location_
-
+            logger.info(f'ADD NEW TEST:{new_test.id}, {new_test.code} BY {current_user}')
             db.session.add(new_test)
             db.session.commit()
+
+            version = new_test.versions[0]
+            new_test.test_name = u'Added Test'
+            db.session.commit()
+
+            version.revert()
+            db.session.commit()
+            print(new_test.test_name)
         else:
             form.populate_obj(test)
+            logger.info(f'EDIT TEST:{test.id}, {test.code} BY {current_user}')
             for source in add_specimens_source():
                 test.specimens_source.append(source)
             db.session.add(test)
             db.session.commit()
+
+            version = test.versions[0]
+            test.test_name = u'Edited Test'
+            db.session.commit()
+
+            version.revert()
+            db.session.commit()
+            print(test.test_name)
             del session['specimens_list']
         flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
         return redirect(url_for('gj_test.view_tests'))
@@ -351,7 +379,7 @@ def login():
             password = form.password.data
             if user.verify_password(password):
                 login_user(user, form.remember_me.data)
-                flash(u'Logged in successfully ลงทะเบียนสำเร็จ', 'success')
+                app.logger.info('%s logged in successfully', user.username)
                 return redirect(url_for('gj_test.landing'))
             else:
                 flash(u'Wrong password, try again. รหัสผ่านไม่ถูกต้อง โปรดลองอีกครั้ง', 'danger')
@@ -456,13 +484,12 @@ def view_tests():
 
 
 @gj_test.route('/api/view-tests')
-@login_required
 def get_tests_view_data():
     query = GJTest.query
     search = request.args.get('search[value]')
     query = query.filter(db.or_(
-        GJTest.test_name.like(u'%{}%'.format(search)),
-        GJTest.code.like(u'%{}%'.format(search)),
+        GJTest.test_name.ilike(u'%{}%'.format(search)),
+        GJTest.code.ilike(u'%{}%'.format(search)),
 
     ))
     start = request.args.get('start', type=int)
@@ -540,7 +567,7 @@ def add_many_tests():
             for idx, rec in df.iterrows():
                 no, test_name, code, desc, prepare, specimen, specimen_quantity, specimens_unit, specimen_container, \
                 specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent, \
-                reporting_referral_values, interference_analysis, time_period_request, caution, test_location = rec
+                reporting_referral_values, time_period_request, interference_analysis, caution, test_location = rec
 
                 specimen_obj = GJTestSpecimen.query.filter_by(specimen=specimen).first()
                 if not specimen_obj:
@@ -604,6 +631,8 @@ def add_many_tests():
                                                             specimen_quantity=specimen_quantity_obj,
                                                             specimens_unit=unit_obj,
                                                             specimen_container=specimen_container_obj)
+                    db.session.add(specimen_source_)
+                    db.session.commit()
 
                 test_ = GJTest.query.filter_by(code=code).first()
                 if not test_:
@@ -618,15 +647,21 @@ def add_many_tests():
                         test_date=test_date_,
                         waiting_period=waiting_time,
                         reporting_referral_values=reporting_referral_values,
-                        interference_analysis=interference_analysis,
                         time_period_request=time_period_request_,
+                        interference_analysis=interference_analysis,
                         caution=caution,
                         test_location=test_location_
                     )
                     new_test.specimens_source.append(specimen_source_)
                     db.session.add(new_test)
                     db.session.commit()
+                else:
+                    if specimen_source_ not in test_.specimens_source:
+                        test_.specimens_source.append(specimen_source_)
+                    db.session.add(test_)
+                    db.session.commit()
             flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
+            logger.info(f'UPLOAD TEST BY {current_user}')
             return redirect(url_for('gj_test.view_tests'))
     else:
         for er in form.errors:
@@ -640,6 +675,7 @@ def delete_test(test_id):
     if test_id:
         test = GJTest.query.get(test_id)
         flash(u'Test has been removed.', 'danger')
+        logger.info(f'DELETE TEST:{test.id}, {test.code} BY {current_user}')
         db.session.delete(test)
         db.session.commit()
         return redirect(url_for('gj_test.view_tests', test_id=test_id))

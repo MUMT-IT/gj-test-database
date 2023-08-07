@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from flask_login import UserMixin
 from sqlalchemy import func
+from sqlalchemy_continuum import make_versioned
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
@@ -17,7 +18,11 @@ test_specimen_source_assoc = db.Table('db_test_specimen_source_assoc',
                                       )
 
 
+make_versioned(user_cls=None)
+
+
 class GJTest(db.Model):
+    __versioned__ = {}
     __tablename__ = 'gj_tests'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     test_name = db.Column('test_name', db.String(), info={'label': u'ชื่อการทดสอบ'}, nullable=False)
@@ -35,7 +40,7 @@ class GJTest(db.Model):
     waiting_period = db.relationship('GJTestWaitingPeriod', backref=db.backref('waiting_periods', lazy='dynamic'))
     reporting_referral_values = db.Column(db.Text(), info={'label': u'การรายงานผลและค่าอ้างอิง'})
     interference_analysis = db.Column(db.Text(), info={'label': u'สิ่งรบกวนต่อการตรวจวิเคราะห์'})
-    caution = db.Column(db.String(), info={'label': u'ข้อควรระวังและอื่นๆ'})
+    caution = db.Column(db.Text(), info={'label': u'ข้อควรระวังและอื่นๆ'})
     location_id = db.Column('location_id', db.ForeignKey('gj_test_locations.id'))
     test_location = db.relationship('GJTestLocation', foreign_keys=[location_id],
                                     backref=db.backref('test_locations', lazy='dynamic'))
@@ -241,6 +246,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(), unique=True, index=True)
     username = db.Column(db.String(), unique=True)
+    is_admin = db.Column('is_admin', db.Boolean(), default=False)
+    is_active = db.Column('is_active', db.Boolean(), default=False)
     password_hash = db.Column(db.String())
 
     def __repr__(self):
@@ -256,3 +263,5 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+

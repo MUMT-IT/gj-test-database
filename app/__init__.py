@@ -1,5 +1,6 @@
 import os
 
+
 from flask import Flask
 from dotenv import load_dotenv
 from flask_login import LoginManager, current_user
@@ -15,10 +16,33 @@ from datetime import timedelta
 
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin
 
 
 load_dotenv()
+
+
+from logging.config import dictConfig
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {
+        'file': {
+            'class': 'logging.FileHandler',
+            'formatter': 'default',
+            'filename': 'run_log.txt'
+        }
+    },
+    'loggers': {
+        'client': {
+            'level': 'INFO',
+            'handlers': ['file']
+        },
+    },
+})
 
 app = Flask(__name__)
 app.config.from_prefixed_env()
@@ -37,7 +61,6 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = ('MUMT-GJ',
                                      os.environ.get('MAIL_USERNAME'))
 app.config['SESSION_TYPE'] = 'filesystem'
-
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -70,3 +93,5 @@ admin.add_views(ModelView(User, db.session, category='User'))
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
