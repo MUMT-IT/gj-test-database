@@ -296,21 +296,18 @@ def add_test(test_id=None):
 
 
 @gj_test.route('api/v1.0/specimens', methods=['GET'])
-@login_required
 def get_all_specimens():
     specimens = [specimen.to_dict() for specimen in GJTestSpecimen.query.all()]
     return jsonify({'results': specimens})
 
 
 @gj_test.route('api/v1.0/containers', methods=['GET'])
-@login_required
 def get_all_containers():
     containers = [specimen_container.to_dict() for specimen_container in GJTestSpecimenContainer.query.all()]
     return jsonify({'results': containers})
 
 
 @gj_test.route('api/v1.0/specimen_quantity', methods=['GET'])
-@login_required
 def get_all_specimen_quantity():
     quantities = [specimen_quantity.to_dict() for specimen_quantity in GJTestSpecimenQuantity.query.all()]
     return jsonify({'results': quantities})
@@ -324,7 +321,6 @@ def get_all_specimens_unit():
 
 
 @gj_test.route('api/v1.0/specimen_transportations', methods=['GET'])
-@login_required
 def get_all_specimen_transportations():
     specimen_transportations = [specimen_transportation.to_dict() for specimen_transportation in
                                 GJTestSpecimenTransportation.query.all()]
@@ -332,21 +328,18 @@ def get_all_specimen_transportations():
 
 
 @gj_test.route('api/v1.0/drop_off_locations', methods=['GET'])
-@login_required
 def get_all_drop_off_locations():
     drop_off_locations = [location.to_dict() for location in GJTestLocation.query.all()]
     return jsonify({'results': drop_off_locations})
 
 
 @gj_test.route('api/v1.0/test_dates', methods=['GET'])
-@login_required
 def get_all_test_dates():
     test_dates = [test_date.to_dict() for test_date in GJTestDate.query.all()]
     return jsonify({'results': test_dates})
 
 
 @gj_test.route('api/v1.0/waiting_time/<mode>')
-@login_required
 def get_all_waiting_time(mode):
     if mode == "normal":
         data = [w.normal_to_dict() for w in GJTestWaitingPeriod.query.all()]
@@ -356,7 +349,6 @@ def get_all_waiting_time(mode):
 
 
 @gj_test.route('api/v1.0/time_period_requests', methods=['GET'])
-@login_required
 def get_all_time_period_requests():
     time_period_requests = [time_period_request.to_dict() for time_period_request in
                             GJTestTimePeriodRequest.query.all()]
@@ -364,7 +356,6 @@ def get_all_time_period_requests():
 
 
 @gj_test.route('api/v1.0/test_locations', methods=['GET'])
-@login_required
 def get_all_test_locations():
     test_locations = [location.to_dict() for location in GJTestLocation.query.all()]
     return jsonify({'results': test_locations})
