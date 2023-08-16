@@ -55,7 +55,8 @@ class GJTest(db.Model):
                                                             ('Draft', 'Draft')]})
     specimens_source = db.relationship('GJTestSpecimenSource', secondary=test_specimen_source_assoc,
                                        lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
-    outsource_lab_test_url = db.Column('outsource_lab_test_url', db.String())
+    outsource_lab_test_url = db.Column('outsource_lab_test_url', db.Text())
+    request_form_url = db.Column('request_form_url', db.Text())
 
     def to_dict(self):
         return {
