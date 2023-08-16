@@ -204,7 +204,6 @@ def add_test(test_id=None):
             yield specimen_source_
     if request.method == 'GET':
         session['specimens_list'] = []
-
     if test_id:
         test = GJTest.query.get(test_id)
         form = TestListForm(obj=test)
@@ -314,7 +313,6 @@ def get_all_specimen_quantity():
 
 
 @gj_test.route('api/v1.0/specimens_unit', methods=['GET'])
-@login_required
 def get_all_specimens_unit():
     units = [specimens_unit.to_dict() for specimens_unit in GJTestSpecimenUnit.query.all()]
     return jsonify({'results': units})
