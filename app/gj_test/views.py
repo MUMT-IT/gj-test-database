@@ -21,6 +21,7 @@ ALLOWED_EXTENSIONS = ['xlsx', 'xls']
 
 logger = logging.getLogger('client')
 
+
 def send_mail(recp, title, message):
     message = Message(subject=title, body=message, recipients=recp)
     mail.send(message)
@@ -33,6 +34,7 @@ def active_user(f):
             flash('You do not have permission to view access this page. Please contact admin!', 'warning')
             return redirect('/login')
         return f(*args, **kwargs)
+
     return decorated_function
 
 
@@ -46,6 +48,16 @@ def landing():
 @gj_test.route('/index')
 def index():
     return render_template('gj_test/index.html')
+
+
+# AttributeError: 'list' object has no attribute 'versions'
+@gj_test.route('/history')
+def view_history():
+    test = GJTest.query.all()
+    for ver in test.versions:
+        pass
+        print(ver)
+    return render_template('gj_test/view_history.html', ver=ver)
 
 
 @gj_test.route('/')
@@ -202,6 +214,7 @@ def add_test(test_id=None):
                                                         specimens_unit=unit,
                                                         specimen_container=container)
             yield specimen_source_
+
     if request.method == 'GET':
         session['specimens_list'] = []
     if test_id:
@@ -564,14 +577,16 @@ def add_many_tests():
                     db.session.add(specimen_obj)
                     db.session.commit()
 
-                specimen_container_obj = GJTestSpecimenContainer.query.filter_by(specimen_container=specimen_container).first()
+                specimen_container_obj = GJTestSpecimenContainer.query.filter_by(
+                    specimen_container=specimen_container).first()
                 if not specimen_container_obj:
                     specimen_container_obj = GJTestSpecimenContainer(specimen_container=specimen_container)
                     db.session.add(specimen_container_obj)
                     db.session.commit()
 
                 specimen_quantity = str(specimen_quantity)
-                specimen_quantity_obj = GJTestSpecimenQuantity.query.filter_by(specimen_quantity=specimen_quantity).first()
+                specimen_quantity_obj = GJTestSpecimenQuantity.query.filter_by(
+                    specimen_quantity=specimen_quantity).first()
                 if not specimen_quantity_obj:
                     specimen_quantity_obj = GJTestSpecimenQuantity(specimen_quantity=specimen_quantity)
                     db.session.add(specimen_quantity_obj)
@@ -612,9 +627,9 @@ def add_many_tests():
                     test_location_ = GJTestLocation(location=test_location)
 
                 specimen_source_ = GJTestSpecimenSource.query.filter_by(specimens=specimen_obj,
-                                                                    specimen_quantity=specimen_quantity_obj,
-                                                                    specimens_unit=unit_obj,
-                                                                    specimen_container=specimen_container_obj).first()
+                                                                        specimen_quantity=specimen_quantity_obj,
+                                                                        specimens_unit=unit_obj,
+                                                                        specimen_container=specimen_container_obj).first()
                 if not specimen_source_:
                     specimen_source_ = GJTestSpecimenSource(specimens=specimen_obj,
                                                             specimen_quantity=specimen_quantity_obj,
