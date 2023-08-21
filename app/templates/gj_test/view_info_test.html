@@ -1,4 +1,13 @@
 {% extends "base.html" %}
+{% block head %}
+{{ super() }}
+<style>
+tr:nth-child(even) {
+  background-color: #e6f4fc;
+}
+</style>
+{% endblock %}
+
 {% block page_content %}
 <section class="section">
     <div class="container">
@@ -22,11 +31,21 @@
             <div class="column has-text-centered is-two-thirds is-offset-2">
                 <div class="card">
                     <div class="card-content">
-                        <table class="table is-striped is-bordered is-fullwidth">
+                        <table class="table is-bordered is-fullwidth">
                             <colgroup>
                                 <col span="1" style="width: 25%;">
                                 <col span="1" style="width: 75%;">
                             </colgroup>
+                            {% if revision_index %}
+                            <tr>
+                                <td><label class="label">Revision Number</label></td>
+                                <td class="has-text-danger">{{ revision_index }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">วันที่และเวลาที่แก้ไข</label></td>
+                                <td class="has-text-danger">{{ test.updated_at|localdatetime }} by {{test.updater}}</td>
+                            </tr>
+                            {% endif %}
                             <tr>
                                 <td><label class="label">การทดสอบ</label></td>
                                 <td>{{ test.test_name }}</td>
@@ -112,9 +131,34 @@
                                 <td><label class="label">Status</label></td>
                                 <td>{{ test.status }}</td>
                             </tr>
+                            {% if current_user.is_authenticated and revision_index == None %}
+                            <tr>
+                                <td><label class="label">ประวัติการแก้ไข</label></td>
+                                <td>
+                                    <table>
+                                        <thead>
+                                        <th>Version</th>
+                                        <th>Updated at</th>
+                                        <th>Updated by</th>
+                                        <th></th>
+                                        </thead>
+                                        {% for ver in test.versions %}
+                                        <tr>
+                                            <td>{{ver.index}}</td>
+                                            <td>{{ver.updated_at|localdatetime}}</td>
+                                            <td>{{ver.updater}}</td>
+                                            <td>
+                                                <a href="{{url_for('gj_test.view_info_test', revision_index=loop.index0, test_id=test.id)}}">view</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </td>
+                            </tr>
+                            {% endif %}
                         </table>
                         <div class="buttons is-centered">
-                            {% if current_user.is_authenticated %}
+                            {% if current_user.is_authenticated and version_index == None %}
                             <a href="{{ url_for('gj_test.view_tests') }}" class="button is-light">กลับ</a>
                             <a href="{{ url_for('gj_test.add_test', test_id=test.id) }}"
                                class="button is-warning">แก้ไข</a>

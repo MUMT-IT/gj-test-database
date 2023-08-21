@@ -55,6 +55,9 @@ class GJTest(db.Model):
                                                             ('Draft', 'Draft')]})
     specimens_source = db.relationship('GJTestSpecimenSource', secondary=test_specimen_source_assoc,
                                        lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
+    updated_at = db.Column('updated_at', db.DateTime(timezone=True), onupdate=func.now())
+    updated_by = db.Column('updated_by', db.ForeignKey('users.id'))
+    updater = db.relationship('User')
 
     def to_dict(self):
         return {
@@ -247,6 +250,9 @@ class User(UserMixin, db.Model):
     is_admin = db.Column('is_admin', db.Boolean(), default=False)
     is_active = db.Column('is_active', db.Boolean(), default=False)
     password_hash = db.Column(db.String())
+
+    def __str__(self):
+        return self.username
 
     def __repr__(self):
         return '<User({username!r})>'.format(username=self.username)

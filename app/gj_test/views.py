@@ -261,31 +261,17 @@ def add_test(test_id=None):
                                                       'location')
             new_test.test_location = test_location_
             logger.info(f'ADD NEW TEST:{new_test.id}, {new_test.code} BY {current_user}')
+            new_test.updater = current_user
             db.session.add(new_test)
             db.session.commit()
-
-            version = new_test.versions[0]
-            new_test.test_name = u'Added Test'
-            db.session.commit()
-
-            version.revert()
-            db.session.commit()
-            print(new_test.test_name)
         else:
             form.populate_obj(test)
+            test.updater = current_user
             logger.info(f'EDIT TEST:{test.id}, {test.code} BY {current_user}')
             for source in add_specimens_source():
                 test.specimens_source.append(source)
             db.session.add(test)
             db.session.commit()
-
-            version = test.versions[0]
-            test.test_name = u'Edited Test'
-            db.session.commit()
-
-            version.revert()
-            db.session.commit()
-            print(test.test_name)
             del session['specimens_list']
         flash(u'บันทึกข้อมูลสำเร็จ.', 'success')
         return redirect(url_for('gj_test.view_tests'))
@@ -415,7 +401,6 @@ def reset_password():
     try:
         token_data = serializer.loads(token)
     except Exception as e:
-        print(str(e))
         return u'Bad JSON Web token. You need a valid token to reset the password.' \
                u'รหัสสำหรับทำการตั้งค่า password หมดอายุหรือไม่ถูกต้อง'
     if token_data.get('email') != email:
@@ -453,13 +438,11 @@ def forgot_password():
             url = url_for('gj_test.reset_password', token=token, email=form.email.data, _external=True)
             message = u'Click the link below to reset the password.' \
                       u' กรุณาคลิกที่ลิงค์เพื่อทำการตั้งค่ารหัสผ่านใหม่\n\n{}'.format(url)
-            print(form.email.data)
             try:
                 send_mail(['{}'.format(form.email.data)],
                           title='MUMT-GJ: Password Reset. ตั้งรหัสผ่านใหม่สำหรับระบบ MUMT-GJ',
                           message=message)
             except Exception as e:
-                print(str(e))
                 flash(u'Failed to send an email to {}. ระบบไม่สามารถส่งอีเมลได้กรุณาตรวจสอบอีกครั้ง' \
                       .format(form.email.data), 'danger')
             else:
@@ -501,10 +484,12 @@ def get_tests_view_data():
 
 
 @gj_test.route('/info-tests/view/<int:test_id>')
-def view_info_test(test_id):
+@gj_test.route('/info-tests/view/<int:test_id>/revisions/<int:revision_index>')
+def view_info_test(test_id, revision_index=None):
     test = GJTest.query.get(test_id)
-    return render_template('gj_test/view_info_test.html',
-                           test=test)
+    if revision_index:
+        test = test.versions[revision_index]
+    return render_template('gj_test/view_info_test.html', test=test, revision_index=revision_index)
 
 
 def allowed_file(filename):
