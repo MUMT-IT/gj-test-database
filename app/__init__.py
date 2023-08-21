@@ -1,6 +1,4 @@
 import os
-
-
 from flask import Flask
 from dotenv import load_dotenv
 from flask_login import LoginManager, current_user
@@ -12,6 +10,7 @@ from flask_wtf import CSRFProtect
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from datetime import timedelta
+from pytz import timezone
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -95,3 +94,11 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+@app.template_filter("localdatetime")
+def local_datetime(dt):
+    bangkok = timezone('Asia/Bangkok')
+    datetime_format = '%d/%m/%Y %X'
+    if dt:
+        return dt.astimezone(bangkok).strftime(datetime_format)
+    else:
+        return None
