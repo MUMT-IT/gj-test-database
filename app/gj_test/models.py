@@ -50,11 +50,13 @@ class GJTest(db.Model):
                                            db.ForeignKey('gj_test_specimen_transportations.id'))
     specimen_transportation = db.relationship('GJTestSpecimenTransportation', foreign_keys=[specimen_transportation_id],
                                               backref=db.backref('specimen_transportations', lazy='dynamic'))
-    status = db.Column('status', db.String(),
-                       info={'label': u'สถานะ', 'choices': [('Avaliable', 'Avaliable'),
+    status = db.Column('status', db.String(), default='Available',
+                       info={'label': u'สถานะ', 'choices': [('Available', 'Available'),
                                                             ('Draft', 'Draft')]})
     specimens_source = db.relationship('GJTestSpecimenSource', secondary=test_specimen_source_assoc,
                                        lazy='subquery', backref=db.backref('specimens_sources', lazy=True))
+    outsource_lab_test_url = db.Column('outsource_lab_test_url', db.Text())
+    request_form_url = db.Column('request_form_url', db.Text())
     updated_at = db.Column('updated_at', db.DateTime(timezone=True), onupdate=func.now())
     updated_by = db.Column('updated_by', db.ForeignKey('users.id'))
     updater = db.relationship('User')

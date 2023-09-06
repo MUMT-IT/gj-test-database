@@ -1,11 +1,10 @@
 # -*- coding:utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import SelectMultipleField, widgets, StringField, PasswordField, BooleanField, SubmitField, FileField, \
-    SelectField
+from wtforms import SelectMultipleField, widgets, StringField, PasswordField, BooleanField, SubmitField, FileField,\
+    TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
-from wtforms_alchemy import model_form_factory, QuerySelectField, QuerySelectMultipleField
+from wtforms_alchemy import model_form_factory
 
-from app import db
 from app.gj_test.models import *
 
 BaseModelForm = model_form_factory(FlaskForm)
@@ -28,6 +27,8 @@ class TestListForm(ModelForm):
         exclude = ['created_at']
 
     upload = FileField(u'อัพโหลดไฟล์')
+    outsource_lab_test_url = TextAreaField('URL for Outsource Lab Test')
+    request_form_url = TextAreaField('URL for Request Form')
 
 
 class LoginForm(ModelForm):

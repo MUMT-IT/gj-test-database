@@ -2,9 +2,9 @@
 {% block head %}
 {{ super() }}
 <style>
-tr:nth-child(even) {
-  background-color: #e6f4fc;
-}
+    tr:nth-child(even) {
+        background-color: #e6f4fc;
+    }
 </style>
 {% endblock %}
 
@@ -27,6 +27,7 @@ tr:nth-child(even) {
                 <h1 class="title">รายละเอียดการทดสอบ</h1>
             </div>
         </div>
+        {% if not test.outsource_lab_test_url %}
         <div class="columns">
             <div class="column has-text-centered is-two-thirds is-offset-2">
                 <div class="card">
@@ -157,19 +158,65 @@ tr:nth-child(even) {
                             </tr>
                             {% endif %}
                         </table>
-                        <div class="buttons is-centered">
-                            {% if current_user.is_authenticated and version_index == None %}
-                            <a href="{{ url_for('gj_test.view_tests') }}" class="button is-light">กลับ</a>
-                            <a href="{{ url_for('gj_test.add_test', test_id=test.id) }}"
-                               class="button is-warning">แก้ไข</a>
-                            <a href="{{ url_for('gj_test.delete_test', test_id=test.id) }}"
-                               class="button is-danger">ลบ</a>
-                            {% else %}
-                            <a href="{{ url_for('gj_test.index') }}" class="button is-light">กลับ</a>
-                            {% endif %}
-                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        {% else %}
+        <table class="table is-bordered is-fullwidth">
+            <colgroup>
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 75%;">
+            </colgroup>
+            <tr>
+                <td><label class="label">การทดสอบ</label></td>
+                <td>{{ test.test_name }}</td>
+            </tr>
+            <tr>
+                <td><label class="label">รหัส</label></td>
+                <td>{{ test.code }}</td>
+            </tr>
+             <tr>
+                 <td><label class="label">Request Form</label></td>
+                 <td>
+                     <a href="{{ test.request_form_url }}" class="button is-rounded is-primary is-outlined">
+                        <span class="icon">
+                            <i class="fas fa-download"></i>
+                        </span><span>Download</span>
+                    </a>
+                 </td>
+             </tr>
+            <tr>
+                 <td><label class="label">Outsource Lab Test</label></td>
+                <td>
+                    <a href="{{ test.outsource_lab_test_url }}" class="button is-rounded is-info is-outlined">
+                        <span class="icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span><span>ไปยังหน้า page</span>
+                    </a>
+                </td>
+             </tr>
+        </table>
+        <div class="columns">
+            <div class="column">
+                <label class="label">URL for Outsource Lab Test</label>
+                <iframe src="{{ test.outsource_lab_test_url }}" width="1350px" height="600px"></iframe>
+            </div>
+        </div>
+        {% endif %}
+        <div class="columns">
+            <div class="buttons is-centered">
+                {% if current_user.is_authenticated %}
+                {% if version_index == None %}
+                    <a href="{{ url_for('gj_test.add_test', test_id=test.id) }}"
+                       class="button is-warning">แก้ไข</a>
+                    <a href="{{ url_for('gj_test.delete_test', test_id=test.id) }}"
+                       class="button is-danger">ลบ</a>
+                 {% endif %}
+                    <a href="{{ url_for('gj_test.view_tests') }}" class="button is-light">กลับ</a>
+                {% else %}
+                    <a href="{{ url_for('gj_test.index') }}" class="button is-light">กลับ</a>
+                {% endif %}
             </div>
         </div>
     </div>
