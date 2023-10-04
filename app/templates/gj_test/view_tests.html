@@ -59,6 +59,7 @@
         $('#data').DataTable({
             searchDelay: 350,
             ajax: '{{ url_for("gj_test.get_tests_view_data") }}',
+            processing: true,
             serverSide: true,
             columns: [
                 {data: 'code'},
