@@ -25,7 +25,7 @@ class GJTest(db.Model):
     __tablename__ = 'gj_tests'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     test_name = db.Column('test_name', db.String(), info={'label': u'ชื่อการทดสอบ'}, nullable=False)
-    code = db.Column('code', db.String(), unique=True, info={'label': u'รหัส'}, nullable=False)
+    code = db.Column('code', db.String(), info={'label': u'รหัส'}, nullable=False)
     desc = db.Column('desc', db.Text(), info={'label': u'ข้อบ่งชี้ในการส่งตรวจ'})
     prepare = db.Column(db.Text(), info={'label': u'การเตรียมผู้ป่วย'})
     created_at = db.Column('created_at', db.DateTime(timezone=True), server_default=func.now())

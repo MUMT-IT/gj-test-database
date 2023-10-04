@@ -179,7 +179,7 @@
              <tr>
                  <td><label class="label">Request Form</label></td>
                  <td>
-                     <a href="{{ test.request_form_url }}" class="button is-rounded is-primary is-outlined">
+                     <a href="{{ test.request_form_url or test.outsource_lab_test_url }}" class="button is-rounded is-primary">
                         <span class="icon">
                             <i class="fas fa-download"></i>
                         </span><span>Download</span>
@@ -189,18 +189,25 @@
             <tr>
                  <td><label class="label">Outsource Lab Test</label></td>
                 <td>
-                    <a href="{{ test.outsource_lab_test_url }}" class="button is-rounded is-info is-outlined">
+                    {% if test.outsource_lab_test_url %}
+                    <a href="{{ test.outsource_lab_test_url }}" class="button is-rounded is-info">
                         <span class="icon">
                             <i class="fas fa-arrow-right"></i>
-                        </span><span>ไปยังหน้า page</span>
+                        </span><span>ไปยังหน้าเว็บไซต์ของห้องปฏิบัติการ</span>
                     </a>
+                    {% else %}
+                    ไม่มีข้อมูลเว็บไซต์สำหรับการทดสอบนี้
+                    {% endif %}
                 </td>
              </tr>
         </table>
         <div class="columns">
-            <div class="column">
-                <label class="label">URL for Outsource Lab Test</label>
-                <iframe src="{{ test.outsource_lab_test_url }}" width="1350px" height="600px"></iframe>
+            <div class="column has-text-centered">
+                <label class="label">Website Preview</label>
+                <p>
+                    หากหน้าเว็บไซต์ไม่แสดงกรุณาคลิก <a href="{{ test.outsource_lab_test_url }}">ที่นี่</a>
+                </p>
+                <embed type="text/html" src="{{ test.outsource_lab_test_url }}" width="1000px" height="600px">
             </div>
         </div>
         {% endif %}
