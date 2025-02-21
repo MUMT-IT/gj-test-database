@@ -60,6 +60,8 @@ class GJTest(db.Model):
     updated_at = db.Column('updated_at', db.DateTime(timezone=True), onupdate=func.now())
     updated_by = db.Column('updated_by', db.ForeignKey('users.id'))
     updater = db.relationship('User')
+    non_reimbursable_price = db.Column('non_reimbursable_price', db.Numeric(), info={'label': 'ราคาเบิกไม่ได้'})
+    reimbursable_price = db.Column('reimbursable_price', db.Numeric(), info={'label': 'ราคาเบิกได้'})
 
     def to_dict(self):
         return {
@@ -74,7 +76,8 @@ class GJTest(db.Model):
             'reporting_referral_values': self.reporting_referral_values,
             'interference_analysis': self.interference_analysis,
             'caution': self.caution,
-            'status': self.status
+            'status': self.status,
+            'drop_off_location': self.drop_off_location.location if self.drop_off_location else ''
         }
 
 

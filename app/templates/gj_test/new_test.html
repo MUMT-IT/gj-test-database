@@ -149,7 +149,7 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">สถานที่</label>
+                            <label class="label">สถานที่ส่ง</label>
                             <select class="js-example-basic-single" id="drop_off_location"
                                     name="drop_off_location">
                                 {% if test %}
@@ -195,6 +195,18 @@
                                 </option>
                                 {% endif %}
                             </select>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{form.non_reimbursable_price.label}}</label>
+                            <div class="control">
+                                {{form.non_reimbursable_price(class="input")}}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{form.reimbursable_price.label}}</label>
+                            <div class="control">
+                                {{form.reimbursable_price(class="input")}}
+                            </div>
                         </div>
 
                         <div class="field">
