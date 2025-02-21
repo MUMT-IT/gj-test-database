@@ -495,7 +495,7 @@ def view_info_test(test_id, revision_index=None):
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @gj_test.route('tests/template/download', methods=['GET'])
@@ -521,7 +521,9 @@ def download_test_template():
         u'ระยะเวลาที่สามารถขอตรวจเพิ่มได้': u'ภายใน 24 ชั่วโมง',
         u'สิ่งรบกวนต่อการตรวจวิเคราะห์': u'สิ่งส่งตรวจ Clot',
         u'ข้อควรระวังและอื่นๆ': u'นำส่งภายใน 2 ชั่วโมงหลังเจาะเลือด',
-        u'สถานที่ทำการทดสอบ': u'ห้องปฏิบัติการศูนย์เทคนิคการแพทย์ฯ'
+        u'สถานที่ทำการทดสอบ': u'ห้องปฏิบัติการศูนย์เทคนิคการแพทย์ฯ',
+        u'ราคาเบิกได้': 300,
+        u'ราคาเบิกไม่ได้': 400,
     })
     df = DataFrame(records)
     df.to_excel('test_template.xlsx')
@@ -542,9 +544,10 @@ def add_many_tests():
             df = read_excel(upfile)
             df = df.fillna("")
             for idx, rec in df.iterrows():
-                no, test_name, code, desc, prepare, specimen, specimen_quantity, specimens_unit, specimen_container, \
-                specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent, \
-                reporting_referral_values, time_period_request, interference_analysis, caution, test_location = rec
+                (no, test_name, code, desc, prepare, specimen, specimen_quantity, specimens_unit, specimen_container,
+                 specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent,
+                 reporting_referral_values, time_period_request, interference_analysis, caution, test_location,
+                 reimbursable_price, non_reimbursable_price) = rec
 
                 specimen_obj = GJTestSpecimen.query.filter_by(specimen=specimen).first()
                 if not specimen_obj:
@@ -629,7 +632,9 @@ def add_many_tests():
                         time_period_request=time_period_request_,
                         interference_analysis=interference_analysis,
                         caution=caution,
-                        test_location=test_location_
+                        test_location=test_location_,
+                        reimbursable_price=reimbursable_price,
+                        non_reimbursable_price=non_reimbursable_price,
                     )
                     new_test.specimens_source.append(specimen_source_)
                     db.session.add(new_test)
