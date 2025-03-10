@@ -25,9 +25,31 @@
         <div class="columns">
             <div class="column has-text-centered">
                 <h1 class="title">รายละเอียดการทดสอบ</h1>
+                {% if current_user.is_authenticated %}
+                <div class="buttons is-centered">
+                    <a href="{{ url_for('gj_test.view_tests') }}" class="button is-rounded is-light">
+                        <span class="icon">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
+                        <span>กลับ</span>
+                    </a>
+                    <a class="button is-rounded is-warning" href="{{ url_for('gj_test.add_test', test_id=test.id) }}">
+                        <span class="icon">
+                            <i class="fas fa-pencil-alt"></i>
+                        </span>
+                        <span>แก้ไขข้อมูล</span>
+                    </a>
+                    <a href="{{ url_for('gj_test.delete_test', test_id=test.id) }}"
+                       class="button is-rounded is-danger">
+                        <span class="icon">
+                            <i class="fas fa-trash-alt"></i>
+                        </span>
+                        <span>ลบ</span>
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
-        {% if not test.outsource_lab_test_url %}
         <div class="columns">
             <div class="column has-text-centered is-two-thirds is-offset-2">
                 <div class="card">
@@ -129,9 +151,29 @@
                                 <td>{{ test.test_location.location }}</td>
                             </tr>
                             <tr>
+                                <td><label class="label">ราคา (เบิกไม่ได้)</label></td>
+                                <td>{{ test.non_reimbursable_price or '-' }} บาท</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ราคา (เบิกได้)</label></td>
+                                <td>{{ test.reimbursable_price or '-' }} บาท</td>
+                            </tr>
+                            <tr>
                                 <td><label class="label">Status</label></td>
                                 <td>{{ test.status }}</td>
                             </tr>
+                            {% if test.outsource_lab_test_url %}
+                            <tr>
+                                <td><label class="label">Request Form</label></td>
+                                <td>
+                                    <a href="{{ test.request_form_url or test.outsource_lab_test_url }}" class="button is-rounded is-primary">
+                                    <span class="icon">
+                                        <i class="fas fa-download"></i>
+                                    </span><span>Download</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
                             {% if current_user.is_authenticated and revision_index == None %}
                             <tr>
                                 <td><label class="label">ประวัติการแก้ไข</label></td>
@@ -145,7 +187,7 @@
                                         </thead>
                                         {% for ver in test.versions %}
                                         <tr>
-                                            <td>{{ver.index}}</td>
+                                            <td>{{loop.index0}}</td>
                                             <td>{{ver.updated_at|localdatetime}}</td>
                                             <td>{{ver.updater}}</td>
                                             <td>
@@ -162,74 +204,6 @@
                 </div>
             </div>
         </div>
-        {% else %}
-        <table class="table is-bordered is-fullwidth">
-            <colgroup>
-                <col span="1" style="width: 25%;">
-                <col span="1" style="width: 75%;">
-            </colgroup>
-            <tr>
-                <td><label class="label">การทดสอบ</label></td>
-                <td>{{ test.test_name }}</td>
-            </tr>
-            <tr>
-                <td><label class="label">รหัส</label></td>
-                <td>{{ test.code }}</td>
-            </tr>
-             <tr>
-                 <td><label class="label">Request Form</label></td>
-                 <td>
-                     <a href="{{ test.request_form_url or test.outsource_lab_test_url }}" class="button is-rounded is-primary">
-                        <span class="icon">
-                            <i class="fas fa-download"></i>
-                        </span><span>Download</span>
-                    </a>
-                 </td>
-             </tr>
-            <tr>
-                 <td><label class="label">Outsource Lab Test</label></td>
-                <td>
-                    {% if test.outsource_lab_test_url %}
-                    <a href="{{ test.outsource_lab_test_url }}" class="button is-rounded is-info">
-                        <span class="icon">
-                            <i class="fas fa-arrow-right"></i>
-                        </span><span>ไปยังหน้าเว็บไซต์ของห้องปฏิบัติการ</span>
-                    </a>
-                    {% else %}
-                    ไม่มีข้อมูลเว็บไซต์สำหรับการทดสอบนี้
-                    {% endif %}
-                </td>
-             </tr>
-        </table>
-        <div class="columns">
-            <div class="column has-text-centered">
-                <label class="label">Website Preview</label>
-                <p>
-                    หากหน้าเว็บไซต์ไม่แสดงกรุณาคลิก <a href="{{ test.outsource_lab_test_url }}">ที่นี่</a>
-                </p>
-                <embed type="text/html" src="{{ test.outsource_lab_test_url }}" width="1000px" height="600px">
-            </div>
-        </div>
-        {% endif %}
-        <div class="columns">
-            <div class="buttons is-centered">
-                {% if current_user.is_authenticated %}
-                {% if version_index == None %}
-                    <a href="{{ url_for('gj_test.add_test', test_id=test.id) }}"
-                       class="button is-warning">แก้ไข</a>
-                    <a href="{{ url_for('gj_test.delete_test', test_id=test.id) }}"
-                       class="button is-danger">ลบ</a>
-                 {% endif %}
-                    <a href="{{ url_for('gj_test.view_tests') }}" class="button is-light">กลับ</a>
-                {% else %}
-                    <a href="{{ url_for('gj_test.index') }}" class="button is-light">กลับ</a>
-                {% endif %}
-            </div>
-        </div>
     </div>
 </section>
-{% endblock %}
-{% block scripts %}
-{{ super }}
-
 {% endblock %}

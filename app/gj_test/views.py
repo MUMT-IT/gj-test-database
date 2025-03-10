@@ -524,6 +524,7 @@ def download_test_template():
         u'สถานที่ทำการทดสอบ': u'ห้องปฏิบัติการศูนย์เทคนิคการแพทย์ฯ',
         u'ราคาเบิกได้': 300,
         u'ราคาเบิกไม่ได้': 400,
+        u'ใบขอส่งตรวจ': u'https://test.com/form',
     })
     df = DataFrame(records)
     df.to_excel('test_template.xlsx')
@@ -547,7 +548,7 @@ def add_many_tests():
                 (no, test_name, code, desc, prepare, specimen, specimen_quantity, specimens_unit, specimen_container,
                  specimen_date_time, drop_off_location, method, test_date, waiting_time_normal, waiting_time_urgent,
                  reporting_referral_values, time_period_request, interference_analysis, caution, test_location,
-                 reimbursable_price, non_reimbursable_price) = rec
+                 reimbursable_price, non_reimbursable_price, outsource_lab_test_url) = rec
 
                 specimen_obj = GJTestSpecimen.query.filter_by(specimen=specimen).first()
                 if not specimen_obj:
@@ -633,8 +634,9 @@ def add_many_tests():
                         interference_analysis=interference_analysis,
                         caution=caution,
                         test_location=test_location_,
-                        reimbursable_price=reimbursable_price,
-                        non_reimbursable_price=non_reimbursable_price,
+                        reimbursable_price=reimbursable_price or None,
+                        non_reimbursable_price=non_reimbursable_price or None,
+                        outsource_lab_test_url=outsource_lab_test_url,
                     )
                     new_test.specimens_source.append(specimen_source_)
                     db.session.add(new_test)
