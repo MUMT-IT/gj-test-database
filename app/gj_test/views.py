@@ -634,8 +634,8 @@ def add_many_tests():
                         interference_analysis=interference_analysis,
                         caution=caution,
                         test_location=test_location_,
-                        reimbursable_price=reimbursable_price,
-                        non_reimbursable_price=non_reimbursable_price,
+                        reimbursable_price=reimbursable_price or None,
+                        non_reimbursable_price=non_reimbursable_price or None,
                         outsource_lab_test_url=outsource_lab_test_url,
                     )
                     new_test.specimens_source.append(specimen_source_)
