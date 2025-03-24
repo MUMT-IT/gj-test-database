@@ -542,7 +542,7 @@ def add_many_tests():
             filename = secure_filename(upfile.filename)
             upfile.save(filename)
         if upfile and allowed_file(upfile.filename):
-            df = read_excel(upfile)
+            df = read_excel(upfile, converters={'ปกติ': str, 'ด่วน': str})
             df = df.fillna("")
             for idx, rec in df.iterrows():
                 (no, test_name, code, desc, prepare, specimen, specimen_quantity, specimens_unit, specimen_container,
