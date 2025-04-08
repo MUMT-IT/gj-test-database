@@ -69,6 +69,7 @@
                                 <td class="has-text-danger">{{ test.updated_at|localdatetime }} by {{test.updater}}</td>
                             </tr>
                             {% endif %}
+                            {% if not test.outsource_lab_test_url %}
                             <tr>
                                 <td><label class="label">การทดสอบ</label></td>
                                 <td>{{ test.test_name }}</td>
@@ -147,10 +148,6 @@
                                 <td>{{ test.caution }}</td>
                             </tr>
                             <tr>
-                                <td><label class="label">สถานที่ทำการทดสอบ</label></td>
-                                <td>{{ test.test_location.location }}</td>
-                            </tr>
-                            <tr>
                                 <td><label class="label">ราคา (เบิกไม่ได้)</label></td>
                                 <td>{{ test.non_reimbursable_price or '-' }} บาท</td>
                             </tr>
@@ -162,7 +159,52 @@
                                 <td><label class="label">Status</label></td>
                                 <td>{{ test.status }}</td>
                             </tr>
-                            {% if test.outsource_lab_test_url %}
+                            {% else %}
+                            <tr>
+                                <td><label class="label">การทดสอบ</label></td>
+                                <td>{{ test.test_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">รหัส</label></td>
+                                <td>{{ test.code }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ข้อบ่งชี้ในการส่งตรวจ</label></td>
+                                <td>{{ test.desc }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">สิ่งส่งตรวจ</label></td>
+                                <td>
+                                    <table class="table is-fullwidth">
+                                        <thead>
+                                        <th>ชนิด</th>
+                                        <th>ปริมาณ</th>
+                                        <th>หน่วย</th>
+                                        <th>ภาชนะ</th>
+                                        </thead>
+                                        {% for sp in test.specimens_source %}
+                                        <tr>
+                                            <td>{{ sp.specimens }}</td>
+                                            <td>{{ sp.specimen_quantity }}</td>
+                                            <td>{{ sp.specimens_unit }}</td>
+                                            <td>{{ sp.specimen_container }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">สถานที่ทำการทดสอบ</label></td>
+                                <td>{{ test.test_location.location }}</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">ราคา</label></td>
+                                <td>{{ test.non_reimbursable_price or '-' }} บาท</td>
+                            </tr>
+                            <tr>
+                                <td><label class="label">วันที่ทำการทดสอบ</label></td>
+                                <td>ส่งทุกวันจันทร์</td>
+                            </tr>
                             <tr>
                                 <td><label class="label">Request Form</label></td>
                                 <td>
